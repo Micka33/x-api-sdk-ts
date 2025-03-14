@@ -21,8 +21,8 @@ export type ITwitterClientConfig = {
  * The main client for interacting with the Twitter API.
  */
 export class TwitterClient implements ITwitterClient {
-  private auth1: IOAuth1Auth;
-  private auth2: IOAuth2Auth;
+  private oAuth1: IOAuth1Auth;
+  private oAuth2: IOAuth2Auth;
   private baseUrl: string;
   public tweets: ITweets;
   public media: IMedia;
@@ -47,12 +47,12 @@ export class TwitterClient implements ITwitterClient {
       streams?: IStreams;
     } | null,
     auth?: {
-      auth1?: IOAuth1Auth;
-      auth2?: IOAuth2Auth;
+      oAuth1?: IOAuth1Auth;
+      oAuth2?: IOAuth2Auth;
     } | null,
   ) {
-    this.auth1 = auth?.auth1 || new OAuth1Auth(this.config.oAuth1);
-    this.auth2 = auth?.auth2 || new OAuth2Auth(this.config.oAuth2);
+    this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);
+    this.oAuth2 = auth?.oAuth2 || new OAuth2Auth(this.config.oAuth2);
     this.baseUrl = 'https://api.twitter.com';
     this.tweets = apiModules?.tweets || ({} as ITweets);
     this.media = apiModules?.media || ({} as IMedia);
