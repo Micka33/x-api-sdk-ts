@@ -27,19 +27,20 @@ This architecture defines a comprehensive TypeScript SDK for the Twitter API, pr
 ```mermaid
 graph TD
     A[Client Application] -->|Uses| B[TwitterClient]
-    B -->|Authenticates via| C[IAuth]
-    C -->|Implements| D[OAuth1Auth]
-    C -->|Implements| E[OAuth2Auth]
-    B -->|Provides| F[API Modules]
-    F -->|Includes| G[Tweets]
-    F -->|Includes| H[Media]
-    F -->|Includes| I[Users]
-    F -->|Includes| J[Searches]
-    F -->|Includes| K[Streams]
+    B -->|Authenticates via| C[IOAuth1Auth]
+    B -->|Authenticates via| D[IOAuth2Auth]
+    C -->|Implements| E[OAuth1Auth]
+    C -->|Implements| F[OAuth2Auth]
+    B -->|Provides| G[API Modules]
+    G -->|Includes| H[Tweets]
+    G -->|Includes| I[Media]
+    G -->|Includes| J[Users]
+    G -->|Includes| K[Searches]
+    G -->|Includes| L[Streams]
     
     style B fill:#bbf,stroke:#333
     style C fill:#bfb,stroke:#333
-    style F fill:#fbf,stroke:#333
+    style G fill:#fbf,stroke:#333
 ```
 
 ### Request Flow
@@ -69,8 +70,7 @@ sequenceDiagram
 
 ```typescript
 // ITwitterClient interface
-interface ITwitterClient {
-  request<T>(options: RequestOptions): Promise<T>;
+export interface ITwitterClient {
   tweets: ITweets;
   media: IMedia;
   users: IUsers;
@@ -78,10 +78,18 @@ interface ITwitterClient {
   streams: IStreams;
 }
 
-// IAuth interface
-interface IAuth {
-  getHeaders(url: string, method: string, params?: Record<string, any>): Record<string, string>;
+// OAuth 1.0a interface
+export interface IOAuth1Auth {
+  setToken(token: IOAuth1Token): this;
+  getAuthorizationHeaders(): IOAuth1AuthorizationHeaders;
+  getAsAuthorizationHeader(): { Authorization: string };
 }
+
+// OAuth 2.0 interface
+export interface IOAuth2Auth {
+  // TBD
+}
+
 
 // API Module interface example (ITweets)
 interface ITweets {
@@ -127,7 +135,6 @@ interface Media {
 twitter-sdk/
 ├── src/
 │   ├── auth/
-│   │   ├── IAuth.ts                # Auth interface
 │   │   ├── OAuth1Auth.ts           # OAuth 1.0a implementation
 │   │   └── OAuth2Auth.ts           # OAuth 2.0 implementation
 │   ├── api/
@@ -136,13 +143,17 @@ twitter-sdk/
 │   │   ├── users.ts                # Users API module
 │   │   ├── searches.ts             # Searches API module
 │   │   └── streams.ts              # Streaming API module
-│   ├── interfaces/
-│   │   ├── ITwitterClient.ts       # Client interface
-│   │   ├── ITweets.ts              # Tweets module interface
-│   │   ├── IMedia.ts               # Media module interface
-│   │   ├── IUsers.ts               # Users module interface
-│   │   ├── ISearches.ts            # Searches module interface
-│   │   └── IStreams.ts             # Streams module interface
+│   ├── interfaces
+│   │   ├── ITwitterClient.ts       # Client interface
+│   │   ├── api
+│   │   │   ├── IMedia.ts           # Media module interface
+│   │   │   ├── ISearches.ts        # Searches module interface
+│   │   │   ├── IStreams.ts         # Streams module interface
+│   │   │   ├── ITweets.ts          # Tweets module interface
+│   │   │   └── IUsers.ts           # Users module interface
+│   │   └── auth
+│   │       ├── IOAuth1Auth.ts      # OAuth 1.0a interface
+│   │       └── IOAuth2Auth.ts      # OAuth 2.0 interface
 │   ├── types/
 │   │   ├── tweet.ts                # Tweet type definitions
 │   │   ├── user.ts                 # User type definitions

@@ -45,30 +45,30 @@ The Twitter API SDK is a comprehensive, open-source Software Development Kit for
 - **Description**: Manages authentication for different Twitter API versions.
 - **Implementation Details**:
   - Two classes: `OAuth1Auth` for v1.1 API and `OAuth2Auth` for v2 API.
-  - Both implement the `IAuth` interface.
-  - `TwitterClient` dynamically selects the appropriate authentication method based on the API endpoint.
+  - Each implement their own interface `IOAuth1Auth` and `IOAuth2Auth`.
+  - `TwitterClient` injects both instances (via constructor) to each API Module.
 
 ### API Modules
 
 - **Description**: Organized into classes representing Twitter API categories (e.g., Tweets, Media, Users, Searches).
 - **Implementation Details**:
   - Each module (e.g., `Tweets`, `Media`) implements a corresponding interface (e.g., `ITweets`, `IMedia`).
-  - Modules depend on the `ITwitterClient` interface for loose coupling, rather than the concrete `TwitterClient` class.
+  - Modules are injected in their constuctor with an instance of each `IOAuth1Auth` and `IOAuth2Auth` interfaces.
+  - Modules depend on the `IOAuth1Auth` and `IOAuth2Auth` interfaces for loose coupling, rather than the concrete `OAuth1Auth` and `OAuth2Auth` class.
 
 ### Interfaces
 
 - **Description**: Define contracts for SDK components to ensure flexibility and testability.
 - **Implementation Details**:
-  - `ITwitterClient`: Specifies the `request` method.
   - `IAuth`: Specifies the `getHeaders` method for authentication headers.
   - `ITweets`, `IMedia`, etc.: Specify methods specific to each API module (e.g., `postTweet`, `uploadMedia`).
 
-### Factory Method
+### Dependcy Injection in TwitterClient constructor
 
 - **Description**: Simplifies instantiation of `TwitterClient` with default settings while allowing customization.
 - **Implementation Details**:
-  - `TwitterClient.createClient(config)`: A static method to create a client with default authentication and API modules.
-  - Constructor supports passing custom implementations of `IAuth`, `ITweets`, etc.
+  - Constructor supports passing custom implementations of `ITweets`, `IMedia` etc in an optional parameter named `apiModules`
+  - Constructor supports passing custom implementations of `IOAuth1Auth` and `IOAuth2Auth` in an optional parameter named `auth`
 
 ### Supporting Features
 
@@ -84,19 +84,20 @@ title: Twitter API SDK Architecture
 ---
 graph TD
     A[Client Application] -->|Uses| B[TwitterClient]
-    B -->|Authenticates via| C[IAuth]
-    C -->|Implements| D[OAuth1Auth]
-    C -->|Implements| E[OAuth2Auth]
-    B -->|Provides| F[API Modules]
-    F -->|Includes| G[Tweets]
-    F -->|Includes| H[Media]
-    F -->|Includes| I[Users]
-    F -->|Includes| J[Searches]
-    F -->|Includes| K[Streams]
+    B -->|Authenticates via| C[IOAuth1Auth]
+    B -->|Authenticates via| D[IOAuth2Auth]
+    C -->|Implements| E[OAuth1Auth]
+    C -->|Implements| F[OAuth2Auth]
+    B -->|Provides| G[API Modules]
+    G -->|Includes| H[Tweets]
+    G -->|Includes| I[Media]
+    G -->|Includes| J[Users]
+    G -->|Includes| K[Searches]
+    G -->|Includes| L[Streams]
     
     style B fill:#bbf,stroke:#333
     style C fill:#bfb,stroke:#333
-    style F fill:#fbf,stroke:#333
+    style G fill:#fbf,stroke:#333
 ```
 
 ## Code Structure
@@ -106,40 +107,70 @@ graph TD
 ```
 x-sdk-ts/
 ├── src/
-│ ├── auth/
-│ │ ├── IAuth.ts
-│ │ ├── OAuth1Auth.ts
-│ │ └── OAuth2Auth.ts
-│ ├── api/
-│ │ ├── tweets.ts
-│ │ ├── media.ts
-│ │ ├── users.ts
-│ │ ├── searches.ts
-│ │ └── streams.ts
-│ ├── interfaces/
-│ │ ├── ITwitterClient.ts
-│ │ ├── ITweets.ts
-│ │ ├── IMedia.ts
-│ │ └── ...
-│ ├── types/
-│ │ ├── tweet.ts
-│ │ ├── user.ts
-│ │ └── ...
-│ ├── utils/
-│ │ └── request.ts
-│ └── index.ts
+│   ├── auth/
+│   │   ├── OAuth1Auth.ts
+│   │   └── OAuth2Auth.ts
+│   ├── api/
+│   │   ├── tweets.ts
+│   │   ├── media.ts
+│   │   ├── users.ts
+│   │   ├── searches.ts
+│   │   └── streams.ts
+│   ├── interfaces
+│   │   ├── ITwitterClient.ts
+│   │   ├── api
+│   │   │   ├── IMedia.ts
+│   │   │   ├── ISearches.ts
+│   │   │   ├── IStreams.ts
+│   │   │   ├── ITweets.ts
+│   │   │   └── IUsers.ts
+│   │   └── auth
+│   │       ├── IOAuth1Auth.ts
+│   │       └── IOAuth2Auth.ts
+│   ├── types/
+│   │   ├── tweet.ts
+│   │   ├── user.ts
+│   │   ├── media.ts
+│   │   ├── search.ts
+│   │   └── stream.ts
+│   ├── utils/
+│   │   ├── request.ts
+│   │   ├── rate-limit.ts
+│   │   └── error.ts
+│   ├── client.ts
+│   └── index.ts
 ├── tests/
-│ ├── unit/
-│ └── integration/
+│   ├── unit/
+│   │   ├── auth/
+│   │   ├── api/
+│   │   └── client.test.ts
+│   └── integration/
+│       ├── tweets.test.ts
+│       ├── media.test.ts
+│       └── ...
 ├── examples/
-│ └── basic-usage.ts
+│   ├── basic-usage.ts
+│   ├── media-upload.ts
+│   ├── streaming.ts
+│   └── ...
 ├── docs/
+│   ├── architecture.md
+│   └── project-overview.md
+│   └── ...
+├── package.json
+├── tsconfig.json
+├── jest.config.js
+├── .github/
+│   └── workflows/
+├── LICENSE
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
 └── README.md
 ```
 
 ### Naming Conventions
 
-- **Interfaces**: Prefixed with `I` (e.g., `ITwitterClient`, `IAuth`).
+- **Interfaces**: Prefixed with `I` (e.g., `ITwitterClient`, `IOAuth1Auth`, `ITweets`).
 - **Classes**: Use descriptive names (e.g., `TwitterClient`, `OAuth1Auth`, `Tweets`).
 - **Methods**: Use action-oriented names (e.g., `postTweet`, `uploadMedia`).
 
@@ -195,7 +226,7 @@ x-sdk-ts/
 
 ### Phase 1: Core SDK Development
 
-- Implement authentication (`IAuth`, `OAuth1Auth`, `OAuth2Auth`).
+- Implement authentication (`IOAuth1Auth`, `OAuth1Auth`, `IOAuth2Auth`, `OAuth2Auth`).
 - Build `TwitterClient` with factory method and request handling.
 - Develop key API modules: `Tweets` and `Media` (including media uploads with metadata).
 
