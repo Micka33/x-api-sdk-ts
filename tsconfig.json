@@ -31,6 +31,5 @@
       "utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src/index.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "examples"]
+  "exclude": ["node_modules", "dist", "examples"]
 }

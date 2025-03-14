@@ -1,130 +1,63 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { ITwitterClient, RequestOptions } from './interfaces/ITwitterClient';
-import { IAuth } from './interfaces/IAuth';
-import { ITweets } from './interfaces/ITweets';
-import { IMedia } from './interfaces/IMedia';
-import { IUsers } from './interfaces/IUsers';
-import { ISearches } from './interfaces/ISearches';
-import { IStreams } from './interfaces/IStreams';
-import { OAuth1Auth, OAuth1Config } from './auth/OAuth1Auth';
-import { OAuth2Auth, OAuth2Config } from './auth/OAuth2Auth';
-import { parseTwitterError } from './utils/error';
-import { buildUrl } from './utils/request';
+import type { ITwitterClient } from 'interfaces/ITwitterClient';
+import type { ITweets } from 'interfaces/api/ITweets';
+import type { IMedia } from 'interfaces/api/IMedia';
+import type { IUsers } from 'interfaces/api/IUsers';
+import type { ISearches } from 'interfaces/api/ISearches';
+import type { IStreams } from 'interfaces/api/IStreams';
+import type { IOAuth1Auth, IOAuth1Config } from 'interfaces/auth/IOAuth1Auth';
+import type { IOAuth2Auth, IOAuth2Config } from 'interfaces/auth/IOAuth2Auth';
+import { OAuth1Auth } from 'auth/OAuth1Auth';
+import { OAuth2Auth } from 'auth/OAuth2Auth';
 
 /**
  * Configuration for the Twitter client.
  */
-export type TwitterClientConfig = OAuth1Config | OAuth2Config;
+export type ITwitterClientConfig = {
+  oAuth1: IOAuth1Config;
+  oAuth2: IOAuth2Config;
+};
 
 /**
  * The main client for interacting with the Twitter API.
  */
 export class TwitterClient implements ITwitterClient {
-  private auth: IAuth;
+  private auth1: IOAuth1Auth;
+  private auth2: IOAuth2Auth;
   private baseUrl: string;
+  public tweets: ITweets;
+  public media: IMedia;
+  public users: IUsers;
+  public searches: ISearches;
+  public streams: IStreams;
 
   /**
    * Creates a new TwitterClient instance.
-   * 
-   * @param config - The client configuration
-   * @param tweets - The tweets module
-   * @param media - The media module
-   * @param users - The users module
-   * @param searches - The searches module
-   * @param streams - The streams module
-   * @param auth - The authentication provider
+   *
+   * @param config - The client configuration (required)
+   * @param apiModules - The API modules (optional)
+   * @param auth - The authentication providers (optional)
    */
   constructor(
-    private config: TwitterClientConfig,
-    public tweets: ITweets,
-    public media: IMedia,
-    public users: IUsers,
-    public searches: ISearches,
-    public streams: IStreams,
-    auth?: IAuth
+    private config: ITwitterClientConfig,
+    apiModules?: {
+      tweets?: ITweets;
+      media?: IMedia;
+      users?: IUsers;
+      searches?: ISearches;
+      streams?: IStreams;
+    } | null,
+    auth?: {
+      auth1?: IOAuth1Auth;
+      auth2?: IOAuth2Auth;
+    } | null,
   ) {
-    this.auth = auth || this.createAuthProvider(config);
+    this.auth1 = auth?.auth1 || new OAuth1Auth(this.config.oAuth1);
+    this.auth2 = auth?.auth2 || new OAuth2Auth(this.config.oAuth2);
     this.baseUrl = 'https://api.twitter.com';
-  }
-
-  /**
-   * Creates a new TwitterClient instance with default modules.
-   * 
-   * @param config - The client configuration
-   * @returns A new TwitterClient instance
-   */
-  static createClient(config: TwitterClientConfig): ITwitterClient {
-    const auth = 'apiKey' in config
-      ? new OAuth1Auth(config as OAuth1Config)
-      : new OAuth2Auth(config as OAuth2Config);
-
-    // In a real implementation, we would create instances of the API modules here
-    // For now, we'll just use empty objects that satisfy the interfaces
-    const tweets = {} as ITweets;
-    const media = {} as IMedia;
-    const users = {} as IUsers;
-    const searches = {} as ISearches;
-    const streams = {} as IStreams;
-
-    return new TwitterClient(
-      config,
-      tweets,
-      media,
-      users,
-      searches,
-      streams,
-      auth
-    );
-  }
-
-  /**
-   * Makes an authenticated request to the Twitter API.
-   * 
-   * @param options - The request options
-   * @returns A promise that resolves to the response data
-   */
-  async request<T>(options: RequestOptions): Promise<T> {
-    const url = options.url.startsWith('http')
-      ? options.url
-      : `${this.baseUrl}${options.url}`;
-
-    const fullUrl = buildUrl(url, options.params);
-
-    try {
-      const headers = await this.auth.getHeaders(
-        fullUrl,
-        options.method,
-        options.isMedia ? undefined : options.params
-      );
-
-      const requestConfig: AxiosRequestConfig = {
-        url: fullUrl,
-        method: options.method,
-        headers: {
-          ...headers,
-          ...options.headers,
-        },
-        data: options.data,
-      };
-
-      const response = await axios(requestConfig);
-      return response.data;
-    } catch (error) {
-      throw parseTwitterError(error);
-    }
-  }
-
-  /**
-   * Creates an authentication provider based on the client configuration.
-   * 
-   * @param config - The client configuration
-   * @returns An authentication provider
-   */
-  private createAuthProvider(config: TwitterClientConfig): IAuth {
-    if ('apiKey' in config) {
-      return new OAuth1Auth(config as OAuth1Config);
-    } else {
-      return new OAuth2Auth(config as OAuth2Config);
-    }
+    this.tweets = apiModules?.tweets || ({} as ITweets);
+    this.media = apiModules?.media || ({} as IMedia);
+    this.users = apiModules?.users || ({} as IUsers);
+    this.searches = apiModules?.searches || ({} as ISearches);
+    this.streams = apiModules?.streams || ({} as IStreams);
   }
 }

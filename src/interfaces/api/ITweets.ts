@@ -1,4 +1,4 @@
-import { Tweet, TweetOptions } from '../types/tweet';
+import { Tweet, TweetOptions } from 'types/tweet';
 
 /**
  * Interface for the Tweets module.
@@ -7,7 +7,7 @@ import { Tweet, TweetOptions } from '../types/tweet';
 export interface ITweets {
   /**
    * Posts a new tweet.
-   * 
+   *
    * @param text - The text content of the tweet
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
@@ -16,7 +16,7 @@ export interface ITweets {
 
   /**
    * Retrieves a tweet by ID.
-   * 
+   *
    * @param id - The ID of the tweet to retrieve
    * @returns A promise that resolves to the tweet
    */
@@ -24,7 +24,7 @@ export interface ITweets {
 
   /**
    * Deletes a tweet.
-   * 
+   *
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
@@ -32,7 +32,7 @@ export interface ITweets {
 
   /**
    * Likes a tweet.
-   * 
+   *
    * @param id - The ID of the tweet to like
    * @returns A promise that resolves when the tweet is liked
    */
@@ -40,7 +40,7 @@ export interface ITweets {
 
   /**
    * Unlikes a tweet.
-   * 
+   *
    * @param id - The ID of the tweet to unlike
    * @returns A promise that resolves when the tweet is unliked
    */
@@ -48,7 +48,7 @@ export interface ITweets {
 
   /**
    * Retweets a tweet.
-   * 
+   *
    * @param id - The ID of the tweet to retweet
    * @returns A promise that resolves to the retweet
    */
@@ -56,7 +56,7 @@ export interface ITweets {
 
   /**
    * Unretweets a tweet.
-   * 
+   *
    * @param id - The ID of the tweet to unretweet
    * @returns A promise that resolves when the tweet is unretweeted
    */
@@ -64,7 +64,7 @@ export interface ITweets {
 
   /**
    * Retrieves the timeline of the authenticated user.
-   * 
+   *
    * @param options - Optional parameters for the timeline request
    * @returns A promise that resolves to an array of tweets
    */

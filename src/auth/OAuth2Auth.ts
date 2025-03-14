@@ -1,31 +1,17 @@
-import { IAuth } from '../interfaces/IAuth';
-
-/**
- * Configuration for OAuth 2.0 authentication.
- */
-export interface OAuth2Config {
-  /** The client ID */
-  clientId?: string;
-  
-  /** The client secret */
-  clientSecret?: string;
-  
-  /** The bearer token */
-  bearerToken?: string;
-}
+import type { IOAuth2Auth, IOAuth2Config } from 'interfaces/auth/IOAuth2Auth';
 
 /**
  * Implementation of OAuth 2.0 authentication for Twitter API v2.
  */
-export class OAuth2Auth implements IAuth {
+export class OAuth2Auth implements IOAuth2Auth {
   private bearerToken: string;
 
   /**
    * Creates a new OAuth2Auth instance.
-   * 
+   *
    * @param config - The OAuth 2.0 configuration
    */
-  constructor(private config: OAuth2Config) {
+  constructor(private config: IOAuth2Config) {
     if (!config.bearerToken && (!config.clientId || !config.clientSecret)) {
       throw new Error('OAuth2Auth requires either a bearer token or a client ID and client secret');
     }
@@ -35,17 +21,13 @@ export class OAuth2Auth implements IAuth {
 
   /**
    * Generates authentication headers for a Twitter API request.
-   * 
+   *
    * @param url - The full URL of the request
    * @param method - The HTTP method (GET, POST, etc.)
    * @param params - Optional parameters for the request
    * @returns A promise that resolves to the authentication headers
    */
-  async getHeaders(
-    url: string,
-    method: string,
-    params?: Record<string, any>
-  ): Promise<Record<string, string>> {
+  async getHeaders(): Promise<{ Authorization: string }> {
     if (!this.bearerToken) {
       // If we don't have a bearer token but have client credentials, we should get a token
       if (this.config.clientId && this.config.clientSecret) {
@@ -62,14 +44,13 @@ export class OAuth2Auth implements IAuth {
 
   /**
    * Gets a bearer token using client credentials.
-   * 
+   *
    * @returns A promise that resolves when the bearer token is obtained
    */
   private async getBearerToken(): Promise<void> {
     if (!this.config.clientId || !this.config.clientSecret) {
       throw new Error('Client ID and client secret are required to get a bearer token');
     }
-
     // In a real implementation, this would make a request to the Twitter API to get a bearer token
     // For now, we'll just throw an error
     throw new Error('Getting a bearer token from client credentials is not implemented yet');

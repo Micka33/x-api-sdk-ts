@@ -1,4 +1,4 @@
-import { User, UserLookupOptions } from '../types/user';
+import { User, UserLookupOptions } from 'types/user';
 
 /**
  * Interface for the Users module.
@@ -7,7 +7,7 @@ import { User, UserLookupOptions } from '../types/user';
 export interface IUsers {
   /**
    * Retrieves a user by ID.
-   * 
+   *
    * @param id - The ID of the user to retrieve
    * @param options - Optional parameters for the user lookup
    * @returns A promise that resolves to the user
@@ -16,7 +16,7 @@ export interface IUsers {
 
   /**
    * Retrieves a user by username.
-   * 
+   *
    * @param username - The username of the user to retrieve
    * @param options - Optional parameters for the user lookup
    * @returns A promise that resolves to the user
@@ -25,7 +25,7 @@ export interface IUsers {
 
   /**
    * Retrieves multiple users by their IDs.
-   * 
+   *
    * @param ids - The IDs of the users to retrieve
    * @param options - Optional parameters for the user lookup
    * @returns A promise that resolves to an array of users
@@ -34,7 +34,7 @@ export interface IUsers {
 
   /**
    * Retrieves multiple users by their usernames.
-   * 
+   *
    * @param usernames - The usernames of the users to retrieve
    * @param options - Optional parameters for the user lookup
    * @returns A promise that resolves to an array of users
@@ -43,7 +43,7 @@ export interface IUsers {
 
   /**
    * Follows a user.
-   * 
+   *
    * @param userId - The ID of the user to follow
    * @returns A promise that resolves when the user is followed
    */
@@ -51,7 +51,7 @@ export interface IUsers {
 
   /**
    * Unfollows a user.
-   * 
+   *
    * @param userId - The ID of the user to unfollow
    * @returns A promise that resolves when the user is unfollowed
    */
@@ -59,7 +59,7 @@ export interface IUsers {
 
   /**
    * Blocks a user.
-   * 
+   *
    * @param userId - The ID of the user to block
    * @returns A promise that resolves when the user is blocked
    */
@@ -67,7 +67,7 @@ export interface IUsers {
 
   /**
    * Unblocks a user.
-   * 
+   *
    * @param userId - The ID of the user to unblock
    * @returns A promise that resolves when the user is unblocked
    */
@@ -75,7 +75,7 @@ export interface IUsers {
 
   /**
    * Mutes a user.
-   * 
+   *
    * @param userId - The ID of the user to mute
    * @returns A promise that resolves when the user is muted
    */
@@ -83,7 +83,7 @@ export interface IUsers {
 
   /**
    * Unmutes a user.
-   * 
+   *
    * @param userId - The ID of the user to unmute
    * @returns A promise that resolves when the user is unmuted
    */

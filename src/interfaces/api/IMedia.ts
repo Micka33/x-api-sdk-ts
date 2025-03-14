@@ -1,4 +1,4 @@
-import { Media, MediaUploadOptions } from '../types/media';
+import { Media, MediaUploadOptions } from 'types/media';
 
 /**
  * Interface for the Media module.
@@ -7,7 +7,7 @@ import { Media, MediaUploadOptions } from '../types/media';
 export interface IMedia {
   /**
    * Uploads media to Twitter.
-   * 
+   *
    * @param media - The media buffer to upload
    * @param options - Optional parameters for the media upload
    * @returns A promise that resolves to the uploaded media
@@ -16,7 +16,7 @@ export interface IMedia {
 
   /**
    * Adds metadata to an uploaded media.
-   * 
+   *
    * @param mediaId - The ID of the media to add metadata to
    * @param altText - The alt text to add to the media
    * @returns A promise that resolves when the metadata is added
@@ -25,7 +25,7 @@ export interface IMedia {
 
   /**
    * Retrieves information about a media.
-   * 
+   *
    * @param mediaId - The ID of the media to retrieve
    * @returns A promise that resolves to the media information
    */

@@ -1,5 +1,5 @@
-import { Tweet } from '../types/tweet';
-import { SearchOptions, SearchResponse } from '../types/search';
+import { Tweet } from 'types/tweet';
+import { SearchOptions, SearchResponse } from 'types/search';
 
 /**
  * Interface for the Searches module.
@@ -8,7 +8,7 @@ import { SearchOptions, SearchResponse } from '../types/search';
 export interface ISearches {
   /**
    * Searches for tweets using the standard search API (v1.1).
-   * 
+   *
    * @param query - The search query
    * @param options - Optional parameters for the search
    * @returns A promise that resolves to the search response
@@ -17,7 +17,7 @@ export interface ISearches {
 
   /**
    * Searches for tweets using the recent search API (v2).
-   * 
+   *
    * @param query - The search query
    * @param options - Optional parameters for the search
    * @returns A promise that resolves to an array of tweets
@@ -27,7 +27,7 @@ export interface ISearches {
   /**
    * Searches for tweets using the full archive search API (v2).
    * Requires Academic Research access level.
-   * 
+   *
    * @param query - The search query
    * @param options - Optional parameters for the search
    * @returns A promise that resolves to an array of tweets
