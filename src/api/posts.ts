@@ -3,6 +3,7 @@ import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
 import { IPosts } from "src/interfaces/api/IPosts";
 import { Post, PostOptions } from 'src/types/post';
 import { CreatePostResponse } from "src/types/responses/create_post_response";
+import { DeletePostResponse } from "src/types/responses/delete_post_response";
 
 export class Posts implements IPosts {
   constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
@@ -65,12 +66,40 @@ export class Posts implements IPosts {
     return data;
   }
 
+  /**
+   * Deletes a post by its ID.
+   *
+   * @param id - The ID of the post to delete
+   * @returns A promise that resolves to the deletion response
+   * @throws {AuthenticationError} When authentication fails
+   * @throws {ApiError} When the API returns an error
+   * 
+   * @example
+   * ```typescript
+   * const result = await posts.deletePost("1346889436626259968");
+   * if (result.data.deleted) {
+   *   console.log("Post successfully deleted");
+   * }
+   * ```
+   */
+  async deletePost(id: string): Promise<DeletePostResponse> {
+    // Get authentication headers using OAuth 2.0
+    const headers = await this.oAuth2.getHeaders();
+    
+    // Make the API request
+    const response = await fetch(this.baseUrl + '/2/tweets/' + id, {
+      method: 'DELETE',
+      headers
+    });
+
+    // Parse the response
+    const data: DeletePostResponse = await response.json();
+    
+    return data;
+  }
+
   // ... other methods to be implemented
   getPost(id: string): Promise<Post> {
-    throw new Error("Method not implemented.");
-  }
-  
-  deletePost(id: string): Promise<void> {
     throw new Error("Method not implemented.");
   }
   

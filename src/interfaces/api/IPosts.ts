@@ -1,3 +1,4 @@
+import { DeletePostResponse } from 'src/types/responses/delete_post_response';
 import { Post, PostOptions } from 'types/post';
 import { CreatePostResponse } from 'types/responses/create_post_response';
 
@@ -29,7 +30,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
-  deletePost(id: string): Promise<void>;
+  deletePost(id: string): Promise<DeletePostResponse>;
 
   /**
    * Likes a tweet.
