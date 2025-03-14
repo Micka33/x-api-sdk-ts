@@ -1,6 +1,7 @@
 ---
 description: ALWAYS use when developing TypeScript SDK components to ensure consistent patterns, interfaces, and documentation
 globs: src/**/*.ts
+alwaysApply: false
 ---
 
 # TypeScript SDK Development Standards
@@ -15,21 +16,22 @@ globs: src/**/*.ts
 ## Requirements
 
 ### Interface Design
-- Prefix interfaces with `I` (e.g., `ITwitterClient`, `IAuth`)
+- Prefix interfaces with `I` (e.g., `ITwitterClient`, `IOAuth1Auth`, `IOAuth2Auth`, `ITweets`)
 - Design interfaces for loose coupling and dependency injection
 - Make interfaces focused on a single responsibility
 - Document all interface methods with JSDoc comments
 
 ### Class Implementation
 - Implement classes that fulfill a single interface
-- Use descriptive, noun-based names for classes (e.g., `TwitterClient`, `OAuth1Auth`)
+- Use descriptive, noun-based names for classes (e.g., `TwitterClient`, `OAuth1Auth`, `OAuth2Auth`)
 - Use action-oriented names for methods (e.g., `postTweet`, `uploadMedia`)
 - Inject dependencies through constructor parameters
 - Avoid tight coupling to concrete implementations
 
 ### Authentication
 - Support both OAuth 1.0a (v1.1 API) and OAuth 2.0 (v2 API)
-- Implement the `IAuth` interface for all authentication providers
+- Implement the `IOAuth1Auth` interface for `OAuth1Auth` provider
+- Implement the `IOAuth2Auth` interface for `OAuth2Auth` provider
 - Handle token management and renewal internally
 - Provide clear error messages for authentication failures
 

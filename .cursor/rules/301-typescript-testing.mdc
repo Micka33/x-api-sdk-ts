@@ -1,6 +1,7 @@
 ---
 description: ALWAYS use when writing tests for TypeScript SDK to ensure comprehensive test coverage and consistent testing patterns
 globs: tests/**/*.ts
+alwaysApply: false
 ---
 
 # TypeScript SDK Testing Standards
@@ -51,18 +52,24 @@ globs: tests/**/*.ts
 <example>
 describe('TwitterClient', () => {
   let client: TwitterClient;
-  let mockAuth: jest.Mocked<IAuth>;
+  let mockAuth: { auth1: IOAuth1Auth; auth2: IOAuth2Auth };
   
   beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks();
     // Create mock auth provider
-    mockAuth = {
-      getHeaders: jest.fn().mockResolvedValue({ 'Authorization': 'Bearer mock-token' })
-    } as any;
-    
+    mockAuth = { auth1: new MockAuth(), auth2: {} as IOAuth2Auth };
     // Create client with mock auth provider
     client = new TwitterClient(
-      { apiKey: 'mock-key', apiSecret: 'mock-secret' },
-      mockAuth
+      { oAuth1: { apiKey: 'mock-key', apiSecret: 'mock-secret' }, oAuth2: {} as IOAuth2Config },
+      {
+        tweets: {} as any,
+        media: {} as any,
+        users: {} as any,
+        searches: {} as any,
+        streams: {} as any,
+      },
+      mockAuth,
     );
   });
   
