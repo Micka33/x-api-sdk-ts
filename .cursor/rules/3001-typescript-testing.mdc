@@ -1,0 +1,115 @@
+---
+description: ALWAYS use when writing tests for TypeScript SDK to ensure comprehensive test coverage and consistent testing patterns
+globs: tests/**/*.ts
+---
+
+# TypeScript SDK Testing Standards
+
+<version>1.0.0</version>
+
+## Context
+- When writing unit tests for SDK components
+- When writing integration tests for API interactions
+- When mocking dependencies for isolated testing
+
+## Requirements
+
+### Test Organization
+- Organize tests by module/component
+- Use descriptive test names that explain the expected behavior
+- Group related tests using `describe` blocks
+- Test both success and failure cases
+
+### Unit Testing
+- Mock external dependencies using Jest mocks
+- Test components in isolation
+- Mock HTTP requests using Nock
+- Test error handling and edge cases
+- Verify correct parameter passing
+
+### Integration Testing
+- Use real API credentials from environment variables
+- Skip tests if credentials are not available
+- Test end-to-end functionality
+- Verify correct request/response handling
+- Test rate limiting and error scenarios
+
+### Test Coverage
+- Aim for at least 80% code coverage
+- Cover all public methods
+- Test error handling paths
+- Test parameter validation
+
+### Mocking
+- Create mock implementations of interfaces
+- Use Jest's mock functions to verify calls
+- Reset mocks between tests
+- Provide realistic mock responses
+
+## Examples
+
+<example>
+describe('TwitterClient', () => {
+  let client: TwitterClient;
+  let mockAuth: jest.Mocked<IAuth>;
+  
+  beforeEach(() => {
+    // Create mock auth provider
+    mockAuth = {
+      getHeaders: jest.fn().mockResolvedValue({ 'Authorization': 'Bearer mock-token' })
+    } as any;
+    
+    // Create client with mock auth provider
+    client = new TwitterClient(
+      { apiKey: 'mock-key', apiSecret: 'mock-secret' },
+      mockAuth
+    );
+  });
+  
+  describe('request', () => {
+    it('should make a request with the correct parameters', async () => {
+      // Mock axios response
+      jest.spyOn(axios, 'request').mockResolvedValueOnce({
+        data: { id: '123', text: 'Hello, world!' },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {}
+      });
+      
+      // Make request
+      const result = await client.request({
+        url: '/1.1/statuses/update.json',
+        method: 'POST',
+        data: { status: 'Hello, world!' }
+      });
+      
+      // Verify auth headers were requested
+      expect(mockAuth.getHeaders).toHaveBeenCalledWith(
+        'https://api.twitter.com/1.1/statuses/update.json',
+        'POST',
+        undefined
+      );
+      
+      // Verify axios was called with correct parameters
+      expect(axios.request).toHaveBeenCalledWith({
+        url: 'https://api.twitter.com/1.1/statuses/update.json',
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer mock-token' },
+        data: { status: 'Hello, world!' }
+      });
+      
+      // Verify result
+      expect(result).toEqual({ id: '123', text: 'Hello, world!' });
+    });
+  });
+});
+</example>
+
+<example type="invalid">
+test('it works', () => {
+  const client = new TwitterClient({});
+  // No assertions or mocks
+  client.request({ url: '/test', method: 'GET' });
+});
+</example> 

@@ -1,0 +1,84 @@
+---
+description: ALWAYS use when developing TypeScript SDK components to ensure consistent patterns, interfaces, and documentation
+globs: src/**/*.ts
+---
+
+# TypeScript SDK Development Standards
+
+<version>1.0.0</version>
+
+## Context
+- When implementing SDK components for the Twitter API
+- When creating or modifying interfaces, types, or classes
+- When documenting public API methods
+
+## Requirements
+
+### Interface Design
+- Prefix interfaces with `I` (e.g., `ITwitterClient`, `IAuth`)
+- Design interfaces for loose coupling and dependency injection
+- Make interfaces focused on a single responsibility
+- Document all interface methods with JSDoc comments
+
+### Class Implementation
+- Implement classes that fulfill a single interface
+- Use descriptive, noun-based names for classes (e.g., `TwitterClient`, `OAuth1Auth`)
+- Use action-oriented names for methods (e.g., `postTweet`, `uploadMedia`)
+- Inject dependencies through constructor parameters
+- Avoid tight coupling to concrete implementations
+
+### Authentication
+- Support both OAuth 1.0a (v1.1 API) and OAuth 2.0 (v2 API)
+- Implement the `IAuth` interface for all authentication providers
+- Handle token management and renewal internally
+- Provide clear error messages for authentication failures
+
+### Error Handling
+- Create custom error classes for different error types
+- Include relevant error information (code, message, etc.)
+- Handle rate limiting with dedicated error types
+- Provide helpful error messages for debugging
+
+### Type Safety
+- Define comprehensive types for all API responses
+- Use generics for request/response typing
+- Avoid using `any` type where possible
+- Create union types for parameters with multiple options
+
+### Documentation
+- Use JSDoc for all public methods and classes
+- Include parameter and return type documentation
+- Provide examples in documentation comments
+- Document error cases and exceptions
+
+## Examples
+
+<example>
+/**
+ * Uploads media to Twitter.
+ * 
+ * @param media - The media buffer to upload
+ * @param options - Optional parameters for the media upload
+ * @returns A promise that resolves to the uploaded media
+ * @throws {RateLimitError} When rate limit is exceeded
+ * @throws {AuthenticationError} When authentication fails
+ * 
+ * @example
+ * ```typescript
+ * const media = await client.media.uploadMedia(imageBuffer, {
+ *   mimeType: 'image/jpeg',
+ *   altText: 'A beautiful sunset'
+ * });
+ * ```
+ */
+async uploadMedia(media: Buffer, options?: MediaUploadOptions): Promise<Media> {
+  // Implementation
+}
+</example>
+
+<example type="invalid">
+// No documentation, poor naming, any types
+async upload(data: any): any {
+  // Implementation
+}
+</example> 
