@@ -238,24 +238,4 @@ export class Posts implements IPosts {
     
     return data;
   }
-
-  likePost(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  
-  unlikePost(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  
-  repost(id: string): Promise<Post> {
-    throw new Error("Method not implemented.");
-  }
-  
-  unrepost(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  
-  getHomeTimeline(options?: { count?: number; since_id?: string; max_id?: string; }): Promise<Post[]> {
-    throw new Error("Method not implemented.");
-  }
 }

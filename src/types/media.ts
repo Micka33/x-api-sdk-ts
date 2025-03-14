@@ -38,23 +38,3 @@ export interface Media {
     };
   };
 }
-
-/**
- * Options for uploading media to Twitter.
- */
-export interface MediaUploadOptions {
-  /** The MIME type of the media */
-  mimeType: string;
-  
-  /** The alt text for the media (for accessibility) */
-  altText?: string;
-  
-  /** Whether the media is being shared (for copyright purposes) */
-  shared?: boolean;
-  
-  /** The category of the media */
-  category?: 'tweet_image' | 'tweet_video' | 'tweet_gif' | 'amplify_video';
-  
-  /** Additional media data */
-  additionalOwners?: string[];
-}

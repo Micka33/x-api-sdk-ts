@@ -1,13 +1,13 @@
-import { AddMetadataResponse } from 'types/responses/add_metadata_response';
-import { Media } from 'types/media';
-import { GetUploadStatusResponse } from 'src/types/responses/get_upload_status_response';
-import { UploadMediaResponse } from 'src/types/responses/upload_media_response';
+import { IMedia } from "interfaces/api/IMedia";
+import { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
+import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
+import { AddMetadataResponse } from "src/types/responses/add_metadata_response";
+import { GetUploadStatusResponse } from "src/types/responses/get_upload_status_response";
+import { UploadMediaResponse } from "src/types/responses/upload_media_response";
 
-/**
- * Interface for the Media module.
- * Provides methods for interacting with media on Twitter.
- */
-export interface IMedia {
+export class Media implements IMedia {
+  constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
+
   /**
    * Uploads media to Twitter.
    *
@@ -17,7 +17,9 @@ export interface IMedia {
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
    * @returns A promise that resolves to the uploaded media
    */
-  uploadMedia(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<UploadMediaResponse>;
+  public uploadMedia(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<UploadMediaResponse> {
+
+  }
 
   /**
    * Get MediaUpload Status.
@@ -26,7 +28,9 @@ export interface IMedia {
    * @param command - The command for the media upload request.
    * @returns A promise that resolves to the uploaded media
    */
-  getUploadStatus(mediaId: string, command: 'STATUS'): Promise<GetUploadStatusResponse>;
+  public getUploadStatus(mediaId: string, command: 'STATUS'): Promise<GetUploadStatusResponse> {
+
+  }
 
   /**
    * Adds metadata to an uploaded media.
@@ -39,5 +43,9 @@ export interface IMedia {
    * @param uploadSource - The source of the media upload
    * @returns A promise that resolves when the metadata is added
    */
-  addMetadata(mediaId: string, altText: string, allowDownload: boolean, originalId?: string, originalProvider?: string, uploadSource?: string): Promise<AddMetadataResponse>;
+  public addMetadata(mediaId: string, altText: string, allowDownload: boolean, originalId?: string, originalProvider?: string, uploadSource?: string): Promise<AddMetadataResponse> {
+
+  }
+
+
 }
