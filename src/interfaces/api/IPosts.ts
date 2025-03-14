@@ -1,4 +1,5 @@
 import { DeletePostResponse } from 'src/types/responses/delete_post_response';
+import { GetPostResponse, GetPostsResponse } from 'src/types/responses/get_posts_response';
 import { Post, PostOptions } from 'types/post';
 import { CreatePostResponse } from 'types/responses/create_post_response';
 
@@ -17,12 +18,58 @@ export interface IPosts {
   createPost(text: string, options?: PostOptions): Promise<CreatePostResponse>;
 
   /**
-   * Retrieves a tweet by ID.
+   * Retrieves a post by its ID.
    *
-   * @param id - The ID of the tweet to retrieve
-   * @returns A promise that resolves to the tweet
+   * @param id - The ID of the post to retrieve
+   * @param options - Optional parameters for the request
+   * @returns A promise that resolves to the post response
+   * @throws {AuthenticationError} When authentication fails
+   * @throws {ApiError} When the API returns an error
+   * 
+   * @example
+   * ```typescript
+   * const response = await posts.getPost("1346889436626259968", {
+   *   tweetFields: ["author_id", "created_at", "public_metrics"],
+   *   expansions: ["author_id"]
+   * });
+   * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
+   * ```
    */
-  getPosts(ids: string[]): Promise<Post>;
+  getPost(id: string, options?: {
+    tweetFields?: string[];
+    expansions?: string[];
+    mediaFields?: string[];
+    pollFields?: string[];
+    userFields?: string[];
+    placeFields?: string[];
+  }): Promise<GetPostResponse>;
+
+  /**
+   * Retrieves multiple posts by their IDs.
+   *
+   * @param ids - An array of post IDs to retrieve
+   * @param options - Optional parameters for the request
+   * @returns A promise that resolves to the posts response
+   * @throws {AuthenticationError} When authentication fails
+   * @throws {ApiError} When the API returns an error
+   * 
+   * @example
+   * ```typescript
+   * const response = await posts.getPosts(["1346889436626259968", "1346889436626259969"], {
+   *   tweetFields: ["author_id", "created_at", "public_metrics"],
+   *   expansions: ["author_id"]
+   * });
+   * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
+   * ```
+   */
+  getPosts(ids: string[], options?: {
+    tweetFields?: string[];
+    expansions?: string[];
+    mediaFields?: string[];
+    pollFields?: string[];
+    userFields?: string[];
+    placeFields?: string[];
+  }): Promise<GetPostsResponse>;
 
   /**
    * Deletes a tweet.
