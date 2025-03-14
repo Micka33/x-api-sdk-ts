@@ -99,7 +99,7 @@ export class Posts implements IPosts {
   }
 
   // ... other methods to be implemented
-  getPost(id: string): Promise<Post> {
+  getPosts(ids: string[]): Promise<Post> {
     throw new Error("Method not implemented.");
   }
   

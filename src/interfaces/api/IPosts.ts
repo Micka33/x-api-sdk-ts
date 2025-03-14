@@ -22,7 +22,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to retrieve
    * @returns A promise that resolves to the tweet
    */
-  getPost(id: string): Promise<Post>;
+  getPosts(ids: string[]): Promise<Post>;
 
   /**
    * Deletes a tweet.
