@@ -1,0 +1,52 @@
+import { ITweets } from './ITweets';
+import { IMedia } from './IMedia';
+import { IUsers } from './IUsers';
+import { ISearches } from './ISearches';
+import { IStreams } from './IStreams';
+
+/**
+ * Options for making HTTP requests to the Twitter API.
+ */
+export interface RequestOptions {
+  /** The URL to make the request to */
+  url: string;
+  /** The HTTP method to use */
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  /** Query parameters for the request */
+  params?: Record<string, any>;
+  /** Body data for the request */
+  data?: any;
+  /** Additional headers to include */
+  headers?: Record<string, string>;
+  /** Whether to include media in the request */
+  isMedia?: boolean;
+}
+
+/**
+ * Interface for the Twitter client.
+ * Provides access to the Twitter API through various modules.
+ */
+export interface ITwitterClient {
+  /**
+   * Makes an authenticated request to the Twitter API.
+   * 
+   * @param options - The request options
+   * @returns A promise that resolves to the response data
+   */
+  request<T>(options: RequestOptions): Promise<T>;
+
+  /** Module for interacting with tweets */
+  tweets: ITweets;
+  
+  /** Module for interacting with media */
+  media: IMedia;
+  
+  /** Module for interacting with users */
+  users: IUsers;
+  
+  /** Module for interacting with searches */
+  searches: ISearches;
+  
+  /** Module for interacting with streams */
+  streams: IStreams;
+}

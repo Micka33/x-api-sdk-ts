@@ -1,0 +1,97 @@
+{
+  "name": "x-sdk-ts",
+  "version": "0.1.0",
+  "description": "The Fullest Implementation of the X (ex-twitter) API in a TypeScript Library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts'",
+    "docs": "typedoc --out docs/api src",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "twitter",
+    "x",
+    "api",
+    "sdk",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/micka33/x-sdk-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/micka33/x-sdk-ts/issues"
+  },
+  "homepage": "https://github.com/micka33/x-sdk-ts#readme",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "form-data": "^4.0.0",
+    "oauth-1.0a": "^2.2.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.7",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "dotenv": "^16.4.7",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2",
+    "jest": "^29.7.0",
+    "nock": "^13.3.8",
+    "prettier": "^3.4.2",
+    "ts-jest": "^29.2.6",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "globals": "^15.14.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^src/(.*)$": ["<rootDir>/src/$1"],
+      "^auth/(.*)$": ["<rootDir>/src/auth/$1"],
+      "^api/(.*)$": ["<rootDir>/src/api/$1"],
+      "^interfaces/(.*)$": ["<rootDir>/src/interfaces/$1"],
+      "^types/(.*)$": ["<rootDir>/src/types/$1"],
+      "^utils/(.*)$": ["<rootDir>/src/utils/$1"]
+    },
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "roots": ["<rootDir>/src/", "<rootDir>/tests/"],
+    "testRegex": ".*\\.(spec|test)\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts",
+      "!src/types/**/*.ts",
+      "!src/index.ts"
+    ],
+    "coverageDirectory": "../coverage",
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "testEnvironment": "node"
+  }
+} 
