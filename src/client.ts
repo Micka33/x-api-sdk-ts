@@ -8,6 +8,7 @@ import type { IOAuth1Auth, IOAuth1Config } from 'interfaces/auth/IOAuth1Auth';
 import type { IOAuth2Auth, IOAuth2Config } from 'interfaces/auth/IOAuth2Auth';
 import { OAuth1Auth } from 'auth/OAuth1Auth';
 import { OAuth2Auth } from 'auth/OAuth2Auth';
+import { Posts } from './api/posts';
 
 /**
  * Configuration for the Twitter client.
@@ -54,7 +55,7 @@ export class TwitterClient implements ITwitterClient {
     this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);
     this.oAuth2 = auth?.oAuth2 || new OAuth2Auth(this.config.oAuth2);
     this.baseUrl = 'https://api.twitter.com';
-    this.posts = apiModules?.posts || ({} as IPosts);
+    this.posts = apiModules?.posts || new Posts(this.baseUrl, this.oAuth1, this.oAuth2);
     this.media = apiModules?.media || ({} as IMedia);
     this.users = apiModules?.users || ({} as IUsers);
     this.searches = apiModules?.searches || ({} as ISearches);

@@ -9,10 +9,10 @@ export interface Post {
   text: string;
   
   /** The creation date of the tweet */
-  created_at: string;
+  created_at?: string;
   
   /** The ID of the user who created the tweet */
-  author_id: string;
+  author_id?: string;
   
   /** Whether the tweet has been liked by the authenticated user */
   favorited?: boolean;
@@ -55,39 +55,56 @@ export interface Post {
  * Options for posting a tweet.
  */
 export interface PostOptions {
-  /** IDs of media to attach to the tweet */
-  mediaIds?: string[];
+  /** Card URI parameter. Mutually exclusive with quote_tweet_id, poll, media, and direct_message_deep_link */
+  card_uri?: string;
   
-  /** ID of a tweet to reply to */
-  inReplyToStatusId?: string;
+  /** The unique identifier of the Community associated with the post */
+  community_id?: string;
   
-  /** Whether to enable auto-population of user IDs in replies */
-  autoPopulateReplyMetadata?: boolean;
+  /** A link to shift the conversation to a private Direct Message. Mutually exclusive with card_uri, quote_tweet_id, poll, and media */
+  direct_message_deep_link?: string;
   
-  /** Whether to exclude the tweet from replies */
-  excludeReplyUserIds?: string[];
+  /** Indicates if the post is exclusive to super followers */
+  for_super_followers_only?: boolean;
   
-  /** Latitude coordinate for the tweet's location */
-  lat?: number;
-  
-  /** Longitude coordinate for the tweet's location */
-  long?: number;
-  
-  /** A place ID from the Twitter API */
-  placeId?: string;
-  
-  /** Whether to display coordinates */
-  displayCoordinates?: boolean;
-  
-  /** Whether to trim user details in the response */
-  trimUser?: boolean;
-  
-  /** Whether to enable card URI in the response */
-  cardUri?: string;
-  
-  /** Poll options for the tweet */
-  poll?: {
-    options: string[];
-    durationMinutes: number;
+  /** Attaches a geo location to the post via a Place ID */
+  geo?: {
+    /** The unique identifier of the place */
+    place_id: string;
   };
+  
+  /** Media details to attach to the post. Mutually exclusive with quote_tweet_id, poll, card_uri, and direct_message_deep_link */
+  media?: {
+    /** List of Media IDs to include in the post */
+    media_ids: string[];
+    /** List of User IDs tagged in the media */
+    tagged_user_ids?: string[];
+  };
+  
+  /** If true, the post is nullcasted (promoted-only), not appearing in the public timeline */
+  nullcast?: boolean;
+  
+  /** Configures a poll for the post. Mutually exclusive with media, quote_tweet_id, card_uri, and direct_message_deep_link */
+  poll?: {
+    /** Duration of the poll in minutes (5-10080) */
+    duration_minutes: number;
+    /** Text options for the poll choices */
+    options: string[];
+    /** Defines who can reply to the poll */
+    reply_settings?: 'following' | 'mentionedUsers';
+  };
+  
+  /** The unique identifier of the tweet being quoted. Mutually exclusive with card_uri, poll, media, and direct_message_deep_link */
+  quote_tweet_id?: string;
+  
+  /** Details of the tweet being replied to */
+  reply?: {
+    /** The unique identifier of the tweet being replied to */
+    in_reply_to_tweet_id: string;
+    /** List of User IDs to exclude from the reply */
+    exclude_reply_user_ids?: string[];
+  };
+  
+  /** Specifies who can reply to the post */
+  reply_settings?: 'following' | 'mentionedUsers' | 'subscribers';
 }

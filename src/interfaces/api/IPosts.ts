@@ -1,8 +1,9 @@
-import { Post, PostOptions } from 'src/types/post';
+import { Post, PostOptions } from 'types/post';
+import { CreatePostResponse } from 'types/responses/create_post_response';
 
 /**
- * Interface for the Tweets module.
- * Provides methods for interacting with tweets.
+ * Interface for the Posts module.
+ * Provides methods for interacting with posts.
  */
 export interface IPosts {
   /**
@@ -12,7 +13,7 @@ export interface IPosts {
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
    */
-  postTweet(text: string, options?: PostOptions): Promise<Post>;
+  createPost(text: string, options?: PostOptions): Promise<CreatePostResponse>;
 
   /**
    * Retrieves a tweet by ID.
@@ -20,7 +21,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to retrieve
    * @returns A promise that resolves to the tweet
    */
-  getTweet(id: string): Promise<Post>;
+  getPost(id: string): Promise<Post>;
 
   /**
    * Deletes a tweet.
@@ -28,7 +29,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
-  deleteTweet(id: string): Promise<void>;
+  deletePost(id: string): Promise<void>;
 
   /**
    * Likes a tweet.
@@ -36,7 +37,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to like
    * @returns A promise that resolves when the tweet is liked
    */
-  likeTweet(id: string): Promise<void>;
+  likePost(id: string): Promise<void>;
 
   /**
    * Unlikes a tweet.
@@ -44,7 +45,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to unlike
    * @returns A promise that resolves when the tweet is unliked
    */
-  unlikeTweet(id: string): Promise<void>;
+  unlikePost(id: string): Promise<void>;
 
   /**
    * Retweets a tweet.
@@ -52,7 +53,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to retweet
    * @returns A promise that resolves to the retweet
    */
-  retweet(id: string): Promise<Post>;
+  repost(id: string): Promise<Post>;
 
   /**
    * Unretweets a tweet.
@@ -60,7 +61,7 @@ export interface IPosts {
    * @param id - The ID of the tweet to unretweet
    * @returns A promise that resolves when the tweet is unretweeted
    */
-  unretweet(id: string): Promise<void>;
+  unrepost(id: string): Promise<void>;
 
   /**
    * Retrieves the timeline of the authenticated user.
