@@ -39,20 +39,20 @@ class MockAuth implements IOAuth1Auth {
 
 describe('TwitterClient', () => {
   let client: TwitterClient;
-  let mockAuth: { auth1: IOAuth1Auth; auth2: IOAuth2Auth };
+  let mockAuth: { oAuth1: IOAuth1Auth; oAuth2: IOAuth2Auth };
 
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
 
     // Create mock auth provider
-    mockAuth = { auth1: new MockAuth(), auth2: {} as IOAuth2Auth };
+    mockAuth = { oAuth1: new MockAuth(), oAuth2: {} as IOAuth2Auth };
 
     // Create client with mock auth provider
     client = new TwitterClient(
       { oAuth1: { apiKey: 'mock-key', apiSecret: 'mock-secret' }, oAuth2: {} as IOAuth2Config },
       {
-        tweets: {} as any,
+        posts: {} as any,
         media: {} as any,
         users: {} as any,
         searches: {} as any,

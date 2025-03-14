@@ -32,14 +32,20 @@ graph TD
     C -->|Implements| E[OAuth1Auth]
     C -->|Implements| F[OAuth2Auth]
     B -->|Provides| G[API Modules]
-    G -->|Includes| H[Tweets]
-    G -->|Includes| I[Media]
-    G -->|Includes| J[Users]
-    G -->|Includes| K[Searches]
-    G -->|Includes| L[Streams]
+    G -->|Includes| H[IPosts]
+    G -->|Includes| I[IMedia]
+    G -->|Includes| J[IUsers]
+    G -->|Includes| K[ISearches]
+    G -->|Includes| L[IStreams]
+    H -->|Implements| M[Posts]
+    I -->|Implements| N[Media]
+    J -->|Implements| O[Users]
+    K -->|Implements| P[Searches]
+    L -->|Implements| Q[Streams]
     
     style B fill:#bbf,stroke:#333
     style C fill:#bfb,stroke:#333
+    style G fill:#bbf,stroke:#333
     style G fill:#fbf,stroke:#333
 ```
 
@@ -71,7 +77,7 @@ sequenceDiagram
 ```typescript
 // ITwitterClient interface
 export interface ITwitterClient {
-  tweets: ITweets;
+  posts: IPosts;
   media: IMedia;
   users: IUsers;
   searches: ISearches;
@@ -91,11 +97,11 @@ export interface IOAuth2Auth {
 }
 
 
-// API Module interface example (ITweets)
-interface ITweets {
-  postTweet(text: string, options?: TweetOptions): Promise<Tweet>;
-  getTweet(id: string): Promise<Tweet>;
-  deleteTweet(id: string): Promise<void>;
+// API Module interface example (IPosts)
+interface IPosts {
+  createPost(text: string, options?: PostOptions): Promise<Post>;
+  getPost(id: string): Promise<Post>;
+  deletePost(id: string): Promise<void>;
   // Additional methods...
 }
 ```
@@ -103,8 +109,8 @@ interface ITweets {
 ### Response Types
 
 ```typescript
-// Tweet type
-interface Tweet {
+// Post type
+interface Post {
   id: string;
   text: string;
   created_at: string;
@@ -138,7 +144,7 @@ twitter-sdk/
 │   │   ├── OAuth1Auth.ts           # OAuth 1.0a implementation
 │   │   └── OAuth2Auth.ts           # OAuth 2.0 implementation
 │   ├── api/
-│   │   ├── tweets.ts               # Tweets API module
+│   │   ├── posts.ts                # Posts API module
 │   │   ├── media.ts                # Media API module
 │   │   ├── users.ts                # Users API module
 │   │   ├── searches.ts             # Searches API module
@@ -149,13 +155,13 @@ twitter-sdk/
 │   │   │   ├── IMedia.ts           # Media module interface
 │   │   │   ├── ISearches.ts        # Searches module interface
 │   │   │   ├── IStreams.ts         # Streams module interface
-│   │   │   ├── ITweets.ts          # Tweets module interface
+│   │   │   ├── IPosts.ts           # Posts module interface
 │   │   │   └── IUsers.ts           # Users module interface
 │   │   └── auth
 │   │       ├── IOAuth1Auth.ts      # OAuth 1.0a interface
 │   │       └── IOAuth2Auth.ts      # OAuth 2.0 interface
 │   ├── types/
-│   │   ├── tweet.ts                # Tweet type definitions
+│   │   ├── post.ts                 # Post type definitions
 │   │   ├── user.ts                 # User type definitions
 │   │   ├── media.ts                # Media type definitions
 │   │   ├── search.ts               # Search type definitions
@@ -172,7 +178,7 @@ twitter-sdk/
 │   │   ├── api/                    # API module tests
 │   │   └── client.test.ts          # Client tests
 │   └── integration/
-│       ├── tweets.test.ts          # Tweets integration tests
+│       ├── posts.test.ts           # Posts integration tests
 │       ├── media.test.ts           # Media integration tests
 │       └── ...                     # Other integration tests
 ├── examples/

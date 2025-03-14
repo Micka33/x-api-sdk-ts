@@ -4,7 +4,7 @@ export type { ITwitterClientConfig as TwitterClientConfig } from './client';
 
 // Export interfaces
 export type { ITwitterClient, RequestOptions } from 'interfaces/ITwitterClient';
-export type { ITweets } from 'interfaces/api/ITweets';
+export type { IPosts as ITweets } from 'src/interfaces/api/IPosts';
 export type { IMedia } from 'interfaces/api/IMedia';
 export type { IUsers } from 'interfaces/api/IUsers';
 export type { ISearches } from 'interfaces/api/ISearches';
@@ -22,7 +22,7 @@ export { OAuth2Auth } from 'auth/OAuth2Auth';
 export type { IOAuth2Config, IOAuth2Auth } from 'interfaces/auth/IOAuth2Auth';
 
 // Export types
-export type { Tweet, TweetOptions } from 'types/tweet';
+export type { Post as Tweet, PostOptions as TweetOptions } from 'src/types/post';
 export type { Media, MediaUploadOptions } from 'types/media';
 export type { User, UserLookupOptions } from 'types/user';
 export type { SearchOptions, SearchResponse } from 'types/search';

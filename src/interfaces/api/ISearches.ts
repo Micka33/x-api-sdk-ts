@@ -1,4 +1,4 @@
-import { Tweet } from 'types/tweet';
+import { Post } from 'src/types/post';
 import { SearchOptions, SearchResponse } from 'types/search';
 
 /**
@@ -22,7 +22,7 @@ export interface ISearches {
    * @param options - Optional parameters for the search
    * @returns A promise that resolves to an array of tweets
    */
-  searchRecent(query: string, options?: SearchOptions): Promise<Tweet[]>;
+  searchRecent(query: string, options?: SearchOptions): Promise<Post[]>;
 
   /**
    * Searches for tweets using the full archive search API (v2).
@@ -32,5 +32,5 @@ export interface ISearches {
    * @param options - Optional parameters for the search
    * @returns A promise that resolves to an array of tweets
    */
-  searchAll(query: string, options?: SearchOptions): Promise<Tweet[]>;
+  searchAll(query: string, options?: SearchOptions): Promise<Post[]>;
 }

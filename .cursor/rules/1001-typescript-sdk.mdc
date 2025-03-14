@@ -16,7 +16,7 @@ alwaysApply: false
 ## Requirements
 
 ### Interface Design
-- Prefix interfaces with `I` (e.g., `ITwitterClient`, `IOAuth1Auth`, `IOAuth2Auth`, `ITweets`)
+- Prefix interfaces with `I` (e.g., `ITwitterClient`, `IOAuth1Auth`, `IOAuth2Auth`, `IPosts`)
 - Design interfaces for loose coupling and dependency injection
 - Make interfaces focused on a single responsibility
 - Document all interface methods with JSDoc comments
@@ -24,7 +24,7 @@ alwaysApply: false
 ### Class Implementation
 - Implement classes that fulfill a single interface
 - Use descriptive, noun-based names for classes (e.g., `TwitterClient`, `OAuth1Auth`, `OAuth2Auth`)
-- Use action-oriented names for methods (e.g., `postTweet`, `uploadMedia`)
+- Use action-oriented names for methods (e.g., `createPost`, `uploadMedia`)
 - Inject dependencies through constructor parameters
 - Avoid tight coupling to concrete implementations
 

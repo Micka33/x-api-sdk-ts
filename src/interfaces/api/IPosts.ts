@@ -1,10 +1,10 @@
-import { Tweet, TweetOptions } from 'types/tweet';
+import { Post, PostOptions } from 'src/types/post';
 
 /**
  * Interface for the Tweets module.
  * Provides methods for interacting with tweets.
  */
-export interface ITweets {
+export interface IPosts {
   /**
    * Posts a new tweet.
    *
@@ -12,7 +12,7 @@ export interface ITweets {
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
    */
-  postTweet(text: string, options?: TweetOptions): Promise<Tweet>;
+  postTweet(text: string, options?: PostOptions): Promise<Post>;
 
   /**
    * Retrieves a tweet by ID.
@@ -20,7 +20,7 @@ export interface ITweets {
    * @param id - The ID of the tweet to retrieve
    * @returns A promise that resolves to the tweet
    */
-  getTweet(id: string): Promise<Tweet>;
+  getTweet(id: string): Promise<Post>;
 
   /**
    * Deletes a tweet.
@@ -52,7 +52,7 @@ export interface ITweets {
    * @param id - The ID of the tweet to retweet
    * @returns A promise that resolves to the retweet
    */
-  retweet(id: string): Promise<Tweet>;
+  retweet(id: string): Promise<Post>;
 
   /**
    * Unretweets a tweet.
@@ -68,5 +68,5 @@ export interface ITweets {
    * @param options - Optional parameters for the timeline request
    * @returns A promise that resolves to an array of tweets
    */
-  getHomeTimeline(options?: { count?: number; since_id?: string; max_id?: string }): Promise<Tweet[]>;
+  getHomeTimeline(options?: { count?: number; since_id?: string; max_id?: string }): Promise<Post[]>;
 }

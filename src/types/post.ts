@@ -1,7 +1,7 @@
 /**
  * Represents a tweet on Twitter.
  */
-export interface Tweet {
+export interface Post {
   /** The unique identifier of the tweet */
   id: string;
   
@@ -54,7 +54,7 @@ export interface Tweet {
 /**
  * Options for posting a tweet.
  */
-export interface TweetOptions {
+export interface PostOptions {
   /** IDs of media to attach to the tweet */
   mediaIds?: string[];
   

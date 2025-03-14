@@ -1,4 +1,4 @@
-import { ITweets } from './api/ITweets';
+import { IPosts } from './api/IPosts';
 import { IMedia } from './api/IMedia';
 import { IUsers } from './api/IUsers';
 import { ISearches } from './api/ISearches';
@@ -28,7 +28,7 @@ export interface RequestOptions {
  */
 export interface ITwitterClient {
   /** Module for interacting with tweets */
-  tweets: ITweets;
+  posts: IPosts;
   /** Module for interacting with media */
   media: IMedia;
   /** Module for interacting with users */

@@ -1,5 +1,5 @@
 import type { ITwitterClient } from 'interfaces/ITwitterClient';
-import type { ITweets } from 'interfaces/api/ITweets';
+import type { IPosts } from 'src/interfaces/api/IPosts';
 import type { IMedia } from 'interfaces/api/IMedia';
 import type { IUsers } from 'interfaces/api/IUsers';
 import type { ISearches } from 'interfaces/api/ISearches';
@@ -24,7 +24,7 @@ export class TwitterClient implements ITwitterClient {
   private oAuth1: IOAuth1Auth;
   private oAuth2: IOAuth2Auth;
   private baseUrl: string;
-  public tweets: ITweets;
+  public posts: IPosts;
   public media: IMedia;
   public users: IUsers;
   public searches: ISearches;
@@ -40,7 +40,7 @@ export class TwitterClient implements ITwitterClient {
   constructor(
     private config: ITwitterClientConfig,
     apiModules?: {
-      tweets?: ITweets;
+      posts?: IPosts;
       media?: IMedia;
       users?: IUsers;
       searches?: ISearches;
@@ -54,7 +54,7 @@ export class TwitterClient implements ITwitterClient {
     this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);
     this.oAuth2 = auth?.oAuth2 || new OAuth2Auth(this.config.oAuth2);
     this.baseUrl = 'https://api.twitter.com';
-    this.tweets = apiModules?.tweets || ({} as ITweets);
+    this.posts = apiModules?.posts || ({} as IPosts);
     this.media = apiModules?.media || ({} as IMedia);
     this.users = apiModules?.users || ({} as IUsers);
     this.searches = apiModules?.searches || ({} as ISearches);

@@ -1,4 +1,4 @@
-import { Tweet } from './tweet';
+import { Post } from './post';
 
 /**
  * Options for searching tweets.
@@ -94,13 +94,13 @@ export interface SearchResponse {
   };
   
   /** The tweets that matched the search query */
-  statuses: Tweet[];
+  statuses: Post[];
   
   /** The next token for pagination (v2 API) */
   next_token?: string;
   
   /** The tweets that matched the search query (v2 API) */
-  data?: Tweet[];
+  data?: Post[];
   
   /** Metadata about the request (v2 API) */
   meta?: {
