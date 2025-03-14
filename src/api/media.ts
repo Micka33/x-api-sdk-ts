@@ -72,6 +72,12 @@ export class Media implements IMedia {
       headers
     });
 
+    // Check for errors
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to get upload status: ${JSON.stringify(errorData)}`);
+    }
+    
     // Parse the response
     const data: GetUploadStatusResponse = await response.json();
     
@@ -88,10 +94,83 @@ export class Media implements IMedia {
    * @param originalProvider - The original provider of the media
    * @param uploadSource - The source of the media upload
    * @returns A promise that resolves when the metadata is added
+   * 
+   * @example
+   * ```typescript
+   * const result = await media.addMetadata(
+   *   "1146654567674912769",
+   *   "A beautiful sunset over the ocean",
+   *   true,
+   *   "u5BzatR15TZ04",
+   *   "giphy",
+   *   "gallery"
+   * );
+   * ```
    */
-  public addMetadata(mediaId: string, altText: string, allowDownload: boolean, originalId?: string, originalProvider?: string, uploadSource?: string): Promise<AddMetadataResponse> {
-    // Implementation will be added later
-    throw new Error("Method not implemented.");
+  public async addMetadata(
+    mediaId: string, 
+    altText: string, 
+    allowDownload: boolean, 
+    originalId?: string, 
+    originalProvider?: string, 
+    uploadSource?: string
+  ): Promise<AddMetadataResponse> {
+    // Get authentication headers using OAuth 2.0
+    const headers = await this.oAuth2.getHeaders();
+    
+    // Build the request body
+    const requestBody: Record<string, any> = {
+      id: mediaId,
+      metadata: {}
+    };
+    
+    // Add alt text if provided
+    if (altText) {
+      requestBody.metadata.alt_text = {
+        text: altText
+      };
+    }
+    
+    // Add allow download status
+    requestBody.metadata.allow_download_status = {
+      allow_download: allowDownload
+    };
+    
+    // Add found media origin if both ID and provider are provided
+    if (originalId && originalProvider) {
+      requestBody.metadata.found_media_origin = {
+        id: originalId,
+        provider: originalProvider
+      };
+    }
+    
+    // Add upload source if provided
+    if (uploadSource) {
+      requestBody.metadata.upload_source = {
+        upload_source: uploadSource
+      };
+    }
+    
+    // Make the API request
+    const response = await fetch(`${this.baseUrl}/2/media/metadata`, {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    // Check for errors
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to add metadata: ${JSON.stringify(errorData)}`);
+    }
+    
+    // Parse the response
+    const data: AddMetadataResponse = await response.json();
+    
+    return data;
   }
 
   /**
@@ -134,6 +213,12 @@ export class Media implements IMedia {
       body: formData
     });
 
+    // Check for errors
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to initialize media upload: ${JSON.stringify(errorData)}`);
+    }
+    
     // Parse the response
     const data: UploadMediaResponse = await response.json();
     
@@ -199,6 +284,12 @@ export class Media implements IMedia {
       headers,
       body: formData
     });
+
+    // Check for errors
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to finalize media upload: ${JSON.stringify(errorData)}`);
+    }
 
     // Parse the response
     const data: UploadMediaResponse = await response.json();
