@@ -1,7 +1,7 @@
 import { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
 import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
 import { IPosts } from "src/interfaces/api/IPosts";
-import { Post, PostOptions } from 'src/types/post';
+import { PostOptions } from 'src/types/post';
 import { CreatePostResponse } from "src/types/responses/create_post_response";
 import { DeletePostResponse } from "src/types/responses/delete_post_response";
 import { GetPostResponse, GetPostsResponse } from "src/types/responses/get_posts_response";
@@ -48,7 +48,7 @@ export class Posts implements IPosts {
       if (options.reply) requestBody.reply = options.reply;
     }
 
-    // Get authentication headers using OAuth 2.0
+    // Gets headers with a valid access token
     const headers = await this.oAuth2.getHeaders();
     
     // Make the API request
@@ -90,7 +90,10 @@ export class Posts implements IPosts {
     // Make the API request
     const response = await fetch(this.baseUrl + '/2/tweets/' + id, {
       method: 'DELETE',
-      headers
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
     });
 
     // Parse the response
@@ -159,7 +162,10 @@ export class Posts implements IPosts {
     // Make the API request
     const response = await fetch(url.toString(), {
       method: 'GET',
-      headers
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
     });
 
     // Parse the response
@@ -230,7 +236,10 @@ export class Posts implements IPosts {
     // Make the API request
     const response = await fetch(url.toString(), {
       method: 'GET',
-      headers
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
     });
 
     // Parse the response

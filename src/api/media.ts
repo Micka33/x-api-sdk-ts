@@ -69,14 +69,11 @@ export class Media implements IMedia {
     
     const response = await fetch(url.toString(), {
       method: 'GET',
-      headers
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
     });
-
-    // Check for errors
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Failed to get upload status: ${JSON.stringify(errorData)}`);
-    }
     
     // Parse the response
     const data: GetUploadStatusResponse = await response.json();
@@ -161,12 +158,6 @@ export class Media implements IMedia {
       body: JSON.stringify(requestBody)
     });
     
-    // Check for errors
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Failed to add metadata: ${JSON.stringify(errorData)}`);
-    }
-    
     // Parse the response
     const data: AddMetadataResponse = await response.json();
     
@@ -213,12 +204,6 @@ export class Media implements IMedia {
       body: formData
     });
 
-    // Check for errors
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Failed to initialize media upload: ${JSON.stringify(errorData)}`);
-    }
-    
     // Parse the response
     const data: UploadMediaResponse = await response.json();
     
@@ -254,12 +239,6 @@ export class Media implements IMedia {
       headers,
       body: formData
     });
-    
-    // Check for success (HTTP 2XX with empty response body)
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Failed to append media chunk: ${JSON.stringify(errorData)}`);
-    }
   }
 
   /**
@@ -284,12 +263,6 @@ export class Media implements IMedia {
       headers,
       body: formData
     });
-
-    // Check for errors
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Failed to finalize media upload: ${JSON.stringify(errorData)}`);
-    }
 
     // Parse the response
     const data: UploadMediaResponse = await response.json();
@@ -318,12 +291,7 @@ export class Media implements IMedia {
       await new Promise(resolve => setTimeout(resolve, checkAfterSecs * 1000));
       
       // Check status
-      response = await this.getUploadStatus(mediaId, 'STATUS');
-      
-      // If processing failed, throw an error
-      if (response.data.processing_info?.state === 'failed') {
-        throw new Error(`Media processing failed: ${JSON.stringify(response)}`);
-      }
+      response = await this.getUploadStatus(mediaId, 'STATUS');      
     }
     
     return response;

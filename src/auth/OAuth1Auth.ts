@@ -34,7 +34,7 @@ export class OAuth1Auth implements IOAuth1Auth {
    * Sets the OAuth 1.0a token for the instance.
    *
    * @param token - The OAuth 1.0a token
-   * @returns The instance of OAuth1Auth
+   * @returns The instance of OAuth1Auth. Useful for chaining methods.
    * @example
    * const auth = new OAuth1Auth({
    *   apiKey: 'your_api_key',
