@@ -2,155 +2,71 @@
 
 # x-sdk-ts
 
-The Fullest Implementation of the X (ex-twitter) API in a TypeScript Library
+Simple and versatile typescript SDK for X Api.
 
 ## Overview
 
-x-sdk-ts is a comprehensive TypeScript SDK for the Twitter API, providing developers with a robust, type-safe, and intuitive interface to interact with Twitter's v1.1 and v2 endpoints. This SDK aims to fill the gaps in existing libraries by offering full support for Twitter API features, including media uploads with metadata, post usage metrics, and interactions such as likes and searches.
+x-sdk-ts is a flexible TypeScript SDK for the Twitter API, providing a type-safe, and intuitive interface to interact with Twitter's v1.1 and v2 endpoints.
 
 ## Features
 
-- Complete implementation of Twitter API v1.1 and v2 endpoints
-- Modular architecture for easy customization and extension
-- Robust authentication support for OAuth 1.0a (v1.1) and OAuth 2.0 (v2)
-- Media upload functionality with metadata support
-- Real-time streaming for tweets and other Twitter data
-- Comprehensive TypeScript type definitions
-- Thorough documentation and examples
+- Full TypeScript type definitions of supported endpoints.
+- Partial implementation of Twitter API v1.1 and v2 endpoints.
+- Support authentication for OAuth 1.0a (v1.1) and OAuth 2.0 (v2).
+- Modular architecture for easy customization and extension using depencencies injection.
+- Only 1 dependency to [oauth-1.0a](https://github.com/ddo/oauth-1.0a) to support OAuth 1.0a (v1.1).
+- Supported v2 endpoints:
+  - Media
+    - Upload media
+    - Get upload status
+    - Add metadata to media
+  - Posts
+    - Create a post
+    - Get one or several posts at once
+    - Delete a post
+  - Likes
+    - Like a post
+  - Users
+    - Get information about the authenticated user
 
 ## Installation
 
-```bash
-npm install x-sdk-ts
-```
-
 ## Quick Start
-
-```typescript
-import { TwitterClient } from 'x-sdk-ts';
-
-// Create a client with OAuth 1.0a credentials
-const client = TwitterClient.createClient({
-  apiKey: 'YOUR_API_KEY',
-  apiSecret: 'YOUR_API_SECRET',
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  accessTokenSecret: 'YOUR_ACCESS_TOKEN_SECRET',
-});
-
-// Post a tweet
-async function postTweet() {
-  try {
-    const tweet = await client.tweets.postTweet('Hello, Twitter!');
-    console.log('Tweet posted:', tweet.id);
-  } catch (error) {
-    console.error('Error posting tweet:', error);
-  }
-}
-
-postTweet();
-```
 
 ## Authentication
 
 The SDK supports both OAuth 1.0a (for v1.1 API) and OAuth 2.0 (for v2 API):
 
-### OAuth 1.0a (v1.1 API)
+## Generate OAuth2 token from console
 
-```typescript
-const client = TwitterClient.createClient({
-  apiKey: 'YOUR_API_KEY',
-  apiSecret: 'YOUR_API_SECRET',
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  accessTokenSecret: 'YOUR_ACCESS_TOKEN_SECRET',
-});
-```
+See: [examples/generate-oauth2-token.js](https://github.com/Micka33/x-sdk-ts/blob/main/examples/generate-oauth2-token.js)
 
-### OAuth 2.0 (v2 API)
-
-```typescript
-const client = TwitterClient.createClient({
-  clientId: 'YOUR_CLIENT_ID',
-  clientSecret: 'YOUR_CLIENT_SECRET',
-  bearerToken: 'YOUR_BEARER_TOKEN',
-});
-```
+- **NB:**
+  - Set `clientId` to your App's OAuth 2.0 Client ID
+  - Set `redirectUri` to your App's Callback URI / Redirect URL
+    - Or set your App's Callback URI / Redirect URL to `http://localhost:3000/oauth2/callback`
 
 ## Media Upload Example
 
-```typescript
-import { TwitterClient } from 'x-sdk-ts';
-import * as fs from 'fs';
+## Get Media Upload Status Example
 
-const client = TwitterClient.createClient({
-  apiKey: 'YOUR_API_KEY',
-  apiSecret: 'YOUR_API_SECRET',
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  accessTokenSecret: 'YOUR_ACCESS_TOKEN_SECRET',
-});
+## Add Metadata to Media Example
 
-async function uploadMediaAndTweet() {
-  try {
-    // Upload media
-    const mediaBuffer = fs.readFileSync('path/to/image.jpg');
-    const media = await client.media.uploadMedia(mediaBuffer, {
-      mimeType: 'image/jpeg',
-      altText: 'Description of the image',
-    });
+## Create Post Example
 
-    // Post tweet with media
-    const tweet = await client.tweets.postTweet('Check out this image!', {
-      mediaIds: [media.media_id],
-    });
+## Delete Post Example
 
-    console.log('Tweet posted with media:', tweet.id);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
+## Get One Post Example
 
-uploadMediaAndTweet();
-```
+## Get Several Posts Example
 
-## Streaming Example
+## Like Post Example
 
-```typescript
-import { TwitterClient } from 'x-sdk-ts';
-
-const client = TwitterClient.createClient({
-  apiKey: 'YOUR_API_KEY',
-  apiSecret: 'YOUR_API_SECRET',
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  accessTokenSecret: 'YOUR_ACCESS_TOKEN_SECRET',
-});
-
-// Create a filtered stream
-const stream = client.streams.createFilteredStream({
-  track: ['javascript', 'typescript', 'nodejs'],
-});
-
-// Listen for tweets
-stream.on('tweet', (tweet) => {
-  console.log(`New tweet: ${tweet.text}`);
-});
-
-// Listen for errors
-stream.on('error', (error) => {
-  console.error('Stream error:', error);
-});
-
-// Start the stream
-stream.start();
-
-// Stop the stream after 5 minutes
-setTimeout(() => {
-  stream.stop();
-  console.log('Stream stopped');
-}, 5 * 60 * 1000);
-```
+## Get Authenticated User Info Example
 
 ## Documentation
 
-For detailed documentation, see the [API Documentation](https://yourusername.github.io/x-sdk-ts/).
+For detailed documentation, see the [API Documentation](https://micka33.github.io/x-sdk-ts/).
 
 ## Contributing
 

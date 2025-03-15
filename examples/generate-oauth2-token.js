@@ -7,7 +7,7 @@ const readline = require('readline').createInterface({
 
 // Configuration
 const clientId = 'your_client_id_here';
-const redirectUri = 'http://localhost:3000/callback';
+const redirectUri = 'http://localhost:3000/oauth2/callback';
 const scopes = ['tweet.read', 'tweet.write', 'offline.access'];
 
 // Generate PKCE parameters
