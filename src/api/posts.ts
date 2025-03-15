@@ -5,8 +5,9 @@ import { PostOptions } from 'src/types/post';
 import { CreatePostQuery } from "src/types/x-api/create_post_query";
 import { CreatePostResponse } from "src/types/x-api/create_post_response";
 import { DeletePostResponse } from "src/types/x-api/delete_post_response";
-import { ExpansionPost, PlaceField, GetPostQuery, GetPostsQuery, MediaField, PollField, TweetField, UserField } from "src/types/x-api/get_posts_query";
+import { ExpansionPost, PlaceField, GetPostQuery, GetPostsQuery, MediaField, PollField } from "src/types/x-api/get_posts_query";
 import { GetPostResponse, GetPostsResponse } from "src/types/x-api/get_posts_response";
+import { TweetField, UserField } from "src/types/x-api/shared";
 import { httpClient } from "src/utils/http-client";
 
 export class Posts implements IPosts {
