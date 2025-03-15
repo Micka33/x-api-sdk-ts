@@ -41,7 +41,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ### Setting Up the Development Environment
 
-1. Clone the repository: `git clone https://github.com/yourusername/x-sdk-ts.git`
+1. Clone the repository: `git clone https://github.com/micka33/x-sdk-ts.git`
 2. Install dependencies: `npm install`
 3. Build the project: `npm run build`
 
