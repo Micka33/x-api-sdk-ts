@@ -43,6 +43,7 @@ See: [examples/generate-oauth2-token.js](https://github.com/Micka33/x-sdk-ts/blo
 
 - **NB:**
   - Set `clientId` to your App's OAuth 2.0 Client ID
+  - Set `clientSecret` to your App's OAuth 2.0 Client Secret
   - Set `redirectUri` to your App's Callback URI / Redirect URL
     - Or set your App's Callback URI / Redirect URL to `http://localhost:3000/oauth2/callback`
 
