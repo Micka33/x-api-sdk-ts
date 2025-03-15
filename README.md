@@ -66,11 +66,17 @@ See: [examples/generate-oauth2-token.js](https://github.com/Micka33/x-sdk-ts/blo
 
 ## Documentation
 
+<!-- 
 For detailed documentation, see the [API Documentation](https://micka33.github.io/x-sdk-ts/).
+-->
 
 ## Contributing
 
 Contributions are welcome! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+
+## Code of Conduct
+
+By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
