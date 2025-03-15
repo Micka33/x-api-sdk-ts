@@ -1,4 +1,4 @@
-import { BaseResponse } from "./response_type";
+import { BaseResponse } from "./base_response";
 /**
  * Represents the possible states of a media upload.
  */

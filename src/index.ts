@@ -33,7 +33,7 @@ export type { IOAuth2Config, IOAuth2Auth } from 'interfaces/auth/IOAuth2Auth';
 // queries
 export type { AddMetadataQuery } from 'types/x-api/add_metadata_query';
 export type { CreatePostQuery } from 'types/x-api/create_post_query';
-export type { Expansion, GetPostQuery, GetPostsQuery } from 'types/x-api/get_posts_query';
+export type { ExpansionPost, GetPostQuery, GetPostsQuery } from 'types/x-api/get_posts_query';
 export type { GetUploadStatusQuery } from 'types/x-api/get_upload_status_query';
 export type { UploadMediaQuery, AppendParams, Command, FinalizeParams, InitParams, MediaCategory } from 'types/x-api/upload_media_query';
 // responses

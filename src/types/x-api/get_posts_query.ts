@@ -1,41 +1,9 @@
-/**
- * Available tweet fields for the 'tweet.fields' query parameter.
- */
-export type TweetField =
-  | 'article'
-  | 'attachments'
-  | 'author_id'
-  | 'card_uri'
-  | 'community_id'
-  | 'context_annotations'
-  | 'conversation_id'
-  | 'created_at'
-  | 'display_text_range'
-  | 'edit_controls'
-  | 'edit_history_tweet_ids'
-  | 'entities'
-  | 'geo'
-  | 'id'
-  | 'in_reply_to_user_id'
-  | 'lang'
-  | 'media_metadata'
-  | 'non_public_metrics'
-  | 'note_tweet'
-  | 'organic_metrics'
-  | 'possibly_sensitive'
-  | 'promoted_metrics'
-  | 'public_metrics'
-  | 'referenced_tweets'
-  | 'reply_settings'
-  | 'scopes'
-  | 'source'
-  | 'text'
-  | 'withheld';
+import { TweetField, UserField } from "./shared";
 
 /**
  * Available expansions for the 'expansions' query parameter.
  */
-export type Expansion =
+export type ExpansionPost =
   | 'article.cover_media'
   | 'article.media_entities'
   | 'attachments.media_keys'
@@ -80,36 +48,6 @@ export type PollField =
   | 'voting_status';
 
 /**
- * Available user fields for the 'user.fields' query parameter.
- */
-export type UserField =
-  | 'affiliation'
-  | 'connection_status'
-  | 'created_at'
-  | 'description'
-  | 'entities'
-  | 'id'
-  | 'is_identity_verified'
-  | 'location'
-  | 'most_recent_tweet_id'
-  | 'name'
-  | 'parody'
-  | 'pinned_tweet_id'
-  | 'profile_banner_url'
-  | 'profile_image_url'
-  | 'protected'
-  | 'public_metrics'
-  | 'receives_your_dm'
-  | 'subscription'
-  | 'subscription_type'
-  | 'url'
-  | 'username'
-  | 'verified'
-  | 'verified_followers_count'
-  | 'verified_type'
-  | 'withheld';
-
-/**
  * Available place fields for the 'place.fields' query parameter.
  */
 export type PlaceField =
@@ -137,7 +75,7 @@ interface GetPostQueryParams {
    * A list of fields to expand.
    * @example ["author_id", "referenced_tweets.id"]
    */
-  expansions?: Expansion[];
+  expansions?: ExpansionPost[];
 
   /**
    * A list of Media fields to display.

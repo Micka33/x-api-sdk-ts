@@ -5,7 +5,7 @@ import { PostOptions } from 'src/types/post';
 import { CreatePostQuery } from "src/types/x-api/create_post_query";
 import { CreatePostResponse } from "src/types/x-api/create_post_response";
 import { DeletePostResponse } from "src/types/x-api/delete_post_response";
-import { Expansion, PlaceField, GetPostQuery, GetPostsQuery, MediaField, PollField, TweetField, UserField } from "src/types/x-api/get_posts_query";
+import { ExpansionPost, PlaceField, GetPostQuery, GetPostsQuery, MediaField, PollField, TweetField, UserField } from "src/types/x-api/get_posts_query";
 import { GetPostResponse, GetPostsResponse } from "src/types/x-api/get_posts_response";
 import { httpClient } from "src/utils/http-client";
 
@@ -114,7 +114,7 @@ export class Posts implements IPosts {
    */
   async getPost(id: string, options?: {
     tweetFields?: TweetField[];
-    expansions?: Expansion[];
+    expansions?: ExpansionPost[];
     mediaFields?: MediaField[];
     pollFields?: PollField[];
     userFields?: UserField[];
@@ -178,7 +178,7 @@ export class Posts implements IPosts {
    */
   async getPosts(ids: string[], options?: {
     tweetFields?: TweetField[];
-    expansions?: Expansion[];
+    expansions?: ExpansionPost[];
     mediaFields?: MediaField[];
     pollFields?: PollField[];
     userFields?: UserField[];

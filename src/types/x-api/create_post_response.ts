@@ -1,4 +1,4 @@
-import { BaseResponse } from "./response_type";
+import { BaseResponse } from "./base_response";
 /**
  * Response type for the POST /2/tweets endpoint.
  * Represents the response when creating a new post.

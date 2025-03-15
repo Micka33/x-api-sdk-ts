@@ -1,4 +1,4 @@
-import { BaseResponse } from "./response_type";
+import { BaseResponse } from "./base_response";
 export interface GetPostsResponseData {
   /**
    * Unique identifier of the post.

@@ -1,4 +1,4 @@
-import { BaseResponse } from "./response_type";
+import { BaseResponse } from "./base_response";
 
 /**
  * Represents the data object for a media item.
