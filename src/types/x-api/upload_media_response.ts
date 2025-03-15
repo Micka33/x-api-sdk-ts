@@ -1,4 +1,4 @@
-import { ResponseType } from "./response_type";
+import { BaseResponse } from "./response_type";
 /**
  * Represents the possible states of a media upload.
  */
@@ -50,4 +50,4 @@ interface MediaData {
   size?: number;
 }
 
-export interface UploadMediaResponse extends ResponseType<MediaData> {}
+export interface UploadMediaResponse extends BaseResponse<MediaData> {}

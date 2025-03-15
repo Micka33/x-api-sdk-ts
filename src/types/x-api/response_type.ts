@@ -2,7 +2,7 @@
  * Response type for the POST /2/tweets endpoint.
  * Represents the response when creating a new post.
  */
-export interface ResponseType<T extends object> {
+export interface BaseResponse<T extends object> {
   /**
    * Data object containing the created post information.
    */

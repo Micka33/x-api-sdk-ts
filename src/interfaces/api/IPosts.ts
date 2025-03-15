@@ -1,7 +1,7 @@
-import { DeletePostResponse } from 'src/types/responses/delete_post_response';
-import { GetPostResponse, GetPostsResponse } from 'src/types/responses/get_posts_response';
+import { DeletePostResponse } from 'src/types/x-api/delete_post_response';
+import { GetPostResponse, GetPostsResponse } from 'src/types/x-api/get_posts_response';
 import { PostOptions } from 'types/post';
-import { CreatePostResponse } from 'types/responses/create_post_response';
+import { CreatePostResponse } from 'src/types/x-api/create_post_response';
 
 /**
  * Interface for the Posts module.

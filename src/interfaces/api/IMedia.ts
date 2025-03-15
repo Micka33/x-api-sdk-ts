@@ -1,7 +1,6 @@
-import { AddMetadataResponse } from 'types/responses/add_metadata_response';
-import { Media } from 'types/media';
-import { GetUploadStatusResponse } from 'src/types/responses/get_upload_status_response';
-import { UploadMediaResponse } from 'src/types/responses/upload_media_response';
+import { AddMetadataResponse } from 'src/types/x-api/add_metadata_response';
+import { GetUploadStatusResponse } from 'src/types/x-api/get_upload_status_response';
+import { UploadMediaResponse } from 'src/types/x-api/upload_media_response';
 
 /**
  * Interface for the Media module.

@@ -71,12 +71,30 @@ export class AuthenticationError extends TwitterError {
 }
 
 /**
+ * Interface for error response from the Twitter API.
+ */
+export interface TwitterErrorResponse {
+  response: {
+    status: number;
+    data: any;
+    headers: Record<string, string>;
+  };
+  message?: string;
+}
+
+/**
  * Parses an error response from the Twitter API.
  * 
  * @param error - The error object
  * @returns A TwitterError instance
  */
 export function parseTwitterError(error: any): TwitterError {
+  // If it's already a TwitterError, return it
+  if (error instanceof TwitterError) {
+    return error;
+  }
+  
+  // Handle network errors or other non-response errors
   if (!error.response) {
     return new TwitterError(error.message || 'Unknown error');
   }

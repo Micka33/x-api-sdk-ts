@@ -1,4 +1,4 @@
-import { ResponseType } from "./response_type";
+import { BaseResponse } from "./response_type";
 
 /**
  * Represents the data object for a media item.
@@ -58,8 +58,8 @@ interface AllowDownloadStatus {
 interface AltText {
   /**
    * Description of the media.
+   * constraint: <= 1000 characters
    * @example "A dancing cat"
-   * @constraint <= 1000 characters
    */
   text: string;
 }
@@ -70,14 +70,14 @@ interface AltText {
 interface FoundMediaOrigin {
   /**
    * Unique Identifier of the media within the provider.
+   * constraint: <= 24 characters
    * @example "u5BzatR15TZ04"
-   * @constraint <= 24 characters
    */
   id: string;
   /**
    * The media provider that sourced the media (e.g., 'giphy').
+   * constraint: <= 8 characters
    * @example "giphy"
-   * @constraint <= 8 characters
    */
   provider: string;
 }
@@ -88,7 +88,7 @@ interface FoundMediaOrigin {
 interface StickerInfo {
   /**
    * List of stickers applied to the media.
-   * @constraint Must not be empty and should not exceed 25 items
+   * constraint: Must not be empty and should not exceed 25 items
    */
   stickers: object[];
 }
@@ -104,4 +104,4 @@ interface UploadSource {
   upload_source: string;
 }
 
-export interface AddMetadataResponse extends ResponseType<MediaData>{};
+export interface AddMetadataResponse extends BaseResponse<MediaData>{};

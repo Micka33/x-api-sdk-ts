@@ -1,4 +1,4 @@
-import { IOAuth1Auth, IOAuth1AuthorizationHeaders, IOAuth1Token, IOAuth2Auth, IOAuth2Config, TwitterClient } from 'src/index';
+import { IOAuth1Auth, IOAuth1AuthorizationHeaders, IOAuth1Config, IOAuth1Token, IOAuth2Auth, IOAuth2Config, TwitterClient } from 'src/index';
 import axios from 'axios';
 
 // Mock axios
@@ -46,11 +46,13 @@ describe('TwitterClient', () => {
     jest.clearAllMocks();
 
     // Create mock auth provider
+    const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
+    const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret' };
     mockAuth = { oAuth1: new MockAuth(), oAuth2: {} as IOAuth2Auth };
 
     // Create client with mock auth provider
     client = new TwitterClient(
-      { oAuth1: { apiKey: 'mock-key', apiSecret: 'mock-secret' }, oAuth2: {} as IOAuth2Config },
+      { oAuth1: oAuth1Config, oAuth2: oAuth2Config },
       {
         posts: {} as any,
         media: {} as any,
@@ -65,11 +67,6 @@ describe('TwitterClient', () => {
 
   describe('createClient', () => {
     it('should create a client with OAuth1Auth for v1.1 credentials', () => {
-      const client = new TwitterClient({
-        oAuth1: { apiKey: 'mock-key', apiSecret: 'mock-secret' },
-        oAuth2: { bearerToken: 'mock-bearer-token' } as IOAuth2Config,
-      });
-
       expect(client).toBeInstanceOf(TwitterClient);
     });
 

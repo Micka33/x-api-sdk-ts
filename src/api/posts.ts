@@ -2,9 +2,12 @@ import { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
 import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
 import { IPosts } from "src/interfaces/api/IPosts";
 import { PostOptions } from 'src/types/post';
-import { CreatePostResponse } from "src/types/responses/create_post_response";
-import { DeletePostResponse } from "src/types/responses/delete_post_response";
-import { GetPostResponse, GetPostsResponse } from "src/types/responses/get_posts_response";
+import { CreatePostQuery } from "src/types/x-api/create_post_query";
+import { CreatePostResponse } from "src/types/x-api/create_post_response";
+import { DeletePostResponse } from "src/types/x-api/delete_post_response";
+import { Expansion, PlaceField, GetPostQuery, GetPostsQuery, MediaField, PollField, TweetField, UserField } from "src/types/x-api/get_posts_query";
+import { GetPostResponse, GetPostsResponse } from "src/types/x-api/get_posts_response";
+import { httpClient } from "src/utils/http-client";
 
 export class Posts implements IPosts {
   constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
@@ -27,7 +30,7 @@ export class Posts implements IPosts {
    */
   async createPost(text: string, options?: PostOptions): Promise<CreatePostResponse> {
     // Prepare request body
-    const requestBody: Record<string, any> = {
+    const requestBody: CreatePostQuery = {
       text
     };
 
@@ -52,19 +55,14 @@ export class Posts implements IPosts {
     const headers = await this.oAuth2.getHeaders();
     
     // Make the API request
-    const response = await fetch(this.baseUrl + '/2/tweets', {
-      method: 'POST',
-      headers: {
+    return await httpClient.post<CreatePostResponse>(
+      `${this.baseUrl}/2/tweets`,
+      requestBody,
+      {
         ...headers,
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    // Parse the response
-    const data: CreatePostResponse = await response.json();
-
-    return data;
+      }
+    );
   }
 
   /**
@@ -86,20 +84,14 @@ export class Posts implements IPosts {
   async deletePost(id: string): Promise<DeletePostResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
-    
-    // Make the API request
-    const response = await fetch(this.baseUrl + '/2/tweets/' + id, {
-      method: 'DELETE',
-      headers: {
+
+    return await httpClient.delete<DeletePostResponse>(
+      `${this.baseUrl}/2/tweets/${id}`,
+      {
         ...headers,
         'Content-Type': 'application/json'
-      },
-    });
-
-    // Parse the response
-    const data: DeletePostResponse = await response.json();
-    
-    return data;
+      }
+    );
   }
 
   /**
@@ -121,57 +113,48 @@ export class Posts implements IPosts {
    * ```
    */
   async getPost(id: string, options?: {
-    tweetFields?: string[];
-    expansions?: string[];
-    mediaFields?: string[];
-    pollFields?: string[];
-    userFields?: string[];
-    placeFields?: string[];
+    tweetFields?: TweetField[];
+    expansions?: Expansion[];
+    mediaFields?: MediaField[];
+    pollFields?: PollField[];
+    userFields?: UserField[];
+    placeFields?: PlaceField[];
   }): Promise<GetPostResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
-    
+
     // Build query parameters
-    const queryParams = new URLSearchParams();
-    
+    const params: GetPostQuery = {}
+
     if (options) {
       if (options.tweetFields?.length) {
-        queryParams.append('tweet.fields', options.tweetFields.join(','));
+        params['tweet.fields'] = options.tweetFields;
       }
       if (options.expansions?.length) {
-        queryParams.append('expansions', options.expansions.join(','));
+        params.expansions = options.expansions;
       }
       if (options.mediaFields?.length) {
-        queryParams.append('media.fields', options.mediaFields.join(','));
+        params['media.fields'] = options.mediaFields;
       }
       if (options.pollFields?.length) {
-        queryParams.append('poll.fields', options.pollFields.join(','));
+        params['poll.fields'] = options.pollFields;
       }
       if (options.userFields?.length) {
-        queryParams.append('user.fields', options.userFields.join(','));
+        params['user.fields'] = options.userFields;
       }
       if (options.placeFields?.length) {
-        queryParams.append('place.fields', options.placeFields.join(','));
+        params['place.fields'] = options.placeFields;
       }
     }
-    
-    // Build the URL with query parameters
-    const url = new URL(`${this.baseUrl}/2/tweets/${id}`);
-    url.search = queryParams.toString();
-    
-    // Make the API request
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: {
+
+    return await httpClient.get<GetPostResponse>(
+      `${this.baseUrl}/2/tweets/${id}`,
+      params,
+      {
         ...headers,
         'Content-Type': 'application/json'
       },
-    });
-
-    // Parse the response
-    const data: GetPostResponse = await response.json();
-    
-    return data;
+    );
   }
   
 
@@ -194,57 +177,47 @@ export class Posts implements IPosts {
    * ```
    */
   async getPosts(ids: string[], options?: {
-    tweetFields?: string[];
-    expansions?: string[];
-    mediaFields?: string[];
-    pollFields?: string[];
-    userFields?: string[];
-    placeFields?: string[];
+    tweetFields?: TweetField[];
+    expansions?: Expansion[];
+    mediaFields?: MediaField[];
+    pollFields?: PollField[];
+    userFields?: UserField[];
+    placeFields?: PlaceField[];
   }): Promise<GetPostsResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
-    
+
     // Build query parameters
-    const queryParams = new URLSearchParams();
-    queryParams.append('ids', ids.join(','));
+    const params: GetPostsQuery = { ids }
 
     if (options) {
       if (options.tweetFields?.length) {
-        queryParams.append('tweet.fields', options.tweetFields.join(','));
+        params['tweet.fields'] = options.tweetFields;
       }
       if (options.expansions?.length) {
-        queryParams.append('expansions', options.expansions.join(','));
+        params.expansions = options.expansions;
       }
       if (options.mediaFields?.length) {
-        queryParams.append('media.fields', options.mediaFields.join(','));
+        params['media.fields'] = options.mediaFields;
       }
       if (options.pollFields?.length) {
-        queryParams.append('poll.fields', options.pollFields.join(','));
+        params['poll.fields'] = options.pollFields;
       }
       if (options.userFields?.length) {
-        queryParams.append('user.fields', options.userFields.join(','));
+        params['user.fields'] = options.userFields;
       }
       if (options.placeFields?.length) {
-        queryParams.append('place.fields', options.placeFields.join(','));
+        params['place.fields'] = options.placeFields;
       }
     }
     
-    // Build the URL with query parameters
-    const url = new URL(this.baseUrl + '/2/tweets');
-    url.search = queryParams.toString();
-    
-    // Make the API request
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: {
+    return await httpClient.get<GetPostsResponse>(
+      `${this.baseUrl}/2/tweets`,
+      params,
+      {
         ...headers,
         'Content-Type': 'application/json'
       },
-    });
-
-    // Parse the response
-    const data: GetPostsResponse = await response.json();
-    
-    return data;
+    );
   }
 }

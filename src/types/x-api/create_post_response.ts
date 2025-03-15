@@ -1,9 +1,9 @@
-import { ResponseType } from "./response_type";
+import { BaseResponse } from "./response_type";
 /**
  * Response type for the POST /2/tweets endpoint.
  * Represents the response when creating a new post.
  */
-export interface CreatePostResponse extends ResponseType<{
+export interface CreatePostResponse extends BaseResponse<{
     /**
      * The unique identifier of the created post.
      * @example "1346889436626259968"

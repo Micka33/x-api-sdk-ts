@@ -1,4 +1,4 @@
-import { ResponseType } from "./response_type";
+import { BaseResponse } from "./response_type";
 export interface GetPostsResponseData {
   /**
    * Unique identifier of the post.
@@ -350,7 +350,7 @@ export interface GetPostsResponse {
  * Response type for the GET /2/tweets/{id} endpoint.
  * Represents the response when retrieving a post by ID.
  */
-export interface GetPostResponse extends ResponseType<GetPostsResponseData> {
+export interface GetPostResponse extends BaseResponse<GetPostsResponseData> {
   /**
    * Included objects referenced in the post.
    */

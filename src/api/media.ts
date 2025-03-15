@@ -1,9 +1,11 @@
 import { IMedia } from "interfaces/api/IMedia";
 import { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
 import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
-import { AddMetadataResponse } from "src/types/responses/add_metadata_response";
-import { GetUploadStatusResponse } from "src/types/responses/get_upload_status_response";
-import { UploadMediaResponse } from "src/types/responses/upload_media_response";
+import { AddMetadataResponse } from "src/types/x-api/add_metadata_response";
+import { GetUploadStatusResponse } from "src/types/x-api/get_upload_status_response";
+import { AppendParams, InitParams, MediaCategory } from "src/types/x-api/upload_media_query";
+import { UploadMediaResponse } from "src/types/x-api/upload_media_response";
+import { httpClient } from "src/utils/http-client";
 
 export class Media implements IMedia {
   constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
@@ -63,22 +65,11 @@ export class Media implements IMedia {
     const headers = await this.oAuth2.getHeaders();
     
     // Make the API request
-    const url = new URL(`${this.baseUrl}/2/media/upload`);
-    url.searchParams.append('command', command);
-    url.searchParams.append('media_id', mediaId);
-    
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: {
-        ...headers,
-        'Content-Type': 'application/json'
-      },
-    });
-    
-    // Parse the response
-    const data: GetUploadStatusResponse = await response.json();
-    
-    return data;
+    return httpClient.get<GetUploadStatusResponse>(
+      `${this.baseUrl}/2/media/upload`,
+      { command, media_id: mediaId },
+      headers
+    );
   }
 
   /**
@@ -149,19 +140,14 @@ export class Media implements IMedia {
     }
     
     // Make the API request
-    const response = await fetch(`${this.baseUrl}/2/media/metadata`, {
-      method: 'POST',
-      headers: {
+    return httpClient.post<AddMetadataResponse>(
+      `${this.baseUrl}/2/media/metadata`,
+      requestBody,
+      {
         ...headers,
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
-    
-    // Parse the response
-    const data: AddMetadataResponse = await response.json();
-    
-    return data;
+      }
+    );
   }
 
   /**
@@ -177,37 +163,35 @@ export class Media implements IMedia {
   private async initMediaUpload(
     totalBytes: number, 
     mediaType: string, 
-    mediaCategory: string, 
+    mediaCategory: MediaCategory, 
     additionalOwners?: string[]
   ): Promise<UploadMediaResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
-    
-    // Create form data
-    const formData = new FormData();
-    formData.append('command', 'INIT');
-    formData.append('total_bytes', totalBytes.toString());
-    formData.append('media_type', mediaType);
-    
-    if (mediaCategory) {
-      formData.append('media_category', mediaCategory);
-    }
-    
-    if (additionalOwners && additionalOwners.length > 0) {
-      formData.append('additional_owners', additionalOwners.join(','));
-    }
-    
-    // Make the API request
-    const response = await fetch(`${this.baseUrl}/2/media/upload`, {
-      method: 'POST',
-      headers,
-      body: formData
-    });
 
-    // Parse the response
-    const data: UploadMediaResponse = await response.json();
-    
-    return data;
+    // Create form data
+    const formData: InitParams = {
+      command: 'INIT',
+      total_bytes: totalBytes,
+      media_type: mediaType
+    };
+
+    if (mediaCategory) {
+      formData.media_category = mediaCategory;
+    }
+
+    if (additionalOwners && additionalOwners.length > 0) {
+      formData.additional_owners = additionalOwners;
+    }
+
+    // Make the API request
+    return httpClient.post<UploadMediaResponse>(
+      `${this.baseUrl}/2/media/upload`,
+      formData,
+      headers,
+      undefined,
+      'multipart/form-data'
+    );
   }
 
   /**
@@ -224,21 +208,21 @@ export class Media implements IMedia {
     const headers = await this.oAuth2.getHeaders();
     
     // Create form data
-    const formData = new FormData();
-    formData.append('command', 'APPEND');
-    formData.append('media_id', mediaId);
-    formData.append('segment_index', segmentIndex.toString());
-    
-    // Convert Buffer to Blob for FormData
-    const blob = new Blob([chunk]);
-    formData.append('media', blob);
+    const params: AppendParams = {
+      command: 'APPEND',
+      media_id: mediaId,
+      segment_index: segmentIndex,
+      media: new Blob([chunk])
+    };
     
     // Make the API request
-    const response = await fetch(`${this.baseUrl}/2/media/upload`, {
-      method: 'POST',
+    await httpClient.post<UploadMediaResponse>(
+      `${this.baseUrl}/2/media/upload`,
+      params,
       headers,
-      body: formData
-    });
+      undefined,
+      'multipart/form-data'
+    );
   }
 
   /**
@@ -253,21 +237,19 @@ export class Media implements IMedia {
     const headers = await this.oAuth2.getHeaders();
     
     // Create form data
-    const formData = new FormData();
-    formData.append('command', 'FINALIZE');
-    formData.append('media_id', mediaId);
+    const formData: Record<string, any> = {
+      command: 'FINALIZE',
+      media_id: mediaId
+    };
     
     // Make the API request
-    const response = await fetch(`${this.baseUrl}/2/media/upload`, {
-      method: 'POST',
+    return httpClient.post<UploadMediaResponse>(
+      `${this.baseUrl}/2/media/upload`,
+      formData,
       headers,
-      body: formData
-    });
-
-    // Parse the response
-    const data: UploadMediaResponse = await response.json();
-    
-    return data;
+      undefined,
+      'multipart/form-data'
+    );
   }
 
   /**
