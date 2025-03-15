@@ -1,8 +1,7 @@
 import { IPosts } from './api/IPosts';
 import { IMedia } from './api/IMedia';
 import { IUsers } from './api/IUsers';
-import { ISearches } from './api/ISearches';
-import { IStreams } from './api/IStreams';
+import { ILikes } from './api/ILikes';
 
 /**
  * Interface for the Twitter client.
@@ -15,8 +14,6 @@ export interface ITwitterClient {
   media: IMedia;
   /** Module for interacting with users */
   users: IUsers;
-  /** Module for interacting with searches */
-  searches: ISearches;
-  /** Module for interacting with streams */
-  streams: IStreams;
+  /** Module for interacting with likes */
+  likes: ILikes;
 }

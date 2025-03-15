@@ -1,9 +1,9 @@
-import { BaseResponse } from './base_response';
+import { IBaseResponse } from '../base_response';
 
 /**
  * Represents a Twitter User object.
  */
-interface User {
+interface IUser {
   /**
    * Unique identifier of this User. Returned as a string to handle large integers.
    * @example "2244994945"
@@ -23,7 +23,7 @@ interface User {
   /**
    * Metadata about a user's affiliation.
    */
-  affiliation?: Affiliation;
+  affiliation?: IAffiliation;
 
   /**
    * Detailed information about the relationship between two users.
@@ -45,7 +45,7 @@ interface User {
   /**
    * A list of metadata found in the User's profile description.
    */
-  entities?: Entities;
+  entities?: IEntities;
 
   /**
    * The location specified in the User's profile. May not indicate a valid location.
@@ -82,7 +82,7 @@ interface User {
   /**
    * A list of metrics for this User.
    */
-  public_metrics?: PublicMetrics;
+  public_metrics?: IPublicMetrics;
 
   /**
    * Indicates if you can send a Direct Message to this User.
@@ -114,13 +114,13 @@ interface User {
   /**
    * Indicates withholding details for withheld content.
    */
-  withheld?: Withheld;
+  withheld?: IWithheld;
 }
 
 /**
  * Metadata about a user's affiliation.
  */
-interface Affiliation {
+interface IAffiliation {
   /**
    * The badge URL corresponding to the affiliation.
    */
@@ -157,54 +157,54 @@ type ConnectionStatus =
 /**
  * A list of metadata found in the User's profile description or URL.
  */
-interface Entities {
+interface IEntities {
   /**
    * Entities found in the user's description.
    */
-  description?: DescriptionEntities;
+  description?: IDescriptionEntities;
 
   /**
    * URLs found in the user's profile URL.
    */
   url?: {
-    urls?: Url[];
+    urls?: IUrl[];
   };
 }
 
 /**
  * Entities found in the user's description.
  */
-interface DescriptionEntities {
+interface IDescriptionEntities {
   /**
    * Annotations based on the Tweet text.
    */
-  annotations?: Annotation[];
+  annotations?: IAnnotation[];
 
   /**
    * Cashtags found in the description.
    */
-  cashtags?: Cashtag[];
+  cashtags?: ICashtag[];
 
   /**
    * Hashtags found in the description.
    */
-  hashtags?: Hashtag[];
+  hashtags?: IHashtag[];
 
   /**
    * User mentions found in the description.
    */
-  mentions?: Mention[];
+  mentions?: IMention[];
 
   /**
    * URLs found in the description.
    */
-  urls?: Url[];
+  urls?: IUrl[];
 }
 
 /**
  * Annotation for entities based on the Tweet text.
  */
-interface Annotation {
+interface IAnnotation {
   /**
    * Index (zero-based) at which position this entity ends. The index is inclusive.
    * Required range: >= 0
@@ -241,7 +241,7 @@ interface Annotation {
 /**
  * Represents a cashtag in the description.
  */
-interface Cashtag {
+interface ICashtag {
   /**
    * Index (zero-based) at which position this entity ends. The index is exclusive.
    * Required range: >= 0
@@ -266,7 +266,7 @@ interface Cashtag {
 /**
  * Represents a hashtag in the description.
  */
-interface Hashtag {
+interface IHashtag {
   /**
    * Index (zero-based) at which position this entity ends. The index is exclusive.
    * Required range: >= 0
@@ -291,7 +291,7 @@ interface Hashtag {
 /**
  * Represents a user mention in the description.
  */
-interface Mention {
+interface IMention {
   /**
    * Index (zero-based) at which position this entity ends. The index is exclusive.
    * Required range: >= 0
@@ -321,7 +321,7 @@ interface Mention {
 /**
  * Represents a URL in the description or profile URL.
  */
-interface Url {
+interface IUrl {
   /**
    * Index (zero-based) at which position this entity ends. The index is exclusive.
    * Required range: >= 0
@@ -363,7 +363,7 @@ interface Url {
   /**
    * Images associated with the URL.
    */
-  images?: Image[];
+  images?: IImage[];
 
   /**
    * The Media Key identifier for this attachment.
@@ -392,7 +392,7 @@ interface Url {
 /**
  * Represents an image associated with a URL.
  */
-interface Image {
+interface IImage {
   /**
    * The height of the media in pixels.
    * Required range: >= 0
@@ -415,7 +415,7 @@ interface Image {
 /**
  * A list of metrics for this User.
  */
-interface PublicMetrics {
+interface IPublicMetrics {
   /**
    * Number of Users who are following this User.
    */
@@ -455,7 +455,7 @@ type VerifiedType = 'blue' | 'government' | 'business' | 'none';
 /**
  * Indicates withholding details for withheld content.
  */
-interface Withheld {
+interface IWithheld {
   /**
    * Provides a list of countries where this content is not available.
    * A two-letter ISO 3166-1 alpha-2 country code.
@@ -469,4 +469,4 @@ interface Withheld {
   scope?: 'user';
 }
 
-export interface GetMeResponse extends BaseResponse<User> {}
+export interface IGetMeResponse extends IBaseResponse<IUser> {}

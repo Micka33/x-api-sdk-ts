@@ -11,7 +11,7 @@ type PollReplySettings = 'following' | 'mentionedUsers';
 /**
  * Represents the geo information for the tweet.
  */
-interface Geo {
+interface IGeo {
   /**
    * Place ID being attached to the Tweet for geo location.
    */
@@ -21,7 +21,7 @@ interface Geo {
 /**
  * Represents the media information for the tweet.
  */
-interface Media {
+interface IMedia {
   /**
    * A list of Media Ids to be attached to a created Tweet.
    */
@@ -35,7 +35,7 @@ interface Media {
 /**
  * Represents the poll options for the tweet.
  */
-interface Poll {
+interface IPoll {
   /**
    * Duration of the poll in minutes.
    * constraint: 5 <= x <= 10080
@@ -54,7 +54,7 @@ interface Poll {
 /**
  * Represents the reply information for the tweet.
  */
-interface Reply {
+interface IReply {
   /**
    * Unique identifier of the Tweet being replied to.
    * @example "1346889436626259968"
@@ -69,7 +69,7 @@ interface Reply {
 /**
  * Represents the request body for creating a post (tweet).
  */
-interface CreatePostBody {
+interface ICreatePostBody {
   /**
    * Card Uri Parameter. Mutually exclusive with quote_tweet_id, poll, media, and direct_message_deep_link.
    */
@@ -91,11 +91,11 @@ interface CreatePostBody {
   /**
    * Place ID being attached to the Tweet for geo location.
    */
-  geo?: Geo;
+  geo?: IGeo;
   /**
    * Media information being attached to created Tweet. Mutually exclusive with quote_tweet_id, poll, card_uri, and direct_message_deep_link.
    */
-  media?: Media;
+  media?: IMedia;
   /**
    * Nullcasted (promoted-only) Posts do not appear in the public timeline and are not served to followers.
    * @default false
@@ -104,7 +104,7 @@ interface CreatePostBody {
   /**
    * Poll options for a Tweet with a poll. Mutually exclusive with media, quote_tweet_id, card_uri, and direct_message_deep_link.
    */
-  poll?: Poll;
+  poll?: IPoll;
   /**
    * Unique identifier of the Tweet being quoted. Mutually exclusive with card_uri, poll, media, and direct_message_deep_link.
    * @example "1346889436626259968"
@@ -113,7 +113,7 @@ interface CreatePostBody {
   /**
    * Tweet information of the Tweet being replied to.
    */
-  reply?: Reply;
+  reply?: IReply;
   /**
    * Settings to indicate who can reply to the Tweet.
    */
@@ -125,4 +125,4 @@ interface CreatePostBody {
   text?: string;
 }
 
-export interface CreatePostQuery extends CreatePostBody {}
+export interface ICreatePostQuery extends ICreatePostBody {}

@@ -1,4 +1,4 @@
-export interface GetUploadStatusQuery {
+export interface IGetUploadStatusQuery {
   /**
    * The media ID of the targeted media to APPEND.
    * @example "1146654567674912769"

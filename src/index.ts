@@ -1,22 +1,23 @@
-import { RequestClient } from './utils/request';
-
 // Export the client
 export { TwitterClient } from './client';
-export type { ITwitterClientConfig as TwitterClientConfig } from './client';
+export type { ITwitterClientConfig } from './client';
 
 // Export apis
 export { Posts } from 'api/posts';
 export { Media } from 'api/media';
+export { Likes } from 'api/likes';
+export { Users } from 'api/users';
 
 // Export utils
-export { httpClient, get, post, put, del, patch } from 'utils/http-client';
 export { RequestClient } from 'utils/request';
-export type { RequestOptions } from 'utils/request';
+export type { IRequestClient, RequestOptions } from 'interfaces/IRequestClient';
 
 // Export interfaces
 export type { ITwitterClient } from 'interfaces/ITwitterClient';
-export type { IPosts as ITweets } from 'src/interfaces/api/IPosts';
+export type { IPosts, IPostOptions } from 'src/interfaces/api/IPosts';
 export type { IMedia } from 'interfaces/api/IMedia';
+export type { IUsers } from 'interfaces/api/IUsers';
+export type { ILikes } from 'interfaces/api/ILikes';
 
 // Export authentication
 export { OAuth1Auth } from 'auth/OAuth1Auth';
@@ -30,19 +31,29 @@ export { OAuth2Auth } from 'auth/OAuth2Auth';
 export type { IOAuth2Config, IOAuth2Auth } from 'interfaces/auth/IOAuth2Auth';
 
 // Export x-api types
-// queries
-export type { AddMetadataQuery } from 'types/x-api/add_metadata_query';
-export type { CreatePostQuery } from 'types/x-api/create_post_query';
-export type { ExpansionPost, GetPostQuery, GetPostsQuery } from 'types/x-api/get_posts_query';
-export type { GetUploadStatusQuery } from 'types/x-api/get_upload_status_query';
-export type { UploadMediaQuery, AppendParams, Command, FinalizeParams, InitParams, MediaCategory } from 'types/x-api/upload_media_query';
-// responses
-export type { AddMetadataResponse } from 'types/x-api/add_metadata_response';
-export type { CreatePostResponse } from 'types/x-api/create_post_response';
-export type { DeletePostResponse } from 'types/x-api/delete_post_response';
-export type { GetPostResponse, GetPostsResponse, GetPostsResponseData, GetPostsResponseIncludes } from 'types/x-api/get_posts_response';
-export type { GetUploadStatusResponse } from 'types/x-api/get_upload_status_response';
-export type { UploadMediaResponse } from 'types/x-api/upload_media_response';
+// likes
+export type { ILikePostQuery } from 'src/types/x-api/likes/like_post_query';
+export type { ILikePostResponse } from 'src/types/x-api/likes/like_post_response';
+// media
+export type { IAddMetadataQuery } from 'src/types/x-api/media/add_metadata_query';
+export type { IAddMetadataResponse } from 'src/types/x-api/media/add_metadata_response';
+export type { IGetUploadStatusQuery } from 'src/types/x-api/media/get_upload_status_query';
+export type { IUploadMediaQuery, IAppendParams, Command, IFinalizeParams, IInitParams, MediaCategory } from 'src/types/x-api/media/upload_media_query';
+export type { IGetUploadStatusResponse } from 'src/types/x-api/media/get_upload_status_response';
+export type { IUploadMediaResponse } from 'src/types/x-api/media/upload_media_response';
+// posts
+export type { ICreatePostQuery } from 'src/types/x-api/posts/create_post_query';
+export type { ExpansionPost, IGetPostQuery, IGetPostsQuery } from 'src/types/x-api/posts/get_posts_query';
+export type { ICreatePostResponse } from 'src/types/x-api/posts/create_post_response';
+export type { IDeletePostResponse } from 'src/types/x-api/posts/delete_post_response';
+export type { IGetPostResponse, IGetPostsResponse, IGetPostsResponseData, IGetPostsResponseIncludes } from 'src/types/x-api/posts/get_posts_response';
+// users
+export type { IGetMeQuery, ExpansionUser } from 'src/types/x-api/users/get_me_query';
+export type { IGetMeResponse } from 'src/types/x-api/users/get_me_response';
+// shared
+export type { TweetField, UserField } from 'src/types/x-api/shared';
+// base_response
+export type { IBaseResponse } from 'src/types/x-api/base_response';
 
 // Export utilities
 export { TwitterError, TwitterAPIError, RateLimitError, AuthenticationError } from 'utils/error';

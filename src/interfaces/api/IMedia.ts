@@ -1,6 +1,6 @@
-import { AddMetadataResponse } from 'src/types/x-api/add_metadata_response';
-import { GetUploadStatusResponse } from 'src/types/x-api/get_upload_status_response';
-import { UploadMediaResponse } from 'src/types/x-api/upload_media_response';
+import { IAddMetadataResponse } from 'src/types/x-api/media/add_metadata_response';
+import { IGetUploadStatusResponse } from 'src/types/x-api/media/get_upload_status_response';
+import { IUploadMediaResponse } from 'src/types/x-api/media/upload_media_response';
 
 /**
  * Interface for the Media module.
@@ -16,7 +16,7 @@ export interface IMedia {
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
    * @returns A promise that resolves to the uploaded media
    */
-  uploadMedia(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<UploadMediaResponse>;
+  uploadMedia(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<IUploadMediaResponse>;
 
   /**
    * Get MediaUpload Status.
@@ -25,7 +25,7 @@ export interface IMedia {
    * @param command - The command for the media upload request.
    * @returns A promise that resolves to the uploaded media
    */
-  getUploadStatus(mediaId: string, command: 'STATUS'): Promise<GetUploadStatusResponse>;
+  getUploadStatus(mediaId: string, command: 'STATUS'): Promise<IGetUploadStatusResponse>;
 
   /**
    * Adds metadata to an uploaded media.
@@ -38,5 +38,5 @@ export interface IMedia {
    * @param uploadSource - The source of the media upload
    * @returns A promise that resolves when the metadata is added
    */
-  addMetadata(mediaId: string, altText: string, allowDownload: boolean, originalId?: string, originalProvider?: string, uploadSource?: string): Promise<AddMetadataResponse>;
+  addMetadata(mediaId: string, altText: string, allowDownload: boolean, originalId?: string, originalProvider?: string, uploadSource?: string): Promise<IAddMetadataResponse>;
 }

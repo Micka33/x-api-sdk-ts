@@ -1,4 +1,4 @@
-import { LikePostResponse } from "src/types/x-api/like_post_response";
+import { ILikePostResponse } from "src/types/x-api/likes/like_post_response";
 
 /**
  * Interface for the Likes module.
@@ -14,5 +14,5 @@ export interface ILikes {
    * @param postId - The ID of the post to like
    * @returns A promise that resolves when the post is liked
    */
-  likePost(userId: string, postId: string): Promise<LikePostResponse>;
+  likePost(userId: string, postId: string): Promise<ILikePostResponse>;
 }

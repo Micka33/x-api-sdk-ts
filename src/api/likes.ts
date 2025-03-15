@@ -1,12 +1,17 @@
-import { ILikes } from "interfaces/api/ILikes";
-import { IOAuth1Auth } from "src/interfaces/auth/IOAuth1Auth";
-import { IOAuth2Auth } from "src/interfaces/auth/IOAuth2Auth";
-import { LikePostQuery } from "src/types/x-api/like_post_query";
-import { LikePostResponse } from "src/types/x-api/like_post_response";
-import { httpClient } from "src/utils/http-client";
+import type { ILikes } from "interfaces/api/ILikes";
+import type { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
+import type { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
+import type { IRequestClient } from "interfaces/IRequestClient";
+import type { ILikePostQuery } from "src/types/x-api/likes/like_post_query";
+import type { ILikePostResponse } from "src/types/x-api/likes/like_post_response";
 
 export class Likes implements ILikes {
-  constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
+  constructor(
+    private readonly baseUrl: string,
+    private readonly oAuth1: IOAuth1Auth,
+    private readonly oAuth2: IOAuth2Auth,
+    private readonly requestClient: IRequestClient
+  ) {}
   
   /**
    * Likes a post.
@@ -15,12 +20,12 @@ export class Likes implements ILikes {
    * @param postId - The ID of the post to like
    * @returns A promise that resolves to the like post response
    */
-  async likePost(userId: string, postId: string): Promise<LikePostResponse> {
+  async likePost(userId: string, postId: string): Promise<ILikePostResponse> {
     const headers = await this.oAuth2.getHeaders();
-    const data: LikePostQuery = {
+    const data: ILikePostQuery = {
       tweet_id: postId
     }
-    return await httpClient.post<LikePostResponse>(`${this.baseUrl}/2/users/${userId}/likes`,
+    return await this.requestClient.post<ILikePostResponse>(`${this.baseUrl}/2/users/${userId}/likes`,
       data,
       {
         ...headers,

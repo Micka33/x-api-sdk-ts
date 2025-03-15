@@ -1,14 +1,19 @@
-import { IMedia } from "interfaces/api/IMedia";
-import { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
-import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
-import { AddMetadataResponse } from "src/types/x-api/add_metadata_response";
-import { GetUploadStatusResponse } from "src/types/x-api/get_upload_status_response";
-import { AppendParams, InitParams, MediaCategory } from "src/types/x-api/upload_media_query";
-import { UploadMediaResponse } from "src/types/x-api/upload_media_response";
-import { httpClient } from "src/utils/http-client";
+import type { IMedia } from "interfaces/api/IMedia";
+import type { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
+import type { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
+import type { IRequestClient } from "interfaces/IRequestClient";
+import type { IAddMetadataResponse } from "src/types/x-api/media/add_metadata_response";
+import type { IGetUploadStatusResponse } from "src/types/x-api/media/get_upload_status_response";
+import type { IAppendParams, IInitParams, MediaCategory } from "src/types/x-api/media/upload_media_query";
+import type { IUploadMediaResponse } from "src/types/x-api/media/upload_media_response";
 
 export class Media implements IMedia {
-  constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
+  constructor(
+    private readonly baseUrl: string,
+    private readonly oAuth1: IOAuth1Auth,
+    private readonly oAuth2: IOAuth2Auth,
+    private readonly requestClient: IRequestClient
+  ) {}
 
   /**
    * Uploads media to Twitter.
@@ -24,7 +29,7 @@ export class Media implements IMedia {
     mimeType: string, 
     category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', 
     additionalOwners?: string[]
-  ): Promise<UploadMediaResponse> {
+  ): Promise<IUploadMediaResponse> {
     // Step 1: INIT - Initialize the upload
     const initResponse = await this.initMediaUpload(media.length, mimeType, category, additionalOwners);
     const mediaId = initResponse.data.id;
@@ -60,12 +65,12 @@ export class Media implements IMedia {
    * @param command - The command for the media upload request.
    * @returns A promise that resolves to the uploaded media
    */
-  public async getUploadStatus(mediaId: string, command: 'STATUS'): Promise<GetUploadStatusResponse> {
+  public async getUploadStatus(mediaId: string, command: 'STATUS'): Promise<IGetUploadStatusResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
     // Make the API request
-    return httpClient.get<GetUploadStatusResponse>(
+    return this.requestClient.get<IGetUploadStatusResponse>(
       `${this.baseUrl}/2/media/upload`,
       { command, media_id: mediaId },
       headers
@@ -102,7 +107,7 @@ export class Media implements IMedia {
     originalId?: string, 
     originalProvider?: string, 
     uploadSource?: string
-  ): Promise<AddMetadataResponse> {
+  ): Promise<IAddMetadataResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
@@ -140,7 +145,7 @@ export class Media implements IMedia {
     }
     
     // Make the API request
-    return httpClient.post<AddMetadataResponse>(
+    return this.requestClient.post<IAddMetadataResponse>(
       `${this.baseUrl}/2/media/metadata`,
       requestBody,
       {
@@ -165,12 +170,12 @@ export class Media implements IMedia {
     mediaType: string, 
     mediaCategory: MediaCategory, 
     additionalOwners?: string[]
-  ): Promise<UploadMediaResponse> {
+  ): Promise<IUploadMediaResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
     // Create form data
-    const formData: InitParams = {
+    const formData: IInitParams = {
       command: 'INIT',
       total_bytes: totalBytes,
       media_type: mediaType
@@ -185,7 +190,7 @@ export class Media implements IMedia {
     }
 
     // Make the API request
-    return httpClient.post<UploadMediaResponse>(
+    return this.requestClient.post<IUploadMediaResponse>(
       `${this.baseUrl}/2/media/upload`,
       formData,
       headers,
@@ -208,7 +213,7 @@ export class Media implements IMedia {
     const headers = await this.oAuth2.getHeaders();
     
     // Create form data
-    const params: AppendParams = {
+    const params: IAppendParams = {
       command: 'APPEND',
       media_id: mediaId,
       segment_index: segmentIndex,
@@ -216,7 +221,7 @@ export class Media implements IMedia {
     };
     
     // Make the API request
-    await httpClient.post<UploadMediaResponse>(
+    await this.requestClient.post<IUploadMediaResponse>(
       `${this.baseUrl}/2/media/upload`,
       params,
       headers,
@@ -232,7 +237,7 @@ export class Media implements IMedia {
    * @returns A promise that resolves to the finalization response
    * @private
    */
-  private async finalizeMediaUpload(mediaId: string): Promise<UploadMediaResponse> {
+  private async finalizeMediaUpload(mediaId: string): Promise<IUploadMediaResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
@@ -243,7 +248,7 @@ export class Media implements IMedia {
     };
     
     // Make the API request
-    return httpClient.post<UploadMediaResponse>(
+    return this.requestClient.post<IUploadMediaResponse>(
       `${this.baseUrl}/2/media/upload`,
       formData,
       headers,
@@ -260,7 +265,7 @@ export class Media implements IMedia {
    * @returns A promise that resolves to the final media status
    * @private
    */
-  private async waitForProcessing(mediaId: string, initialResponse: UploadMediaResponse): Promise<UploadMediaResponse> {
+  private async waitForProcessing(mediaId: string, initialResponse: IUploadMediaResponse): Promise<IUploadMediaResponse> {
     let response = initialResponse;
     
     // Keep checking until processing is complete or fails

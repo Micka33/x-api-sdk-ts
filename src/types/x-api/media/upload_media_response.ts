@@ -1,4 +1,4 @@
-import { BaseResponse } from "./base_response";
+import { IBaseResponse } from "../base_response";
 /**
  * Represents the possible states of a media upload.
  */
@@ -7,7 +7,7 @@ type UploadState = 'succeeded' | 'in_progress' | 'pending' | 'failed';
 /**
  * Information about the processing status of the media.
  */
-interface ProcessingInfo {
+interface IProcessingInfo {
   /**
    * Number of seconds to wait before checking the status again.
    */
@@ -26,7 +26,7 @@ interface ProcessingInfo {
 /**
  * Represents the data object for a media item.
  */
-interface MediaData {
+interface IMediaData {
   /**
    * The unique identifier of this Media.
    * @example "1146654567674912769"
@@ -43,11 +43,11 @@ interface MediaData {
   /**
    * Information about the processing status of the media.
    */
-  processing_info?: ProcessingInfo;
+  processing_info?: IProcessingInfo;
   /**
    * Size of the upload.
    */
   size?: number;
 }
 
-export interface UploadMediaResponse extends BaseResponse<MediaData> {}
+export interface IUploadMediaResponse extends IBaseResponse<IMediaData> {}

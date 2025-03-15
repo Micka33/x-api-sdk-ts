@@ -1,9 +1,14 @@
-import { IOAuth1Auth, IOAuth1AuthorizationHeaders, IOAuth1Config, IOAuth1Token, IOAuth2Auth, IOAuth2Config, TwitterClient } from 'src/index';
-import axios from 'axios';
-
-// Mock axios
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios> & jest.Mock;
+import {
+  IOAuth1Auth,
+  IOAuth1AuthorizationHeaders,
+  IOAuth1Config,
+  IOAuth1Token,
+  IOAuth2Auth,
+  IOAuth2Config,
+  IRequestClient,
+  ITwitterClientConfig,
+  TwitterClient
+} from 'src/index';
 
 // Mock auth provider
 class MockAuth implements IOAuth1Auth {
@@ -37,9 +42,29 @@ class MockAuth implements IOAuth1Auth {
   }
 }
 
+// Mock RequestClient
+class MockRequestClient implements IRequestClient {
+  get<T>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
+    return Promise.resolve({} as T);
+  }
+  post<T>(url: string, body?: any, headers?: Record<string, string>, params?: Record<string, any>, contentType?: 'application/json' | 'application/x-www-form-urlencoded' | 'multipart/form-data'): Promise<T> {
+    return Promise.resolve({} as T);
+  }
+  put<T>(url: string, body?: any, headers?: Record<string, string>, params?: Record<string, any>): Promise<T> {
+    return Promise.resolve({} as T);
+  }
+  delete<T>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
+    return Promise.resolve({} as T);
+  }
+  patch<T>(url: string, body?: any, headers?: Record<string, string>, params?: Record<string, any>): Promise<T> {
+    return Promise.resolve({} as T);
+  }
+}
+
 describe('TwitterClient', () => {
   let client: TwitterClient;
   let mockAuth: { oAuth1: IOAuth1Auth; oAuth2: IOAuth2Auth };
+  let mockRequestClient: IRequestClient;
 
   beforeEach(() => {
     // Reset mocks
@@ -49,6 +74,7 @@ describe('TwitterClient', () => {
     const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
     const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret' };
     mockAuth = { oAuth1: new MockAuth(), oAuth2: {} as IOAuth2Auth };
+    mockRequestClient = new MockRequestClient();
 
     // Create client with mock auth provider
     client = new TwitterClient(
@@ -57,26 +83,21 @@ describe('TwitterClient', () => {
         posts: {} as any,
         media: {} as any,
         users: {} as any,
-        searches: {} as any,
-        streams: {} as any,
+        likes: {} as any,
       },
+      mockRequestClient,
       mockAuth,
     );
   });
 
-
   describe('createClient', () => {
-    it('should create a client with OAuth1Auth for v1.1 credentials', () => {
+    it('should create a TwitterClient', () => {
+      const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
+      const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret' };
+      const config: ITwitterClientConfig = { oAuth1: oAuth1Config, oAuth2: oAuth2Config };
+
+      const client = new TwitterClient(config);
       expect(client).toBeInstanceOf(TwitterClient);
     });
-
-    // it('should create a client with OAuth2Auth for v2 credentials', () => {
-    //   const client = new TwitterClient({
-    //     oAuth1: {} as IOAuth1Config,
-    //     oAuth2: { bearerToken: 'mock-bearer-token' },
-    //   });
-
-    //   expect(client).toBeInstanceOf(TwitterClient);
-    // });
   });
 });

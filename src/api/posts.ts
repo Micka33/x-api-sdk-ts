@@ -1,17 +1,21 @@
-import { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
-import { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
-import { IPosts } from "src/interfaces/api/IPosts";
-import { PostOptions } from 'src/types/post';
-import { CreatePostQuery } from "src/types/x-api/create_post_query";
-import { CreatePostResponse } from "src/types/x-api/create_post_response";
-import { DeletePostResponse } from "src/types/x-api/delete_post_response";
-import { ExpansionPost, PlaceField, GetPostQuery, GetPostsQuery, MediaField, PollField } from "src/types/x-api/get_posts_query";
-import { GetPostResponse, GetPostsResponse } from "src/types/x-api/get_posts_response";
-import { TweetField, UserField } from "src/types/x-api/shared";
-import { httpClient } from "src/utils/http-client";
+import type { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
+import type { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
+import type { IPostOptions, IPosts } from "interfaces/api/IPosts";
+import type { IRequestClient } from "interfaces/IRequestClient";
+import type { ICreatePostQuery } from "src/types/x-api/posts/create_post_query";
+import type { ICreatePostResponse } from "src/types/x-api/posts/create_post_response";
+import type { IDeletePostResponse } from "src/types/x-api/posts/delete_post_response";
+import type { ExpansionPost, PlaceField, IGetPostQuery, IGetPostsQuery, MediaField, PollField } from "src/types/x-api/posts/get_posts_query";
+import type { IGetPostResponse, IGetPostsResponse } from "src/types/x-api/posts/get_posts_response";
+import type { TweetField, UserField } from "src/types/x-api/shared";
 
 export class Posts implements IPosts {
-  constructor(private readonly baseUrl: string, private readonly oAuth1: IOAuth1Auth, private readonly oAuth2: IOAuth2Auth) {}
+  constructor(
+    private readonly baseUrl: string,
+    private readonly oAuth1: IOAuth1Auth,
+    private readonly oAuth2: IOAuth2Auth,
+    private readonly requestClient: IRequestClient
+  ) {}
 
   /**
    * Posts a new post.
@@ -29,9 +33,9 @@ export class Posts implements IPosts {
    * });
    * ```
    */
-  async createPost(text: string, options?: PostOptions): Promise<CreatePostResponse> {
+  async createPost(text: string, options?: IPostOptions): Promise<ICreatePostResponse> {
     // Prepare request body
-    const requestBody: CreatePostQuery = {
+    const requestBody: ICreatePostQuery = {
       text
     };
 
@@ -56,7 +60,7 @@ export class Posts implements IPosts {
     const headers = await this.oAuth2.getHeaders();
     
     // Make the API request
-    return await httpClient.post<CreatePostResponse>(
+    return await this.requestClient.post<ICreatePostResponse>(
       `${this.baseUrl}/2/tweets`,
       requestBody,
       {
@@ -82,11 +86,11 @@ export class Posts implements IPosts {
    * }
    * ```
    */
-  async deletePost(id: string): Promise<DeletePostResponse> {
+  async deletePost(id: string): Promise<IDeletePostResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
-    return await httpClient.delete<DeletePostResponse>(
+    return await this.requestClient.delete<IDeletePostResponse>(
       `${this.baseUrl}/2/tweets/${id}`,
       {
         ...headers,
@@ -120,12 +124,12 @@ export class Posts implements IPosts {
     pollFields?: PollField[];
     userFields?: UserField[];
     placeFields?: PlaceField[];
-  }): Promise<GetPostResponse> {
+  }): Promise<IGetPostResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
     // Build query parameters
-    const params: GetPostQuery = {}
+    const params: IGetPostQuery = {}
 
     if (options) {
       if (options.tweetFields?.length) {
@@ -148,7 +152,7 @@ export class Posts implements IPosts {
       }
     }
 
-    return await httpClient.get<GetPostResponse>(
+    return await this.requestClient.get<IGetPostResponse>(
       `${this.baseUrl}/2/tweets/${id}`,
       params,
       {
@@ -184,12 +188,12 @@ export class Posts implements IPosts {
     pollFields?: PollField[];
     userFields?: UserField[];
     placeFields?: PlaceField[];
-  }): Promise<GetPostsResponse> {
+  }): Promise<IGetPostsResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
     // Build query parameters
-    const params: GetPostsQuery = { ids }
+    const params: IGetPostsQuery = { ids }
 
     if (options) {
       if (options.tweetFields?.length) {
@@ -212,7 +216,7 @@ export class Posts implements IPosts {
       }
     }
     
-    return await httpClient.get<GetPostsResponse>(
+    return await this.requestClient.get<IGetPostsResponse>(
       `${this.baseUrl}/2/tweets`,
       params,
       {

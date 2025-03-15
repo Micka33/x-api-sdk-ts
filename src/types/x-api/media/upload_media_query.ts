@@ -13,7 +13,7 @@ export type Command = 'INIT' | 'APPEND' | 'FINALIZE';
 /**
  * Parameters for the INIT command to initialize a media upload.
  */
-export interface InitParams {
+export interface IInitParams {
   /**
    * The type of command, must be 'INIT'.
    * @example "INIT"
@@ -43,7 +43,7 @@ export interface InitParams {
 /**
  * Parameters for the APPEND command to upload media chunks.
  */
-export interface AppendParams {
+export interface IAppendParams {
   /**
    * The type of command, must be 'APPEND'.
    * @example "APPEND"
@@ -68,7 +68,7 @@ export interface AppendParams {
 /**
  * Parameters for the FINALIZE command to complete the media upload.
  */
-export interface FinalizeParams {
+export interface IFinalizeParams {
   /**
    * The type of command, must be 'FINALIZE'.
    * @example "FINALIZE"
@@ -85,4 +85,4 @@ export interface FinalizeParams {
  * Union type for media upload query parameters, discriminated by the 'command' property.
  * Use this type to ensure the correct parameters are provided based on the command.
  */
-export type UploadMediaQuery = InitParams | AppendParams | FinalizeParams;
+export type IUploadMediaQuery = IInitParams | IAppendParams | IFinalizeParams;

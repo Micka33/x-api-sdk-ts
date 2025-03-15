@@ -1,4 +1,4 @@
-import { TweetField, UserField } from "./shared";
+import { TweetField, UserField } from "../shared";
 
 /**
  * Available expansions for the 'expansions' query parameter.
@@ -8,10 +8,10 @@ export type ExpansionUser =
   | "most_recent_tweet_id"
   | "pinned_tweet_id";
 
-interface GetMeQueryParams {
+interface IGetMeQueryParams {
   'user.fields'?: UserField[];
   expansions?: ExpansionUser[];
   'tweet.fields'?: TweetField[];
 }
 
-export interface GetMeQuery extends GetMeQueryParams {}
+export interface IGetMeQuery extends IGetMeQueryParams {}

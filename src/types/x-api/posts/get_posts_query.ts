@@ -1,4 +1,4 @@
-import { TweetField, UserField } from "./shared";
+import { TweetField, UserField } from "../shared";
 
 /**
  * Available expansions for the 'expansions' query parameter.
@@ -64,7 +64,7 @@ export type PlaceField =
  * Represents the query parameters for retrieving a single post by its ID.
  * ID passed in the path.
  */
-interface GetPostQueryParams {
+interface IGetPostQueryParams {
   /**
    * A list of Tweet fields to display.
    * @example ["author_id", "created_at", "text"]
@@ -105,7 +105,7 @@ interface GetPostQueryParams {
 /**
  * Represents the query parameters for retrieving multiple posts by their IDs.
  */
-interface GetPostsQueryParams extends GetPostQueryParams {
+interface IGetPostsQueryParams extends IGetPostQueryParams {
   /**
    * A list of Post IDs. Up to 100 are allowed in a single request.
    * @example ["1346889436626259968", "1346889436626259969"]
@@ -113,5 +113,5 @@ interface GetPostsQueryParams extends GetPostQueryParams {
   ids: string[];
 }
 
-export interface GetPostQuery extends GetPostQueryParams {}
-export interface GetPostsQuery extends GetPostsQueryParams {}
+export interface IGetPostQuery extends IGetPostQueryParams {}
+export interface IGetPostsQuery extends IGetPostsQueryParams {}

@@ -1,7 +1,65 @@
-import { DeletePostResponse } from 'src/types/x-api/delete_post_response';
-import { GetPostResponse, GetPostsResponse } from 'src/types/x-api/get_posts_response';
-import { PostOptions } from 'types/post';
-import { CreatePostResponse } from 'src/types/x-api/create_post_response';
+import { IDeletePostResponse } from 'src/types/x-api/posts/delete_post_response';
+import { IGetPostResponse, IGetPostsResponse } from 'src/types/x-api/posts/get_posts_response';
+import { ICreatePostResponse } from 'src/types/x-api/posts/create_post_response';
+
+/**
+ * Options for posting a tweet.
+ */
+export interface IPostOptions {
+  /** Card URI parameter. Mutually exclusive with quote_tweet_id, poll, media, and direct_message_deep_link */
+  card_uri?: string;
+  
+  /** The unique identifier of the Community associated with the post */
+  community_id?: string;
+  
+  /** A link to shift the conversation to a private Direct Message. Mutually exclusive with card_uri, quote_tweet_id, poll, and media */
+  direct_message_deep_link?: string;
+  
+  /** Indicates if the post is exclusive to super followers */
+  for_super_followers_only?: boolean;
+  
+  /** Attaches a geo location to the post via a Place ID */
+  geo?: {
+    /** The unique identifier of the place */
+    place_id: string;
+  };
+  
+  /** Media details to attach to the post. Mutually exclusive with quote_tweet_id, poll, card_uri, and direct_message_deep_link */
+  media?: {
+    /** List of Media IDs to include in the post */
+    media_ids: string[];
+    /** List of User IDs tagged in the media */
+    tagged_user_ids?: string[];
+  };
+  
+  /** If true, the post is nullcasted (promoted-only), not appearing in the public timeline */
+  nullcast?: boolean;
+  
+  /** Configures a poll for the post. Mutually exclusive with media, quote_tweet_id, card_uri, and direct_message_deep_link */
+  poll?: {
+    /** Duration of the poll in minutes (5-10080) */
+    duration_minutes: number;
+    /** Text options for the poll choices */
+    options: string[];
+    /** Defines who can reply to the poll */
+    reply_settings?: 'following' | 'mentionedUsers';
+  };
+  
+  /** The unique identifier of the tweet being quoted. Mutually exclusive with card_uri, poll, media, and direct_message_deep_link */
+  quote_tweet_id?: string;
+  
+  /** Details of the tweet being replied to */
+  reply?: {
+    /** The unique identifier of the tweet being replied to */
+    in_reply_to_tweet_id: string;
+    /** List of User IDs to exclude from the reply */
+    exclude_reply_user_ids?: string[];
+  };
+  
+  /** Specifies who can reply to the post */
+  reply_settings?: 'following' | 'mentionedUsers' | 'subscribers';
+}
+
 
 /**
  * Interface for the Posts module.
@@ -15,7 +73,7 @@ export interface IPosts {
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
    */
-  createPost(text: string, options?: PostOptions): Promise<CreatePostResponse>;
+  createPost(text: string, options?: IPostOptions): Promise<ICreatePostResponse>;
 
   /**
    * Retrieves a post by its ID.
@@ -42,7 +100,7 @@ export interface IPosts {
     pollFields?: string[];
     userFields?: string[];
     placeFields?: string[];
-  }): Promise<GetPostResponse>;
+  }): Promise<IGetPostResponse>;
 
   /**
    * Retrieves multiple posts by their IDs.
@@ -69,7 +127,7 @@ export interface IPosts {
     pollFields?: string[];
     userFields?: string[];
     placeFields?: string[];
-  }): Promise<GetPostsResponse>;
+  }): Promise<IGetPostsResponse>;
 
   /**
    * Deletes a tweet.
@@ -77,5 +135,5 @@ export interface IPosts {
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
-  deletePost(id: string): Promise<DeletePostResponse>;
+  deletePost(id: string): Promise<IDeletePostResponse>;
 }

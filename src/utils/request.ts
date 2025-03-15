@@ -1,82 +1,12 @@
 import { parseTwitterError } from './error';
 import { parseRateLimitHeaders, isRateLimitExceeded, RateLimitInfo } from './rate-limit';
 import { RateLimitError } from './error';
-
-/**
- * Request options for the Twitter API.
- */
-export interface RequestOptions {
-  /** The HTTP method to use */
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  
-  /** The URL to request */
-  url: string;
-  
-  /** The headers to include in the request */
-  headers?: Record<string, string>;
-  
-  /** The query parameters to include in the URL */
-  params?: Record<string, any>;
-  
-  /** The body of the request */
-  body?: any;
-  
-  /** The content type of the request */
-  contentType?: 'application/json' | 'application/x-www-form-urlencoded' | 'multipart/form-data';
-  
-  /** Whether to include credentials in the request */
-  withCredentials?: boolean;
-}
+import { RequestOptions, IRequestClient } from 'interfaces/IRequestClient';
 
 /**
  * Client for making requests to the Twitter API.
  */
-export class RequestClient {
-  /**
-   * Makes a request to the Twitter API.
-   * 
-   * @param options - The request options
-   * @returns A promise that resolves to the response data
-   */
-  public async request<T>(options: RequestOptions): Promise<T> {
-    try {
-      // Build the URL with query parameters
-      const url = this.buildUrl(options.url, options.params);
-      
-      // Prepare the request options
-      const fetchOptions: RequestInit = {
-        method: options.method,
-        headers: options.headers || {},
-        credentials: options.withCredentials ? 'include' : 'same-origin'
-      };
-      
-      // Add the body if provided
-      if (options.body) {
-        if (options.contentType === 'application/json') {
-          fetchOptions.body = JSON.stringify(options.body);
-          (fetchOptions.headers as Record<string, string>)['Content-Type'] = 'application/json';
-        } else if (options.contentType === 'application/x-www-form-urlencoded') {
-          fetchOptions.body = this.buildFormData(options.body).toString();
-          (fetchOptions.headers as Record<string, string>)['Content-Type'] = 'application/x-www-form-urlencoded';
-        } else if (options.contentType === 'multipart/form-data') {
-          // For multipart/form-data, we don't set the Content-Type header
-          // as the browser will set it with the correct boundary
-          fetchOptions.body = this.buildFormData(options.body, true);
-        } else {
-          fetchOptions.body = options.body;
-        }
-      }
-      
-      // Make the request
-      const response = await fetch(url, fetchOptions);
-      
-      // Handle the response
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      throw parseTwitterError(error);
-    }
-  }
-  
+export class RequestClient implements IRequestClient {
   /**
    * Makes a GET request to the Twitter API.
    * 
@@ -187,6 +117,51 @@ export class RequestClient {
     });
   }
   
+  /**
+   * Makes a request to the Twitter API.
+   * 
+   * @param options - The request options
+   * @returns A promise that resolves to the response data
+   */
+  private async request<T>(options: RequestOptions): Promise<T> {
+    try {
+      // Build the URL with query parameters
+      const url = this.buildUrl(options.url, options.params);
+      
+      // Prepare the request options
+      const fetchOptions: RequestInit = {
+        method: options.method,
+        headers: options.headers || {},
+        credentials: options.withCredentials ? 'include' : 'same-origin'
+      };
+      
+      // Add the body if provided
+      if (options.body) {
+        if (options.contentType === 'application/json') {
+          fetchOptions.body = JSON.stringify(options.body);
+          (fetchOptions.headers as Record<string, string>)['Content-Type'] = 'application/json';
+        } else if (options.contentType === 'application/x-www-form-urlencoded') {
+          fetchOptions.body = this.buildFormData(options.body).toString();
+          (fetchOptions.headers as Record<string, string>)['Content-Type'] = 'application/x-www-form-urlencoded';
+        } else if (options.contentType === 'multipart/form-data') {
+          // For multipart/form-data, we don't set the Content-Type header
+          // as the browser will set it with the correct boundary
+          fetchOptions.body = this.buildFormData(options.body, true);
+        } else {
+          fetchOptions.body = options.body;
+        }
+      }
+      
+      // Make the request
+      const response = await fetch(url, fetchOptions);
+      
+      // Handle the response
+      return this.handleResponse<T>(response);
+    } catch (error) {
+      throw parseTwitterError(error);
+    }
+  }
+
   /**
    * Handles a response from the Twitter API.
    * 

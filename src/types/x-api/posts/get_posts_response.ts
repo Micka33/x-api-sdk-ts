@@ -1,5 +1,5 @@
-import { BaseResponse } from "./base_response";
-export interface GetPostsResponseData {
+import { IBaseResponse } from "../base_response";
+export interface IGetPostsResponseData {
   /**
    * Unique identifier of the post.
    * @example "1346889436626259968"
@@ -152,7 +152,7 @@ export interface GetPostsResponseData {
   reply_settings?: 'following' | 'mentionedUsers' | 'subscribers';
 };
 
-export interface GetPostsResponseIncludes {
+export interface IGetPostsResponseIncludes {
   /**
    * Users referenced in the post.
    */
@@ -308,16 +308,16 @@ export interface GetPostsResponseIncludes {
  * Response type for the GET /2/tweets/{id} endpoint.
  * Represents the response when retrieving a post by ID.
  */
-export interface GetPostsResponse {
+export interface IGetPostsResponse {
   /**
    * Data object containing the post information.
    */
-  data: GetPostsResponseData[];
+  data: IGetPostsResponseData[];
   
   /**
    * Included objects referenced in the post.
    */
-  includes?: GetPostsResponseIncludes;
+  includes?: IGetPostsResponseIncludes;
   
   /**
    * Array of error objects, if any errors occurred.
@@ -350,9 +350,9 @@ export interface GetPostsResponse {
  * Response type for the GET /2/tweets/{id} endpoint.
  * Represents the response when retrieving a post by ID.
  */
-export interface GetPostResponse extends BaseResponse<GetPostsResponseData> {
+export interface IGetPostResponse extends IBaseResponse<IGetPostsResponseData> {
   /**
    * Included objects referenced in the post.
    */
-  includes?: GetPostsResponseIncludes;
+  includes?: IGetPostsResponseIncludes;
 }

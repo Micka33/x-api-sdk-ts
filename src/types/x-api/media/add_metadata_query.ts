@@ -1,7 +1,7 @@
 /**
  * Represents the data object for a media item.
  */
-interface MediaData {
+interface IMediaData {
   /**
    * The unique identifier of this Media.
    * @example "1146654567674912769"
@@ -10,39 +10,39 @@ interface MediaData {
   /**
    * Metadata associated with the media.
    */
-  metadata?: MediaMetadata;
+  metadata?: IMediaMetadata;
 }
 
 /**
  * Represents the metadata for a media item.
  */
-interface MediaMetadata {
+interface IMediaMetadata {
   /**
    * Status indicating whether the media can be downloaded.
    */
-  allow_download_status?: AllowDownloadStatus;
+  allow_download_status?: IAllowDownloadStatus;
   /**
    * Alternative text description for the media.
    */
-  alt_text?: AltText;
+  alt_text?: IAltText;
   /**
    * Origin information if the media was found from a provider.
    */
-  found_media_origin?: FoundMediaOrigin;
+  found_media_origin?: IFoundMediaOrigin;
   /**
    * Information about stickers applied to the media.
    */
-  sticker_info?: StickerInfo;
+  sticker_info?: IStickerInfo;
   /**
    * Source from which the media was uploaded.
    */
-  upload_source?: UploadSource;
+  upload_source?: IUploadSource;
 }
 
 /**
  * Status indicating whether the media can be downloaded.
  */
-interface AllowDownloadStatus {
+interface IAllowDownloadStatus {
   /**
    * Whether downloading is allowed.
    * @example true
@@ -53,7 +53,7 @@ interface AllowDownloadStatus {
 /**
  * Alternative text description for the media.
  */
-interface AltText {
+interface IAltText {
   /**
    * Description of the media.
    * constraint: <= 1000 characters
@@ -65,7 +65,7 @@ interface AltText {
 /**
  * Origin information if the media was found from a provider.
  */
-interface FoundMediaOrigin {
+interface IFoundMediaOrigin {
   /**
    * Unique Identifier of the media within the provider.
    * constraint: <= 24 characters
@@ -83,18 +83,18 @@ interface FoundMediaOrigin {
 /**
  * Information about stickers applied to the media.
  */
-interface StickerInfo {
+interface IStickerInfo {
   /**
    * List of stickers applied to the media.
    * constraint: Must not be empty and should not exceed 25 items
    */
-  stickers: Sticker[];
+  stickers: ISticker[];
 }
 
 /**
  * Represents a sticker applied to the media.
  */
-interface Sticker {
+interface ISticker {
   /**
    * Width-to-height ratio of the media.
    * @example 1.78
@@ -150,7 +150,7 @@ interface Sticker {
 /**
  * Source from which the media was uploaded.
  */
-interface UploadSource {
+interface IUploadSource {
   /**
    * The source (e.g., app, device) from which the media was uploaded.
    * @example "gallery"
@@ -158,4 +158,4 @@ interface UploadSource {
   upload_source: string;
 }
 
-export interface AddMetadataQuery extends MediaData {}
+export interface IAddMetadataQuery extends IMediaData {}
