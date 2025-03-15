@@ -17,9 +17,6 @@ export type { RequestOptions } from 'utils/request';
 export type { ITwitterClient } from 'interfaces/ITwitterClient';
 export type { IPosts as ITweets } from 'src/interfaces/api/IPosts';
 export type { IMedia } from 'interfaces/api/IMedia';
-export type { IUsers } from 'interfaces/api/IUsers';
-export type { ISearches } from 'interfaces/api/ISearches';
-export type { IStreams, ITwitterStream } from 'interfaces/api/IStreams';
 
 // Export authentication
 export { OAuth1Auth } from 'auth/OAuth1Auth';
