@@ -8,7 +8,7 @@ import {
   IRequestClient,
   ITwitterClientConfig,
   TwitterClient
-} from 'src/index';
+} from '../../src/index';
 
 // Mock auth provider
 class MockAuth implements IOAuth1Auth {
@@ -72,7 +72,7 @@ describe('TwitterClient', () => {
 
     // Create mock auth provider
     const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
-    const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret' };
+    const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret', scopes: [], redirectUri: 'http://localhost:3000/oauth2/callback' };
     mockAuth = { oAuth1: new MockAuth(), oAuth2: {} as IOAuth2Auth };
     mockRequestClient = new MockRequestClient();
 
@@ -93,7 +93,7 @@ describe('TwitterClient', () => {
   describe('createClient', () => {
     it('should create a TwitterClient', () => {
       const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
-      const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret' };
+      const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret', scopes: [], redirectUri: 'http://localhost:3000/oauth2/callback' };
       const config: ITwitterClientConfig = { oAuth1: oAuth1Config, oAuth2: oAuth2Config };
 
       const client = new TwitterClient(config);
