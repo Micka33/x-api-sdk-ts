@@ -62,17 +62,16 @@ export class Media implements IMedia {
    * Get MediaUpload Status.
    *
    * @param mediaId - Media id for the requested media upload status.
-   * @param command - The command for the media upload request.
    * @returns A promise that resolves to the uploaded media
    */
-  public async getUploadStatus(mediaId: string, command: 'STATUS'): Promise<IGetUploadStatusResponse> {
+  public async getUploadStatus(mediaId: string): Promise<IGetUploadStatusResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
     // Make the API request
     return this.requestClient.get<IGetUploadStatusResponse>(
       `${this.baseUrl}/2/media/upload`,
-      { command, media_id: mediaId },
+      { command: 'STATUS', media_id: mediaId },
       headers
     );
   }
@@ -101,11 +100,11 @@ export class Media implements IMedia {
    * ```
    */
   public async addMetadata(
-    mediaId: string, 
-    altText: string, 
-    allowDownload: boolean, 
-    originalId?: string, 
-    originalProvider?: string, 
+    mediaId: string,
+    altText: string,
+    allowDownload: boolean,
+    originalId?: string,
+    originalProvider?: string,
     uploadSource?: string
   ): Promise<IAddMetadataResponse> {
     // Get authentication headers using OAuth 2.0
@@ -278,7 +277,7 @@ export class Media implements IMedia {
       await new Promise(resolve => setTimeout(resolve, checkAfterSecs * 1000));
       
       // Check status
-      response = await this.getUploadStatus(mediaId, 'STATUS');      
+      response = await this.getUploadStatus(mediaId);
     }
     
     return response;

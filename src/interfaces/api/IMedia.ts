@@ -22,10 +22,9 @@ export interface IMedia {
    * Get MediaUpload Status.
    *
    * @param mediaId - Media id for the requested media upload status.
-   * @param command - The command for the media upload request.
    * @returns A promise that resolves to the uploaded media
    */
-  getUploadStatus(mediaId: string, command: 'STATUS'): Promise<IGetUploadStatusResponse>;
+  getUploadStatus(mediaId: string): Promise<IGetUploadStatusResponse>;
 
   /**
    * Adds metadata to an uploaded media.
