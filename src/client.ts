@@ -55,11 +55,12 @@ export class TwitterClient implements ITwitterClient {
       oAuth1?: IOAuth1Auth;
       oAuth2?: IOAuth2Auth;
     } | null,
+    baseUrl?: string | null,
   ) {
     this.requestClient = requestClient || new RequestClient();
     this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);
     this.oAuth2 = auth?.oAuth2 || new OAuth2Auth(this.config.oAuth2);
-    this.baseUrl = 'https://api.twitter.com';
+    this.baseUrl = baseUrl || 'https://api.twitter.com';
     this.posts = apiModules?.posts || new Posts(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
     this.media = apiModules?.media || new Media(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
     this.users = apiModules?.users || new Users(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
