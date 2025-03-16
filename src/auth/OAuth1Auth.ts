@@ -5,7 +5,7 @@ import type {
   IOAuth1Auth,
   IOAuth1Token,
   IOAuth1AuthorizationHeaders,
-} from 'interfaces/auth/IOAuth1Auth';
+} from '../interfaces/auth/IOAuth1Auth';
 
 /**
  * Implementation of OAuth 1.0a authentication for Twitter API v1.1.

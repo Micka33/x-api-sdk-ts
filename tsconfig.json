@@ -3,7 +3,7 @@
     "target": "es2018",
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "baseUrl": ".",
     "lib": ["es2018", "dom"],
     "strict": true,
@@ -22,14 +22,7 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "paths": {
-      "src/*": ["src/*"],
-      "auth/*": ["src/auth/*"],
-      "api/*": ["src/api/*"],
-      "interfaces/*": ["src/interfaces/*"],
-      "types/*": ["src/types/*"],
-      "utils/*": ["src/utils/*"]
-    }
   },
-  "exclude": ["node_modules", "dist", "examples"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "examples", "tests"]
 }

@@ -1,11 +1,11 @@
-import type { IMedia } from "interfaces/api/IMedia";
-import type { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
-import type { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
-import type { IRequestClient } from "interfaces/IRequestClient";
-import type { IAddMetadataResponse } from "src/types/x-api/media/add_metadata_response";
-import type { IGetUploadStatusResponse } from "src/types/x-api/media/get_upload_status_response";
-import type { IAppendParams, IInitParams, MediaCategory } from "src/types/x-api/media/upload_media_query";
-import type { IUploadMediaResponse } from "src/types/x-api/media/upload_media_response";
+import type { IMedia } from "../interfaces/api/IMedia";
+import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
+import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
+import type { IRequestClient } from "../interfaces/IRequestClient";
+import type { IAddMetadataResponse } from "../types/x-api/media/add_metadata_response";
+import type { IGetUploadStatusResponse } from "../types/x-api/media/get_upload_status_response";
+import type { IAppendParams, IInitParams, MediaCategory } from "../types/x-api/media/upload_media_query";
+import type { IUploadMediaResponse } from "../types/x-api/media/upload_media_response";
 
 export class Media implements IMedia {
   constructor(

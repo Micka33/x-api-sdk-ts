@@ -1,4 +1,4 @@
-import { ILikePostResponse } from "src/types/x-api/likes/like_post_response";
+import { ILikePostResponse } from "../../types/x-api/likes/like_post_response";
 
 /**
  * Interface for the Likes module.

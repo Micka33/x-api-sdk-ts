@@ -1,4 +1,6 @@
-import type { IOAuth2Auth, IOAuth2Config, IOAuth2Token } from 'interfaces/auth/IOAuth2Auth';
+import type { IOAuth2Auth, IOAuth2Config, IOAuth2Token } from '../interfaces/auth/IOAuth2Auth';
+import { NullablePartial, TwitterApiScope } from '../types/x-api/shared';
+import crypto from 'crypto';
 
 /**
  * Implementation of OAuth 2.0 authentication for Twitter API v2.
@@ -6,6 +8,10 @@ import type { IOAuth2Auth, IOAuth2Config, IOAuth2Token } from 'interfaces/auth/I
 export class OAuth2Auth implements IOAuth2Auth {
   private clientId: string;
   private clientSecret?: string;
+  private redirectUri?: string;
+  private state: string;
+  private codeVerifier: string;
+  private scopes: TwitterApiScope[];
   private accessToken: string | null;
   private refreshToken: string | null;
   private tokenExpiresAt: number | null;
@@ -16,6 +22,10 @@ export class OAuth2Auth implements IOAuth2Auth {
     }
     this.clientId = config.clientId;
     this.clientSecret = config.clientSecret;
+    this.redirectUri = config.redirectUri;
+    this.state = config.state || this.generateState();
+    this.codeVerifier = config.codeVerifier || this.generateCodeVerifier();
+    this.scopes = config.scopes;
     this.accessToken = config.accessToken || null;
     this.refreshToken = config.refreshToken || null;
     this.tokenExpiresAt = config.tokenExpiresAt || null;
@@ -34,30 +44,43 @@ export class OAuth2Auth implements IOAuth2Auth {
   }
 
   /**
+   * Gets the token for the OAuth2Auth instance.
+   * @returns The token.
+   */
+  public getToken(): NullablePartial<IOAuth2Token> {
+    return {
+      accessToken: this.accessToken,
+      refreshToken: this.refreshToken,
+      tokenExpiresAt: this.tokenExpiresAt,
+    };
+  }
+
+
+  /**
    * Generates the OAuth 2.0 authorize URL for user authentication.
-   * @param scopes - Array of scopes (e.g., ['tweet.read', 'tweet.write', 'offline.access'])
-   * @param redirectUri - The callback URL registered in your app settings
-   * @param state - A random string to prevent CSRF attacks
-   * @param codeChallenge - The PKCE code challenge (e.g., base64url-encoded SHA256 of code verifier)
-   * @param codeChallengeMethod - 'S256' (recommended) or 'plain'
+   * @param codeChallenge - Optional; The PKCE code challenge (e.g., base64url-encoded SHA256 of code verifier) - if provided, ensures you provide codeVerifier when instanciating this class
+   * @param codeChallengeMethod - Optional; 'S256' (recommended) or 'plain'
    * @returns The authorize URL to redirect the user to
    */
   public generateAuthorizeUrl(
-    scopes: string[],
-    redirectUri: string,
-    state: string,
-    codeChallenge: string,
+    codeChallenge?: string | null,
     codeChallengeMethod: 'S256' | 'plain' = 'S256'
   ): string {
+    if (!codeChallenge) {
+      codeChallengeMethod = 'S256';
+      codeChallenge = this.generateCodeChallenge();
+    }
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: this.clientId,
-      redirect_uri: redirectUri,
-      scope: scopes.join(' '),
-      state,
+      scope: this.scopes.join(' '),
+      state: this.state,
       code_challenge: codeChallenge,
       code_challenge_method: codeChallengeMethod,
     });
+    if (this.redirectUri) {
+      params.set('redirect_uri', this.redirectUri);
+    }
     return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
   }
 
@@ -67,19 +90,25 @@ export class OAuth2Auth implements IOAuth2Auth {
    * @param redirectUri - The same redirect URI used in the authorize URL
    * @param codeVerifier - The original code verifier used to generate the code challenge
    */
-  async exchangeAuthCodeForToken(code: string, redirectUri: string, codeVerifier: string): Promise<this> {
+  public async exchangeAuthCodeForToken(code: string): Promise<this> {
+    const authHeader = 'Basic ' + Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      code_verifier: this.codeVerifier,
+    });
+
+    if (this.redirectUri) {
+      params.set('redirect_uri', this.redirectUri);
+    }
+
     const response = await fetch('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': authHeader,
       },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: redirectUri,
-        client_id: this.clientId,
-        code_verifier: codeVerifier,
-      }),
+      body: params.toString(),
     });
 
     if (!response.ok) {
@@ -159,4 +188,32 @@ export class OAuth2Auth implements IOAuth2Auth {
     return Date.now() >= this.tokenExpiresAt;
   }
 
+  /**
+   * Encodes a buffer to base64url format.
+   * @param buffer - The buffer to encode.
+   * @returns The base64url encoded string.
+   */
+  private base64urlEncode(buffer: Buffer) {
+    return buffer
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+  }
+
+  /**
+   * Generates a random code verifier.
+   * @returns The code verifier.
+   */
+  private generateCodeVerifier(): string {
+    return this.base64urlEncode(crypto.randomBytes(32));
+  }
+
+  private generateCodeChallenge(): string {
+    return this.base64urlEncode(crypto.createHash('sha256').update(this.codeVerifier).digest())
+  }
+
+  private generateState(): string {
+    return crypto.randomBytes(16).toString('hex');
+  }
 }

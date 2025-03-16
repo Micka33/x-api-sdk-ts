@@ -1,4 +1,110 @@
 /**
+ * Type representing a nullable partial object.
+ * Same usage as Partial<T> but with null values.
+ */
+export type NullablePartial<T> = { [P in keyof T]?: T[P] | null };
+
+/**
+ * Enum representing the available scopes for the Twitter API.
+ */
+export enum TwitterApiScope {
+  /**
+   * All the Tweets you can view, including Tweets from protected accounts.
+   */
+  TweetRead = 'tweet.read',
+
+  /**
+   * Tweet and Retweet for you.
+   */
+  TweetWrite = 'tweet.write',
+
+  /**
+   * Hide and unhide replies to your Tweets.
+   */
+  TweetModerateWrite = 'tweet.moderate.write',
+
+  /**
+   * Any account you can view, including protected accounts.
+   */
+  UsersRead = 'users.read',
+
+  /**
+   * People who follow you and people who you follow.
+   */
+  FollowsRead = 'follows.read',
+
+  /**
+   * Follow and unfollow people for you.
+   */
+  FollowsWrite = 'follows.write',
+
+  /**
+   * Stay connected to your account until you revoke access.
+   */
+  OfflineAccess = 'offline.access',
+
+  /**
+   * All the Spaces you can view.
+   */
+  SpaceRead = 'space.read',
+
+  /**
+   * Accounts you’ve muted.
+   */
+  MuteRead = 'mute.read',
+
+  /**
+   * Mute and unmute accounts for you.
+   */
+  MuteWrite = 'mute.write',
+
+  /**
+   * Tweets you’ve liked and likes you can view.
+   */
+  LikeRead = 'like.read',
+
+  /**
+   * Like and un-like Tweets for you.
+   */
+  LikeWrite = 'like.write',
+
+  /**
+   * Lists, list members, and list followers of lists you’ve created or are a member of, including private lists.
+   */
+  ListRead = 'list.read',
+
+  /**
+   * Create and manage Lists for you.
+   */
+  ListWrite = 'list.write',
+
+  /**
+   * Accounts you’ve blocked.
+   */
+  BlockRead = 'block.read',
+
+  /**
+   * Block and unblock accounts for you.
+   */
+  BlockWrite = 'block.write',
+
+  /**
+   * Get Bookmarked Tweets from an authenticated user.
+   */
+  BookmarkRead = 'bookmark.read',
+
+  /**
+   * Bookmark and remove Bookmarks from Tweets.
+   */
+  BookmarkWrite = 'bookmark.write',
+
+  /**
+   * Upload media.
+   */
+  MediaWrite = 'media.write',
+}
+
+/**
  * Available user fields for the 'user.fields' query parameter.
  */
 export type UserField =

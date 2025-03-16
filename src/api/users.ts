@@ -1,10 +1,10 @@
-import type { IUsers } from "interfaces/api/IUsers";
-import type { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
-import type { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
-import type { ExpansionUser, IGetMeQuery } from "src/types/x-api/users/get_me_query";
-import type { IGetMeResponse } from "src/types/x-api/users/get_me_response";
-import type { IRequestClient } from "interfaces/IRequestClient";
-import type { UserField, TweetField } from "src/types/x-api/shared";
+import type { IUsers } from "../interfaces/api/IUsers";
+import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
+import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
+import type { ExpansionUser, IGetMeQuery } from "../types/x-api/users/get_me_query";
+import type { IGetMeResponse } from "../types/x-api/users/get_me_response";
+import type { IRequestClient } from "../interfaces/IRequestClient";
+import type { UserField, TweetField } from "../types/x-api/shared";
 
 export class Users implements IUsers {
   constructor(
@@ -21,10 +21,12 @@ export class Users implements IUsers {
   ): Promise<IGetMeResponse> {
     const headers = await this.oAuth2.getHeaders();
 
-    const data: IGetMeQuery = {
-      'user.fields': userFields,
-      expansions: expansions,
-      'tweet.fields': tweetFields
+    const data: IGetMeQuery = { 'user.fields': userFields }
+    if (expansions) {
+      data['expansions'] = expansions;
+    }
+    if (tweetFields) {
+      data['tweet.fields'] = tweetFields;
     }
 
     return await this.requestClient.get<IGetMeResponse>(`${this.baseUrl}/2/users/me`,

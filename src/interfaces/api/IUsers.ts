@@ -1,6 +1,6 @@
-import { ExpansionUser } from "src/types/x-api/users/get_me_query";
-import { IGetMeResponse } from "src/types/x-api/users/get_me_response";
-import { TweetField, UserField } from "src/types/x-api/shared";
+import { ExpansionUser } from "../../types/x-api/users/get_me_query";
+import { IGetMeResponse } from "../../types/x-api/users/get_me_response";
+import { TweetField, UserField } from "../../types/x-api/shared";
 
 export interface IUsers {
   /**

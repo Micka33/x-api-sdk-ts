@@ -1,6 +1,6 @@
-import { IDeletePostResponse } from 'src/types/x-api/posts/delete_post_response';
-import { IGetPostResponse, IGetPostsResponse } from 'src/types/x-api/posts/get_posts_response';
-import { ICreatePostResponse } from 'src/types/x-api/posts/create_post_response';
+import { IDeletePostResponse } from '../../types/x-api/posts/delete_post_response';
+import { IGetPostResponse, IGetPostsResponse } from '../../types/x-api/posts/get_posts_response';
+import { ICreatePostResponse } from '../../types/x-api/posts/create_post_response';
 
 /**
  * Options for posting a tweet.

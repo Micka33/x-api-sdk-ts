@@ -33,4 +33,24 @@ export interface IBaseResponse<T extends object> {
      */
     status?: number;
   }>;
+
+  /**
+   * Information about the rate limit for the request.
+   */
+  rateLimitInfo?: {
+    /** 
+     * The limit for the endpoint
+     */
+    limit: number;
+    
+    /**
+     * The remaining requests for the endpoint
+     */
+    remaining: number;
+    
+    /**
+     * The time when the rate limit resets
+     */
+    reset: Date;
+  }
 }

@@ -1,3 +1,4 @@
+import { NullablePartial, TwitterApiScope } from '../../types/x-api/shared';
 /**
  * Interface for OAuth 2.0 tokens.
  */
@@ -16,8 +17,16 @@ export interface IOAuth2Token {
 export interface IOAuth2Config extends Partial<IOAuth2Token> {
   /** Required for all clients, found in your app’s “Keys and Tokens” section in the Twitter Developer Portal. */
   clientId: string;
+  /** Required; scopes to request from the user. */
+  scopes: TwitterApiScope[];
+  /** Optional; only needed for confidential clients (e.g., web apps) if using client credentials flow later. For PKCE, it’s not required in the token exchange. */
+  redirectUri?: string;
+  /** Optional; a random string to prevent CSRF attacks. */
+  state?: string;
   /** Optional; only needed for confidential clients (e.g., web apps) if using client credentials flow later. For PKCE, it’s not required in the token exchange. */
   clientSecret?: string;
+  /** Optional; only needed for confidential clients (e.g., web apps) if using client credentials flow later. For PKCE, it’s not required in the token exchange. */
+  codeVerifier?: string;
 }
 
 /**
@@ -33,6 +42,12 @@ export interface IOAuth2Auth {
   setToken(token: IOAuth2Token): this;
 
   /**
+   * Gets the token for the OAuth2Auth instance.
+   * @returns The token.
+   */
+  getToken(): NullablePartial<IOAuth2Token>;
+
+  /**
    * Generates the OAuth 2.0 authorize URL for user authentication.
    * @param scopes - Array of scopes (e.g., ['tweet.read', 'tweet.write', 'offline.access'])
    * @param redirectUri - The callback URL registered in your app settings
@@ -42,11 +57,9 @@ export interface IOAuth2Auth {
    * @returns The authorize URL to redirect the user to
    */
   generateAuthorizeUrl(
-    scopes: string[],
-    redirectUri: string,
     state: string,
-    codeChallenge: string,
-    codeChallengeMethod: 'S256' | 'plain'
+    codeChallenge?: string | null,
+    codeChallengeMethod?: 'S256' | 'plain'
   ): string;
 
   /**

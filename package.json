@@ -5,7 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "build": "npm run clean && tsc",
+    "build:watch": "npm run build -- --watch",
+    "prepublishOnly": "npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -21,8 +24,13 @@
     "sdk",
     "typescript"
   ],
-  "author": "",
+  "author": "@mickaelcassy",
   "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/micka33/x-sdk-ts.git"

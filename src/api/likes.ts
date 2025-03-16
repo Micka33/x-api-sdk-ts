@@ -1,9 +1,9 @@
-import type { ILikes } from "interfaces/api/ILikes";
-import type { IOAuth1Auth } from "interfaces/auth/IOAuth1Auth";
-import type { IOAuth2Auth } from "interfaces/auth/IOAuth2Auth";
-import type { IRequestClient } from "interfaces/IRequestClient";
-import type { ILikePostQuery } from "src/types/x-api/likes/like_post_query";
-import type { ILikePostResponse } from "src/types/x-api/likes/like_post_response";
+import type { ILikes } from "../interfaces/api/ILikes";
+import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
+import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
+import type { IRequestClient } from "../interfaces/IRequestClient";
+import type { ILikePostQuery } from "../types/x-api/likes/like_post_query";
+import type { ILikePostResponse } from "../types/x-api/likes/like_post_response";
 
 export class Likes implements ILikes {
   constructor(

@@ -1,7 +1,6 @@
 import { parseTwitterError } from './error';
-import { parseRateLimitHeaders, isRateLimitExceeded, RateLimitInfo } from './rate-limit';
-import { RateLimitError } from './error';
-import { RequestOptions, IRequestClient } from 'interfaces/IRequestClient';
+import { parseRateLimitHeaders, RateLimitInfo } from './rate-limit';
+import { RequestOptions, IRequestClient } from '../interfaces/IRequestClient';
 
 /**
  * Client for making requests to the Twitter API.
@@ -152,7 +151,6 @@ export class RequestClient implements IRequestClient {
         }
       }
       
-      // Make the request
       const response = await fetch(url, fetchOptions);
       
       // Handle the response
@@ -170,29 +168,30 @@ export class RequestClient implements IRequestClient {
    * @private
    */
   private async handleResponse<T>(response: Response): Promise<T> {
+    let rateLimitInfo: RateLimitInfo | undefined;
     // Convert Headers to a plain object
     const headers: Record<string, string> = {};
     response.headers.forEach((value, key) => {
       headers[key] = value;
     });
     
-    const rateLimitInfo = parseRateLimitHeaders(headers);
+    rateLimitInfo = parseRateLimitHeaders(headers);
     
-    // Check if the rate limit has been exceeded
-    if (rateLimitInfo && isRateLimitExceeded(rateLimitInfo)) {
-      throw new RateLimitError('Twitter API rate limit exceeded', rateLimitInfo.reset);
-    }
     
     // Check if the response is successful
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw parseTwitterError({
-        response: {
-          status: response.status,
-          data: errorData,
-          headers
-        }
-      });
+      if (rateLimitInfo) {
+        errorData.rateLimitInfo = rateLimitInfo;
+      }
+      return errorData as unknown as T;
+      // throw parseTwitterError({
+      //   response: {
+      //     status: response.status,
+      //     data: errorData,
+      //     headers
+      //   }
+      // });
     }
     
     // Handle empty responses (like for APPEND commands)
@@ -203,7 +202,11 @@ export class RequestClient implements IRequestClient {
     // Parse the response body
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
-      return response.json();
+      const jsonObject = await response.json();
+      if (rateLimitInfo) {
+        jsonObject.rateLimitInfo = rateLimitInfo;
+      }
+      return jsonObject as unknown as T;
     } else {
       return response.text() as unknown as T;
     }
@@ -226,13 +229,13 @@ export class RequestClient implements IRequestClient {
     
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        if (Array.isArray(value)) {
-          value.forEach((item) => {
-            url.searchParams.append(key, item.toString());
-          });
-        } else {
+        // if (Array.isArray(value)) {
+        //   value.forEach((item) => {
+        //     url.searchParams.append(key, item.toString());
+        //   });
+        // } else {
           url.searchParams.append(key, value.toString());
-        }
+        // }
       }
     });
     

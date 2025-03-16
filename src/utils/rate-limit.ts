@@ -23,10 +23,6 @@ export function parseRateLimitHeaders(headers: Record<string, string>): RateLimi
   const remaining = headers['x-rate-limit-remaining'];
   const reset = headers['x-rate-limit-reset'];
 
-  if (!limit || !remaining || !reset) {
-    return undefined;
-  }
-
   return {
     limit: parseInt(limit, 10),
     remaining: parseInt(remaining, 10),
