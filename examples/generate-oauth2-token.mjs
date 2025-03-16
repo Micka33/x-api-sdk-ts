@@ -76,6 +76,9 @@ async function displayTokenInfoAndGetUserInfo() {
   if (response.errors) {
     console.log('errors:', JSON.stringify(response.errors, null, 2));
   }
+  if (response.rateLimitInfo) {
+    console.log('rateLimitInfo:', response.rateLimitInfo);
+  }
 
   // Uncomment to post a tweet as an example
   // const tweetResponse = await twitterClient.posts.createPost('Hello World!');
