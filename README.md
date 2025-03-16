@@ -62,6 +62,19 @@ const twitterClient = new TwitterClient({
 });
 ```
 
+### Get accessToken and refreshToken
+
+```typescript
+const token = twitterClient.oAuth2.getToken();
+const { accessToken, refreshToken, tokenExpiresAt } = token;
+```
+
+### Change accessToken and refreshToken
+
+```typescript
+twitterClient.oAuth2.setToken(accessToken, refreshToken, tokenExpiresAt);
+```
+
 ## Media Upload Example
 
 ```typescript
