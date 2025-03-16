@@ -53,7 +53,7 @@ const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApi
 
 const accessToken = 'input_access_token_here';
 const refreshToken = 'input_refresh_token_here';
-const tokenExpiresAt = 'input_token_expires_at_here';
+const tokenExpiresAt = 'input_token_expires_at_here'; // a date object; example: new Date()
 
 // Initialize the Twitter client
 const twitterClient = new TwitterClient({
