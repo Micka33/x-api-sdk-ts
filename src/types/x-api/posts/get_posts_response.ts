@@ -18,6 +18,13 @@ export interface IGetPostsResponseData {
    */
   author_id?: string;
   
+
+  /**
+   * The X handle (screen name) of this user.
+   * @example "Jack"
+   */
+  username?: string;
+
   /**
    * The time when the post was created.
    * @example "2021-01-06T18:40:40.000Z"
@@ -29,12 +36,21 @@ export interface IGetPostsResponseData {
    */
   attachments?: {
     /**
-     * Media keys for media attached to the post.
+     * A list of Media Keys for each one of the media attachments (if media are attached).
+     * The Media Key identifier for this attachment.
      */
     media_keys?: string[];
     
     /**
-     * Poll IDs for polls attached to the post.
+     * A list of Posts the media on this Tweet was originally posted in.
+     * For example, if the media on a tweet is re-used in another Tweet, this refers to the original, source Tweet..
+     * Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers.
+     */
+    media_source_tweet_id?: string[];
+
+    /**
+     * A list of poll IDs (if polls are attached).
+     * Unique identifier of this poll.
      */
     poll_ids?: string[];
   };
@@ -78,11 +94,13 @@ export interface IGetPostsResponseData {
     /**
      * Number of quotes.
      */
-    quote_count: number;
+    quote_count?: number;
   };
   
   /**
-   * References to other posts.
+   * A list of Posts this Tweet refers to.
+   * For example, if the parent Tweet is a Retweet, a Quoted Tweet or a Reply,
+   * it will include the related Tweet referenced to by its parent.
    */
   referenced_tweets?: Array<{
     /**
@@ -91,7 +109,8 @@ export interface IGetPostsResponseData {
     type: 'replied_to' | 'quoted' | 'retweeted';
     
     /**
-     * ID of the referenced post.
+     * Unique identifier of this Tweet.
+     * This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers.
      */
     id: string;
   }>;
@@ -150,6 +169,37 @@ export interface IGetPostsResponseData {
    * Reply settings for the post.
    */
   reply_settings?: 'following' | 'mentionedUsers' | 'subscribers';
+
+  /**
+   * The scope of the post.
+   */
+  scope?: {
+    /**
+     * Indicates if this Tweet is viewable by followers without the Tweet ID
+     * @example false
+     */
+    followers?: boolean;
+  }
+
+  /**
+   * Indicates withholding details for withheld content.
+   */
+  withheld?: {
+    /**
+     * Indicates if the content is being withheld for on the basis of copyright infringement.
+     * @example false
+     */
+    copyright: boolean;
+    /**
+     * Provides a list of countries where this content is not available.
+     * A two-letter ISO 3166-1 alpha-2 country code.
+     */
+    country_codes: string[];
+    /**
+     * Indicates whether the content being withheld is the tweet or a user.
+     */
+    scope?: 'tweet' | 'user';
+  }
 };
 
 export interface IGetPostsResponseIncludes {
