@@ -1,4 +1,4 @@
-import { IBaseResponse } from '../base_response';
+import { IBaseResponse, IErrorResponse } from '../base_response';
 
 /**
  * Represents the data object for a media item.
@@ -104,4 +104,5 @@ interface IUploadSource {
   upload_source: string;
 }
 
-export interface IAddMetadataResponse extends IBaseResponse<IMediaData>{};
+export interface ISuccessAddMetadataResponse extends IBaseResponse<IMediaData>{};
+export type IAddMetadataResponse = ISuccessAddMetadataResponse | IErrorResponse;

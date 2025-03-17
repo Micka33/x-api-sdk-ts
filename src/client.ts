@@ -13,6 +13,8 @@ import { Posts } from './api/posts';
 import { Media } from './api/media';
 import { Users } from './api/users';
 import { Likes } from './api/likes';
+import { IHttpAdapter } from './interfaces/IHttpAdapter';
+import { FetchAdapter } from './adapters/fetch-adapter';
 
 /**
  * Configuration for the Twitter client.
@@ -26,14 +28,15 @@ export type ITwitterClientConfig = {
  * The main client for interacting with the Twitter API.
  */
 export class TwitterClient implements ITwitterClient {
-  private oAuth1: IOAuth1Auth;
-  private oAuth2: IOAuth2Auth;
+  public readonly oAuth1: IOAuth1Auth;
+  public readonly oAuth2: IOAuth2Auth;
   private baseUrl: string;
   private requestClient: IRequestClient;
-  public posts: IPosts;
-  public media: IMedia;
-  public users: IUsers;
-  public likes: ILikes;
+  private httpAdapter: IHttpAdapter;
+  public readonly posts: IPosts;
+  public readonly media: IMedia;
+  public readonly users: IUsers;
+  public readonly likes: ILikes;
 
   /**
    * Creates a new TwitterClient instance.
@@ -44,23 +47,28 @@ export class TwitterClient implements ITwitterClient {
    */
   constructor(
     private config: ITwitterClientConfig,
-    apiModules?: {
-      posts?: IPosts;
-      media?: IMedia;
-      users?: IUsers;
-      likes?: ILikes;
-    } | null,
-    requestClient?: IRequestClient,
-    auth?: {
-      oAuth1?: IOAuth1Auth;
-      oAuth2?: IOAuth2Auth;
-    } | null,
-    baseUrl?: string | null,
+    options?: {
+      baseUrl?: string | null,
+      httpAdapter?: IHttpAdapter,
+      requestClient?: IRequestClient,
+      auth?: {
+        oAuth1?: IOAuth1Auth;
+        oAuth2?: IOAuth2Auth;
+      } | null,
+      apiModules?: {
+        posts?: IPosts;
+        media?: IMedia;
+        users?: IUsers;
+        likes?: ILikes;
+      } | null,
+    },
   ) {
-    this.requestClient = requestClient || new RequestClient();
-    this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);
-    this.oAuth2 = auth?.oAuth2 || new OAuth2Auth(this.config.oAuth2);
+    const { apiModules, requestClient, auth, baseUrl, httpAdapter } = options || {};
     this.baseUrl = baseUrl || 'https://api.twitter.com';
+    this.httpAdapter = httpAdapter || new FetchAdapter();
+    this.requestClient = requestClient || new RequestClient(this.httpAdapter);
+    this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);
+    this.oAuth2 = auth?.oAuth2 || new OAuth2Auth(this.config.oAuth2, this.httpAdapter);
     this.posts = apiModules?.posts || new Posts(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
     this.media = apiModules?.media || new Media(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
     this.users = apiModules?.users || new Users(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);

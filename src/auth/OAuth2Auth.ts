@@ -1,3 +1,4 @@
+import { IHttpAdapter } from 'src/interfaces/IHttpAdapter';
 import type { IOAuth2Auth, IOAuth2Config, IOAuth2Token } from '../interfaces/auth/IOAuth2Auth';
 import { NullablePartial, TwitterApiScope } from '../types/x-api/shared';
 import crypto from 'crypto';
@@ -16,9 +17,11 @@ export class OAuth2Auth implements IOAuth2Auth {
   private refreshToken: string | null;
   private tokenExpiresAt: number | null;
 
-  constructor(config: IOAuth2Config) {
+  constructor(config: IOAuth2Config, private httpAdapter: IHttpAdapter) {
     if (!config.clientId) {
       throw new Error('OAuth2Auth requires a client ID');
+    } else if (!this.httpAdapter) {
+      throw new Error('OAuth2Auth requires a httpAdapter');
     }
     this.clientId = config.clientId;
     this.clientSecret = config.clientSecret;
@@ -102,7 +105,11 @@ export class OAuth2Auth implements IOAuth2Auth {
       params.set('redirect_uri', this.redirectUri);
     }
 
-    const response = await fetch('https://api.twitter.com/2/oauth2/token', {
+    const response = await this.httpAdapter.fetch<{
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+    }>('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -153,7 +160,11 @@ export class OAuth2Auth implements IOAuth2Auth {
       throw new Error('No refresh token available to refresh access token');
     }
 
-    const response = await fetch('https://api.twitter.com/2/oauth2/token', {
+    const response = await this.httpAdapter.fetch<{
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+    }>('https://api.twitter.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

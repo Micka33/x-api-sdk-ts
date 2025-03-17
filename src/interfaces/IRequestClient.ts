@@ -1,3 +1,5 @@
+import { ICustomBaseResponse } from "src/types/x-api/base_response";
+
 /**
  * Request options for the Twitter API.
  */
@@ -24,6 +26,7 @@ export interface RequestOptions {
   withCredentials?: boolean;
 }
 
+
 /**
  * Interface for a client that makes requests to the Twitter API.
  */
@@ -36,7 +39,7 @@ export interface IRequestClient {
    * @param headers - The headers to include
    * @returns A promise that resolves to the response data
    */
-  get<T>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T>;
+  get<T extends ICustomBaseResponse>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T>;
 
   /**
    * Makes a POST request to the Twitter API.
@@ -48,7 +51,7 @@ export interface IRequestClient {
    * @param contentType - The content type of the request body
    * @returns A promise that resolves to the response data
    */
-  post<T>(
+  post<T extends ICustomBaseResponse>(
     url: string,
     body?: any,
     headers?: Record<string, string>,
@@ -65,7 +68,7 @@ export interface IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  put<T>(
+  put<T extends ICustomBaseResponse>(
     url: string,
     body?: any,
     headers?: Record<string, string>,
@@ -80,7 +83,7 @@ export interface IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  delete<T>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T>;
+  delete<T extends ICustomBaseResponse>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T>;
 
   /**
    * Makes a PATCH request to the Twitter API.
@@ -91,7 +94,7 @@ export interface IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  patch<T>(
+  patch<T extends ICustomBaseResponse>(
     url: string,
     body?: any,
     headers?: Record<string, string>,

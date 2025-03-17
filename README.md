@@ -4,6 +4,9 @@
 
 Simple and versatile typescript SDK for X Api.
 
+It is not reccomended to use this SDK in production, but it can be used as a reference for building your own SDK.  
+It is reccomended to use [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk) instead.  
+
 ## Overview
 
 x-sdk-ts is a flexible TypeScript SDK for the Twitter API, providing a type-safe, and intuitive interface to interact with Twitter's v1.1 and v2 endpoints.

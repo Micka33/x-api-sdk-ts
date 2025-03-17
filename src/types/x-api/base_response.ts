@@ -1,13 +1,60 @@
 /**
- * Response type for the POST /2/tweets endpoint.
- * Represents the response when creating a new post.
+ * Information about the rate limit for the request.
  */
-export interface IBaseResponse<T extends object> {
+export interface IRateLimitInfo {
+  /** 
+   * The limit for the endpoint
+   */
+  limit: number;
+  
+  /**
+   * The remaining requests for the endpoint
+   */
+  remaining: number;
+  
+  /**
+   * The time when the rate limit resets
+   */
+  reset: Date;
+}
+
+export interface ICustomBaseResponse {
+  /**
+   * Information about the rate limit for the request.
+   */
+  rateLimitInfo?: IRateLimitInfo;
+}
+
+export interface IErrorResponse extends ICustomBaseResponse {
+  /**
+   * The title of the error.
+   */
+  title: string;
+
+  /**
+   * The type of error.
+   */
+  type: string;
+
+  /**
+   * Detailed description of the error.
+   */
+  detail?: string;
+
+  /**
+   * Additional error details.
+   */
+  errors?: {
+    parameters?: Record<string, string|string[]>;
+    message?: string;
+  }[];
+}
+
+export interface ISuccessResponse<T extends object> extends ICustomBaseResponse {
   /**
    * Data object containing the created post information.
    */
   data: T;
-  
   /**
    * Array of error objects, if any errors occurred.
    * Formatted per the HTTP Problem Details standard (IETF RFC 7807).
@@ -33,24 +80,6 @@ export interface IBaseResponse<T extends object> {
      */
     status?: number;
   }>;
-
-  /**
-   * Information about the rate limit for the request.
-   */
-  rateLimitInfo?: {
-    /** 
-     * The limit for the endpoint
-     */
-    limit: number;
-    
-    /**
-     * The remaining requests for the endpoint
-     */
-    remaining: number;
-    
-    /**
-     * The time when the rate limit resets
-     */
-    reset: Date;
-  }
 }
+
+export type IBaseResponse<T extends object> = ISuccessResponse<T>;

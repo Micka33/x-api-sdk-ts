@@ -1,3 +1,4 @@
+import { IErrorResponse } from "src/types/x-api/base_response";
 import type { IMedia } from "../interfaces/api/IMedia";
 import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
 import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
@@ -5,7 +6,7 @@ import type { IRequestClient } from "../interfaces/IRequestClient";
 import type { IAddMetadataResponse } from "../types/x-api/media/add_metadata_response";
 import type { IGetUploadStatusResponse } from "../types/x-api/media/get_upload_status_response";
 import type { IAppendParams, IInitParams, MediaCategory } from "../types/x-api/media/upload_media_query";
-import type { IUploadMediaResponse } from "../types/x-api/media/upload_media_response";
+import type { ISuccessUploadMediaResponse, IUploadMediaResponse } from "../types/x-api/media/upload_media_response";
 
 export class Media implements IMedia {
   constructor(
@@ -32,7 +33,10 @@ export class Media implements IMedia {
   ): Promise<IUploadMediaResponse> {
     // Step 1: INIT - Initialize the upload
     const initResponse = await this.initMediaUpload(media.length, mimeType, category, additionalOwners);
-    const mediaId = initResponse.data.id;
+    if (!(initResponse as ISuccessUploadMediaResponse).data) {
+      return initResponse as IErrorResponse;
+    }
+    const mediaId = (initResponse as ISuccessUploadMediaResponse).data.id;
 
     // Step 2: APPEND - Upload the media in chunks
     const chunkSize = 1024 * 1024; // 1MB chunks
@@ -50,7 +54,7 @@ export class Media implements IMedia {
     const finalizeResponse = await this.finalizeMediaUpload(mediaId);
     
     // Step 4: Check if processing is needed
-    if (finalizeResponse.data.processing_info) {
+    if ((finalizeResponse as ISuccessUploadMediaResponse).data?.processing_info) {
       // If processing is needed, wait for it to complete
       return this.waitForProcessing(mediaId, finalizeResponse);
     }
@@ -265,19 +269,25 @@ export class Media implements IMedia {
    * @private
    */
   private async waitForProcessing(mediaId: string, initialResponse: IUploadMediaResponse): Promise<IUploadMediaResponse> {
-    let response = initialResponse;
-    
+    let response: IUploadMediaResponse = initialResponse;
+    let data = (response as ISuccessUploadMediaResponse).data;
+
     // Keep checking until processing is complete or fails
     while (
-      response.data.processing_info && 
-      ['pending', 'in_progress'].includes(response.data.processing_info.state)
+      response &&
+      data.processing_info && 
+      ['pending', 'in_progress'].includes(data.processing_info.state)
     ) {
       // Wait for the recommended time before checking again
-      const checkAfterSecs = response.data.processing_info.check_after_secs || 1;
+      const checkAfterSecs = data.processing_info?.check_after_secs || 1;
       await new Promise(resolve => setTimeout(resolve, checkAfterSecs * 1000));
       
       // Check status
       response = await this.getUploadStatus(mediaId);
+      data = (response as ISuccessUploadMediaResponse).data;
+      if (!data) {
+        return response as IErrorResponse;
+      }
     }
     
     return response;

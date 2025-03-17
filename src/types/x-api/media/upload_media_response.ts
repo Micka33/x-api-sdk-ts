@@ -1,4 +1,4 @@
-import { IBaseResponse } from "../base_response";
+import { IBaseResponse, IErrorResponse } from "../base_response";
 /**
  * Represents the possible states of a media upload.
  */
@@ -50,4 +50,5 @@ interface IMediaData {
   size?: number;
 }
 
-export interface IUploadMediaResponse extends IBaseResponse<IMediaData> {}
+export interface ISuccessUploadMediaResponse extends IBaseResponse<IMediaData> {}
+export type IUploadMediaResponse = ISuccessUploadMediaResponse | IErrorResponse;

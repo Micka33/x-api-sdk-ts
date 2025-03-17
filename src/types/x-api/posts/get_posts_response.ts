@@ -1,4 +1,4 @@
-import { IBaseResponse } from "../base_response";
+import { IBaseResponse, IErrorResponse } from "../base_response";
 export interface IGetPostsResponseData {
   /**
    * Unique identifier of the post.
@@ -400,9 +400,11 @@ export interface IGetPostsResponse {
  * Response type for the GET /2/tweets/{id} endpoint.
  * Represents the response when retrieving a post by ID.
  */
-export interface IGetPostResponse extends IBaseResponse<IGetPostsResponseData> {
+export interface ISuccessGetPostResponse extends IBaseResponse<IGetPostsResponseData> {
   /**
    * Included objects referenced in the post.
    */
   includes?: IGetPostsResponseIncludes;
 }
+
+export type IGetPostResponse = ISuccessGetPostResponse | IErrorResponse;

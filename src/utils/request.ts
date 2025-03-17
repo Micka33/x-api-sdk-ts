@@ -1,11 +1,16 @@
 import { parseTwitterError } from './error';
-import { parseRateLimitHeaders, RateLimitInfo } from './rate-limit';
+import { parseRateLimitHeaders } from './rate-limit';
 import { RequestOptions, IRequestClient } from '../interfaces/IRequestClient';
+import { IHttpAdapter, IHttpFetchResponse } from '../interfaces/IHttpAdapter';
+import { ICustomBaseResponse, IRateLimitInfo } from 'src/types/x-api/base_response';
 
 /**
  * Client for making requests to the Twitter API.
  */
 export class RequestClient implements IRequestClient {
+
+  constructor(private httpAdapter: IHttpAdapter) {}
+
   /**
    * Makes a GET request to the Twitter API.
    * 
@@ -14,7 +19,7 @@ export class RequestClient implements IRequestClient {
    * @param headers - The headers to include
    * @returns A promise that resolves to the response data
    */
-  public async get<T>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
+  public async get<T extends ICustomBaseResponse>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
     return this.request<T>({
       method: 'GET',
       url,
@@ -32,7 +37,7 @@ export class RequestClient implements IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  public async post<T>(
+  public async post<T extends ICustomBaseResponse>(
     url: string, 
     body?: any, 
     headers?: Record<string, string>, 
@@ -58,7 +63,7 @@ export class RequestClient implements IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  public async put<T>(
+  public async put<T extends ICustomBaseResponse>(
     url: string, 
     body?: any, 
     headers?: Record<string, string>, 
@@ -82,7 +87,7 @@ export class RequestClient implements IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  public async delete<T>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T> {
+  public async delete<T extends ICustomBaseResponse>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T> {
     return this.request<T>({
       method: 'DELETE',
       url,
@@ -100,7 +105,7 @@ export class RequestClient implements IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  public async patch<T>(
+  public async patch<T extends ICustomBaseResponse>(
     url: string, 
     body?: any, 
     headers?: Record<string, string>, 
@@ -122,7 +127,7 @@ export class RequestClient implements IRequestClient {
    * @param options - The request options
    * @returns A promise that resolves to the response data
    */
-  private async request<T>(options: RequestOptions): Promise<T> {
+  private async request<T extends ICustomBaseResponse>(options: RequestOptions): Promise<T> {
     try {
       // Build the URL with query parameters
       const url = this.buildUrl(options.url, options.params);
@@ -151,7 +156,7 @@ export class RequestClient implements IRequestClient {
         }
       }
       
-      const response = await fetch(url, fetchOptions);
+      const response = await this.httpAdapter.fetch<T>(url, fetchOptions);
       
       // Handle the response
       return this.handleResponse<T>(response);
@@ -167,38 +172,21 @@ export class RequestClient implements IRequestClient {
    * @returns The response data
    * @private
    */
-  private async handleResponse<T>(response: Response): Promise<T> {
-    let rateLimitInfo: RateLimitInfo | undefined;
+  private async handleResponse<T extends ICustomBaseResponse>(response: IHttpFetchResponse<T>): Promise<T> {
+    let rateLimitInfo: IRateLimitInfo | undefined;
     // Convert Headers to a plain object
     const headers: Record<string, string> = {};
     response.headers.forEach((value, key) => {
       headers[key] = value;
     });
-    
+
     rateLimitInfo = parseRateLimitHeaders(headers);
-    
-    
-    // Check if the response is successful
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      if (rateLimitInfo) {
-        errorData.rateLimitInfo = rateLimitInfo;
-      }
-      return errorData as unknown as T;
-      // throw parseTwitterError({
-      //   response: {
-      //     status: response.status,
-      //     data: errorData,
-      //     headers
-      //   }
-      // });
-    }
-    
+
     // Handle empty responses (like for APPEND commands)
     if (response.status === 204 || response.headers.get('content-length') === '0') {
       return undefined as unknown as T;
     }
-    
+
     // Parse the response body
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
@@ -206,12 +194,12 @@ export class RequestClient implements IRequestClient {
       if (rateLimitInfo) {
         jsonObject.rateLimitInfo = rateLimitInfo;
       }
-      return jsonObject as unknown as T;
+      return {...jsonObject, rateLimitInfo } as unknown as T;
     } else {
       return response.text() as unknown as T;
     }
   }
-  
+
   /**
    * Builds a URL with query parameters.
    * 
@@ -241,7 +229,7 @@ export class RequestClient implements IRequestClient {
     
     return url.toString();
   }
-  
+
   /**
    * Builds a form data object from parameters.
    * 

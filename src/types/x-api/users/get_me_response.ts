@@ -1,4 +1,4 @@
-import { IBaseResponse } from '../base_response';
+import { IBaseResponse, IErrorResponse } from '../base_response';
 
 /**
  * Represents a Twitter User object.
@@ -469,4 +469,5 @@ interface IWithheld {
   scope?: 'user';
 }
 
-export interface IGetMeResponse extends IBaseResponse<IUser> {}
+export interface ISuccessGetMeResponse extends IBaseResponse<IUser> {}
+export type IGetMeResponse = ISuccessGetMeResponse | IErrorResponse;

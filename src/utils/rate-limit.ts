@@ -1,16 +1,4 @@
-/**
- * Information about a rate limit.
- */
-export interface RateLimitInfo {
-  /** The limit for the endpoint */
-  limit: number;
-  
-  /** The remaining requests for the endpoint */
-  remaining: number;
-  
-  /** The time when the rate limit resets */
-  reset: Date;
-}
+import { RateLimitInfo } from "src/interfaces/IRequestClient";
 
 /**
  * Parses rate limit headers from a Twitter API response.
