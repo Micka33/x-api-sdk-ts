@@ -1,6 +1,9 @@
 import { TwitterClient } from '../dist/index.js';
 import { TwitterApiScope } from '../dist/index.js';
+import { AxiosAdapter } from '../dist/index.js';
 import { createInterface } from 'readline';
+import axios from 'axios';
+axios.defaults.adapter = 'http';
 
 const readline = createInterface({
   input: process.stdin,
@@ -18,34 +21,35 @@ const accessToken = null;
 const refreshToken = null;
 const tokenExpiresAt = null;
 
+const httpAdapter = new AxiosAdapter(axios); // default is `new FetchAdapter()`
+
 // Initialize the Twitter client
 const twitterClient = new TwitterClient({
   oAuth1: { apiKey: '', apiSecret: '' },
   oAuth2: { clientId, clientSecret, scopes, redirectUri, accessToken, refreshToken, tokenExpiresAt },
-});
-
-// Generate authorization URL
-const authorizeUrl = twitterClient.oAuth2.generateAuthorizeUrl();
-
-console.log('Please visit this URL to authorize your application:');
-console.log(authorizeUrl);
+}, { httpAdapter });
 
 // Check if the access token was provided in the config
 if (!twitterClient.oAuth2.getToken().accessToken) {
 
-// if not, prompt for authorization code and exchange it for tokens
-readline.question('Please enter the authorization code from the browser: ', async (code) => {
-  try {
-    // Exchange the code for tokens using OAuth2Auth
-    await twitterClient.oAuth2.exchangeAuthCodeForToken(code);
-    // Display the token information and get user info
-    await displayTokenInfoAndGetUserInfo()
-  } catch (error) {
-    console.error('Error:', error.message);
-  } finally {
-    readline.close();
-  }
-});
+  // Generate authorization URL
+  const authorizeUrl = twitterClient.oAuth2.generateAuthorizeUrl();
+  console.log('Please visit this URL to authorize your application:');
+  console.log(authorizeUrl);
+
+  // Prompt for authorization code and exchange it for tokens
+  readline.question('Please enter the authorization code from the browser: ', async (code) => {
+    try {
+      // Exchange the code for tokens using OAuth2Auth
+      await twitterClient.oAuth2.exchangeAuthCodeForToken(code);
+      // Display the token information and get user info
+      await displayTokenInfoAndGetUserInfo()
+    } catch (error) {
+      console.error('Error:', error.message);
+    } finally {
+      readline.close();
+    }
+  });
 
 
 } else {
@@ -71,7 +75,7 @@ async function displayTokenInfoAndGetUserInfo() {
   console.log('Expires In (seconds):', Math.floor((tokenExpiresAt - Date.now()) / 1000));
 
   // Get user information as an example
-  const response = await twitterClient.users.getMe();
+  const response = await twitterClient.users.getMe(['id', 'name', 'username']);
   console.log('User:', response.data);
   if (response.errors) {
     console.log('errors:', JSON.stringify(response.errors, null, 2));
@@ -81,9 +85,12 @@ async function displayTokenInfoAndGetUserInfo() {
   }
 
   // Uncomment to post a tweet as an example
-  // const tweetResponse = await twitterClient.posts.createPost('Hello World!');
-  // console.log('Tweet:', tweetResponse.data);
-  // if (tweetResponse.errors) {
-  //   console.log('errors:', JSON.stringify(tweetResponse.errors, null, 2));
+  // response = await twitterClient.posts.createPost('Hello World!');
+  // console.log('Tweet:', response.data);
+  // if (response.errors) {
+  //   console.log('errors:', JSON.stringify(response.errors, null, 2));
+  // }
+  // if (response.rateLimitInfo) {
+  //   console.log('rateLimitInfo:', response.rateLimitInfo);
   // }
 }
