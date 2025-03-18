@@ -80,13 +80,15 @@ describe('TwitterClient', () => {
     client = new TwitterClient(
       { oAuth1: oAuth1Config, oAuth2: oAuth2Config },
       {
-        posts: {} as any,
-        media: {} as any,
-        users: {} as any,
-        likes: {} as any,
-      },
-      mockRequestClient,
-      mockAuth,
+        apiModules: {
+          posts: {} as any,
+          media: {} as any,
+          users: {} as any,
+          likes: {} as any,
+        },
+        requestClient: mockRequestClient,
+        auth: mockAuth,
+      }
     );
   });
 
