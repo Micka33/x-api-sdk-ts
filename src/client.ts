@@ -64,7 +64,7 @@ export class TwitterClient implements ITwitterClient {
     },
   ) {
     const { apiModules, requestClient, auth, baseUrl, httpAdapter } = options || {};
-    this.baseUrl = baseUrl || 'https://api.twitter.com';
+    this.baseUrl = baseUrl || 'https://api.x.com';
     this.httpAdapter = httpAdapter || new FetchAdapter();
     this.requestClient = requestClient || new RequestClient(this.httpAdapter);
     this.oAuth1 = auth?.oAuth1 || new OAuth1Auth(this.config.oAuth1);

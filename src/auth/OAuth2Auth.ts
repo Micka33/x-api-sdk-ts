@@ -84,7 +84,7 @@ export class OAuth2Auth implements IOAuth2Auth {
     if (this.redirectUri) {
       params.set('redirect_uri', this.redirectUri);
     }
-    return `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+    return `https://x.com/i/oauth2/authorize?${params.toString()}`;
   }
 
   /**
@@ -109,7 +109,7 @@ export class OAuth2Auth implements IOAuth2Auth {
       access_token: string;
       refresh_token: string;
       expires_in: number;
-    }>('https://api.twitter.com/2/oauth2/token', {
+    }>('https://api.x.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -160,18 +160,22 @@ export class OAuth2Auth implements IOAuth2Auth {
       throw new Error('No refresh token available to refresh access token');
     }
 
+    // Generate the Basic Auth header
+    const authHeader = 'Basic ' + Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
+
     const response = await this.httpAdapter.fetch<{
       access_token: string;
       refresh_token: string;
       expires_in: number;
-    }>('https://api.twitter.com/2/oauth2/token', {
+    }>('https://api.x.com/2/oauth2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': authHeader,
       },
       body: new URLSearchParams({
-        grant_type: 'refresh_token',
         refresh_token: this.refreshToken,
+        grant_type: 'refresh_token',
         client_id: this.clientId,
       }),
     });
