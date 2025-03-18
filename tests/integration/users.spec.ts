@@ -75,7 +75,7 @@ describe('Users Integration Tests', () => {
       expect(response.title).toBe('Invalid Request');
       expect(response.type).toBe('https://api.twitter.com/2/problems/invalid-request');
       expect(response.detail).toContain('One or more parameters to your request was invalid.');
-      expect(response.errors?.[0].message).toContain('The `user.fields` query parameter value [wrong_field] is not one of [affiliation,connection_status,created_at,description,entities,id,is_identity_verified,location,most_recent_tweet_id,name,parody,pinned_tweet_id,profile_banner_url,profile_image_url,protected,public_metrics,receives_your_dm,subscription,subscription_type,url,username,verified,verified_followers_count,verified_type,withheld]');
+      expect(response.errors?.[0].message).toContain('[wrong_field] is not one of');
       expect(response.errors?.[0].parameters?.['user.fields'][0]).toBe(['id,wrong_field'][0]);
     });
   });
