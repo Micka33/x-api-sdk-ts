@@ -1,4 +1,4 @@
-import { RateLimitInfo } from "src/interfaces/IRequestClient";
+import { IRateLimitInfo } from "../types/x-api/base_response";
 
 /**
  * Parses rate limit headers from a Twitter API response.
@@ -6,7 +6,7 @@ import { RateLimitInfo } from "src/interfaces/IRequestClient";
  * @param headers - The response headers
  * @returns Rate limit information or undefined if not available
  */
-export function parseRateLimitHeaders(headers: Record<string, string>): RateLimitInfo | undefined {
+export function parseRateLimitHeaders(headers: Record<string, string>): IRateLimitInfo | undefined {
   const limit = headers['x-rate-limit-limit'];
   const remaining = headers['x-rate-limit-remaining'];
   const reset = headers['x-rate-limit-reset'];
@@ -24,7 +24,7 @@ export function parseRateLimitHeaders(headers: Record<string, string>): RateLimi
  * @param rateLimitInfo - The rate limit information
  * @returns Whether the rate limit has been exceeded
  */
-export function isRateLimitExceeded(rateLimitInfo?: RateLimitInfo): boolean {
+export function isRateLimitExceeded(rateLimitInfo?: IRateLimitInfo): boolean {
   if (!rateLimitInfo) {
     return false;
   }
@@ -38,7 +38,7 @@ export function isRateLimitExceeded(rateLimitInfo?: RateLimitInfo): boolean {
  * @param rateLimitInfo - The rate limit information
  * @returns The time until the rate limit resets in milliseconds
  */
-export function getTimeUntilReset(rateLimitInfo?: RateLimitInfo): number {
+export function getTimeUntilReset(rateLimitInfo?: IRateLimitInfo): number {
   if (!rateLimitInfo) {
     return 0;
   }

@@ -2,6 +2,11 @@
 export { TwitterClient } from './client';
 export type { ITwitterClientConfig } from './client';
 
+// Export Http Adapters
+export type { IHttpAdapter } from './interfaces/IHttpAdapter';
+export { AxiosAdapter } from './adapters/axios-adapter';
+export { FetchAdapter } from './adapters/fetch-adapter';
+
 // Export apis
 export { Posts } from './api/posts';
 export { Media } from './api/media';
@@ -54,9 +59,8 @@ export type { IGetMeResponse } from './types/x-api/users/get_me_response';
 export type { TweetField, UserField, NullablePartial } from './types/x-api/shared';
 export { TwitterApiScope } from './types/x-api/shared';
 // base_response
-export type { IBaseResponse } from './types/x-api/base_response';
+export type { IBaseResponse, ICustomBaseResponse, IRateLimitInfo, IErrorResponse, ISuccessResponse } from './types/x-api/base_response';
 
 // Export utilities
 export { TwitterError, TwitterAPIError, RateLimitError, AuthenticationError } from './utils/error';
 export { parseRateLimitHeaders, isRateLimitExceeded, getTimeUntilReset } from './utils/rate-limit';
-export type { RateLimitInfo } from './utils/rate-limit';

@@ -358,48 +358,6 @@ export interface IGetPostsResponseIncludes {
  * Response type for the GET /2/tweets/{id} endpoint.
  * Represents the response when retrieving a post by ID.
  */
-export interface IGetPostsResponse {
-  /**
-   * Data object containing the post information.
-   */
-  data: IGetPostsResponseData[];
-  
-  /**
-   * Included objects referenced in the post.
-   */
-  includes?: IGetPostsResponseIncludes;
-  
-  /**
-   * Array of error objects, if any errors occurred.
-   * Formatted per the HTTP Problem Details standard (IETF RFC 7807).
-   */
-  errors?: Array<{
-    /**
-     * The title of the error.
-     */
-    title: string;
-    
-    /**
-     * The type of error.
-     */
-    type: string;
-    
-    /**
-     * Detailed description of the error.
-     */
-    detail?: string;
-    
-    /**
-     * HTTP status code associated with the error.
-     */
-    status?: number;
-  }>;
-}
-
-/**
- * Response type for the GET /2/tweets/{id} endpoint.
- * Represents the response when retrieving a post by ID.
- */
 export interface ISuccessGetPostResponse extends IBaseResponse<IGetPostsResponseData> {
   /**
    * Included objects referenced in the post.
@@ -407,4 +365,16 @@ export interface ISuccessGetPostResponse extends IBaseResponse<IGetPostsResponse
   includes?: IGetPostsResponseIncludes;
 }
 
+/**
+ * Response type for the GET /2/tweets/{id} endpoint.
+ * Represents the response when retrieving a post by ID.
+ */
+export interface ISuccessGetPostsResponse extends IBaseResponse<IGetPostsResponseData[]> {
+  /**
+   * Included objects referenced in the post.
+   */
+  includes?: IGetPostsResponseIncludes;
+}
+
 export type IGetPostResponse = ISuccessGetPostResponse | IErrorResponse;
+export type IGetPostsResponse = ISuccessGetPostsResponse | IErrorResponse;
