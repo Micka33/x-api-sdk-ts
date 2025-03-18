@@ -17,7 +17,6 @@ export class AxiosAdapter implements IHttpAdapter {
       signal: options?.signal || undefined,
     };
 
-    this.axiosInstance.prototype.constructor.isAxiosError()
     try {
       const response: AxiosResponse<T> = await this.axiosInstance(url, axiosConfig);
       // Return an object that matches IHttpFetchResponse
