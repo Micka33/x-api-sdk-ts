@@ -7,9 +7,9 @@ import { IRateLimitInfo } from "../types/x-api/base_response";
  * @returns Rate limit information or undefined if not available
  */
 export function parseRateLimitHeaders(headers: Record<string, string>): IRateLimitInfo | undefined {
-  const limit = headers['x-rate-limit-limit'];
-  const remaining = headers['x-rate-limit-remaining'];
-  const reset = headers['x-rate-limit-reset'];
+  const limit = headers['x-rate-limit-24hour-limit'];
+  const remaining = headers['x-rate-limit-24hour-remaining'];
+  const reset = headers['x-rate-limit-24hour-reset'];
 
   return {
     limit: parseInt(limit, 10),
