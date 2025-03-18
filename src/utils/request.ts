@@ -186,7 +186,6 @@ export class RequestClient implements IRequestClient {
     if (response.status === 204 || response.headers.get('content-length') === '0') {
       return undefined as unknown as T;
     }
-    console.log('response.headers', JSON.stringify(response.headers, null, 2));
 
     // Parse the response body
     const contentType = response.headers.get('content-type');
