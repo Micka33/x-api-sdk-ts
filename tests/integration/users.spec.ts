@@ -1,4 +1,4 @@
-import { AxiosAdapter, TwitterApiScope, TwitterClient } from '../../src';
+import { AxiosAdapter, IHttpAdapter, TwitterApiScope, TwitterClient } from '../../src';
 import path from 'path';
 import nock from 'nock';
 import dotenv from 'dotenv';
@@ -27,7 +27,7 @@ describe('Users Integration Tests', () => {
       oAuth1: { apiKey, apiSecret },
       oAuth2: { clientId, clientSecret, scopes, redirectUri, accessToken, refreshToken, tokenExpiresAt },
     };
-    let httpAdapter: AxiosAdapter | undefined;
+    let httpAdapter: IHttpAdapter | undefined;
     if (!recordingMode) {
       /**
        * Only use http adapter in non recording mode.
