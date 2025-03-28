@@ -85,7 +85,7 @@ async function displayTokenInfoAndGetUserInfo() {
   }
 
   // Uncomment to post a tweet as an example
-  // response = await twitterClient.posts.createPost('Hello World!');
+  // response = await twitterClient.posts.create('Hello World!');
   // console.log('Tweet:', response.data);
   // if (response.errors) {
   //   console.log('errors:', JSON.stringify(response.errors, null, 2));
