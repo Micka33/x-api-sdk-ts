@@ -33,7 +33,7 @@ export class Posts implements IPosts {
    * });
    * ```
    */
-  async createPost(text: string, options?: IPostOptions): Promise<ICreatePostResponse> {
+  async create(text: string, options?: IPostOptions): Promise<ICreatePostResponse> {
     // Prepare request body
     const requestBody: ICreatePostQuery = {
       text
@@ -86,7 +86,7 @@ export class Posts implements IPosts {
    * }
    * ```
    */
-  async deletePost(id: string): Promise<IDeletePostResponse> {
+  async delete(id: string): Promise<IDeletePostResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
@@ -117,7 +117,7 @@ export class Posts implements IPosts {
    * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
    * ```
    */
-  async getPost(id: string, options?: {
+  async get(id: string, options?: {
     tweetFields?: TweetField[];
     expansions?: ExpansionPost[];
     mediaFields?: MediaField[];
@@ -181,7 +181,7 @@ export class Posts implements IPosts {
    * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data[0].text}`);
    * ```
    */
-  async getPosts(ids: string[], options?: {
+  async getMultiple(ids: string[], options?: {
     tweetFields?: TweetField[];
     expansions?: ExpansionPost[];
     mediaFields?: MediaField[];

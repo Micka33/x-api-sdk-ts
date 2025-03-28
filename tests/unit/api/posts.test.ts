@@ -66,7 +66,7 @@ describe('Posts', () => {
       (mockRequestClient.post as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.createPost(text);
+      const result = await posts.create(text);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -105,7 +105,7 @@ describe('Posts', () => {
       (mockRequestClient.post as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.createPost(text, options);
+      const result = await posts.create(text, options);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -136,7 +136,7 @@ describe('Posts', () => {
       (mockRequestClient.post as jest.Mock).mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
-      await expect(posts.createPost(text))
+      await expect(posts.create(text))
         .rejects.toThrow('Failed to create post');
 
       // Assertions
@@ -159,7 +159,7 @@ describe('Posts', () => {
       (mockRequestClient.delete as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.deletePost(postId) as ISuccessDeletePostResponse;
+      const result = await posts.delete(postId) as ISuccessDeletePostResponse;
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -184,7 +184,7 @@ describe('Posts', () => {
       (mockRequestClient.delete as jest.Mock).mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
-      await expect(posts.deletePost(postId))
+      await expect(posts.delete(postId))
         .rejects.toThrow('Failed to delete post');
 
       // Assertions
@@ -208,7 +208,7 @@ describe('Posts', () => {
       (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.getPost(postId);
+      const result = await posts.get(postId);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -261,7 +261,7 @@ describe('Posts', () => {
       (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.getPost(postId, options);
+      const result = await posts.get(postId, options);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -290,7 +290,7 @@ describe('Posts', () => {
       (mockRequestClient.get as jest.Mock).mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
-      await expect(posts.getPost(postId))
+      await expect(posts.get(postId))
         .rejects.toThrow('Failed to get post');
 
       // Assertions
@@ -320,7 +320,7 @@ describe('Posts', () => {
       (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.getPosts(postIds);
+      const result = await posts.getMultiple(postIds);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -388,7 +388,7 @@ describe('Posts', () => {
       (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       // Call the method
-      const result = await posts.getPosts(postIds, options);
+      const result = await posts.getMultiple(postIds, options);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -418,7 +418,7 @@ describe('Posts', () => {
       (mockRequestClient.get as jest.Mock).mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
-      await expect(posts.getPosts(postIds))
+      await expect(posts.getMultiple(postIds))
         .rejects.toThrow('Failed to get posts');
 
       // Assertions

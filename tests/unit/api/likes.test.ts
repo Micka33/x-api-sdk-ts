@@ -59,7 +59,7 @@ describe('Likes', () => {
       mockRequestClient.post = jest.fn().mockResolvedValue(mockResponse);
 
       // Call the method
-      const result = await likes.likePost(userId, postId);
+      const result = await likes.add(userId, postId);
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -86,7 +86,7 @@ describe('Likes', () => {
       mockRequestClient.post = jest.fn().mockRejectedValue(mockError);
 
       // Call the method and expect it to throw
-      await expect(likes.likePost(userId, postId)).rejects.toThrow('API Error');
+      await expect(likes.add(userId, postId)).rejects.toThrow('API Error');
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -103,7 +103,7 @@ describe('Likes', () => {
       mockOAuth2.getHeaders = jest.fn().mockRejectedValue(mockAuthError);
 
       // Call the method and expect it to throw
-      await expect(likes.likePost(userId, postId)).rejects.toThrow('Authentication failed');
+      await expect(likes.add(userId, postId)).rejects.toThrow('Authentication failed');
 
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);

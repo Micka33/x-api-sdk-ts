@@ -25,7 +25,7 @@ export class Media implements IMedia {
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
    * @returns A promise that resolves to the uploaded media
    */
-  public async uploadMedia(
+  public async upload(
     media: Buffer, 
     mimeType: string, 
     category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', 
@@ -68,7 +68,7 @@ export class Media implements IMedia {
    * @param mediaId - Media id for the requested media upload status.
    * @returns A promise that resolves to the uploaded media
    */
-  public async getUploadStatus(mediaId: string): Promise<IGetUploadStatusResponse> {
+  public async getStatus(mediaId: string): Promise<IGetUploadStatusResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
@@ -283,7 +283,7 @@ export class Media implements IMedia {
       await new Promise(resolve => setTimeout(resolve, checkAfterSecs * 1000));
       
       // Check status
-      response = await this.getUploadStatus(mediaId);
+      response = await this.getStatus(mediaId);
       data = (response as ISuccessUploadMediaResponse).data;
       if (!data) {
         return response as IErrorResponse;

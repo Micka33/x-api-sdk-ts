@@ -16,7 +16,7 @@ export interface IMedia {
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
    * @returns A promise that resolves to the uploaded media
    */
-  uploadMedia(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<IUploadMediaResponse>;
+  upload(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<IUploadMediaResponse>;
 
   /**
    * Get MediaUpload Status.
@@ -24,7 +24,7 @@ export interface IMedia {
    * @param mediaId - Media id for the requested media upload status.
    * @returns A promise that resolves to the uploaded media
    */
-  getUploadStatus(mediaId: string): Promise<IGetUploadStatusResponse>;
+  getStatus(mediaId: string): Promise<IGetUploadStatusResponse>;
 
   /**
    * Adds metadata to an uploaded media.

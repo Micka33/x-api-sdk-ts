@@ -20,7 +20,7 @@ export class Likes implements ILikes {
    * @param postId - The ID of the post to like
    * @returns A promise that resolves to the like post response
    */
-  async likePost(userId: string, postId: string): Promise<ILikePostResponse> {
+  async add(userId: string, postId: string): Promise<ILikePostResponse> {
     const headers = await this.oAuth2.getHeaders();
     const data: ILikePostQuery = {
       tweet_id: postId

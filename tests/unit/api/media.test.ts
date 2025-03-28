@@ -80,7 +80,7 @@ describe('Media', () => {
         .mockResolvedValueOnce(finalizeResponse); // FINALIZE
       
       // Call the method
-      const result = await media.uploadMedia(mediaBuffer, mimeType, category);
+      const result = await media.upload(mediaBuffer, mimeType, category);
       
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(3); // Once for each step
@@ -203,7 +203,7 @@ describe('Media', () => {
       });
       
       // Call the method
-      const result = await media.uploadMedia(mediaBuffer, mimeType, category);
+      const result = await media.upload(mediaBuffer, mimeType, category);
       
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(5); // 3 for upload steps, 2 for status checks
@@ -231,7 +231,7 @@ describe('Media', () => {
       (mockRequestClient.post as jest.Mock).mockRejectedValueOnce(mockError);
       
       // Call the method and expect it to throw
-      await expect(media.uploadMedia(mediaBuffer, mimeType, category))
+      await expect(media.upload(mediaBuffer, mimeType, category))
         .rejects.toThrow('Upload failed');
       
       // Assertions
@@ -261,7 +261,7 @@ describe('Media', () => {
       (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
       
       // Call the method
-      const result = await media.getUploadStatus(mediaId);
+      const result = await media.getStatus(mediaId);
       
       // Assertions
       expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
@@ -283,7 +283,7 @@ describe('Media', () => {
       (mockRequestClient.get as jest.Mock).mockRejectedValueOnce(mockError);
       
       // Call the method and expect it to throw
-      await expect(media.getUploadStatus(mediaId))
+      await expect(media.getStatus(mediaId))
         .rejects.toThrow('Status check failed');
       
       // Assertions

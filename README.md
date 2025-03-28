@@ -4,31 +4,33 @@
 
 Simple and versatile typescript SDK for X Api.
 
-It is not reccomended to use this SDK in production, but it can be used as a reference for building your own SDK.  
-It is reccomended to use [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk) instead.  
+I don't recommend using this SDK in production, but it can be used as a reference for building your own SDK.  
+I recommend to use [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk) instead.  
 
 ## Overview
 
-x-sdk-ts is a flexible TypeScript SDK for the Twitter API, providing a type-safe, and intuitive interface to interact with Twitter's v1.1 and v2 endpoints.
+x-sdk-ts is a flexible TypeScript SDK for the Twitter API, providing a type-safe, and intuitive interface to interact with v2 endpoints.  
+
+Twitter's v1.1 endpoints are not supported, but can be implemented. *if this is something you need, please open an issue.*  
 
 ## Features
 
 - Full TypeScript type definitions of supported endpoints.
-- Partial implementation of Twitter API v1.1 and v2 endpoints.
-- Support authentication for OAuth 1.0a (v1.1) and OAuth 2.0 (v2).
+- Partial implementation of Twitter API v2 endpoints.
+- Support authentication for OAuth 2.0 (v2).
 - Modular architecture for easy customization and extension using depencencies injection.
-- Only 1 dependency to [oauth-1.0a](https://github.com/ddo/oauth-1.0a) to support OAuth 1.0a (v1.1).
 - Supported v2 endpoints:
   - Media
-    - Upload media
-    - Get upload status
-    - Add metadata to media
+    - Upload
+    - Get status
+    - Add metadata
   - Posts
-    - Create a post
-    - Get one or several posts at once
-    - Delete a post
+    - Create
+    - Get
+    - GetMultiple
+    - Delete
   - Likes
-    - Like a post
+    - Add
   - Users
     - Get information about the authenticated user
 
@@ -46,7 +48,8 @@ See: [examples/generate-oauth2-token.js](https://github.com/Micka33/x-sdk-ts/blo
 
 ## Authentication
 
-The SDK supports both OAuth 1.0a (for v1.1 API) and OAuth 2.0 (for v2 API).
+The SDK supports OAuth 2.0 (for v2 API).  
+*It is designed to be easily extendable to support OAuth 1.0a (for v1.1 API) in the future. if this is something you need, please open an issue.*
 
 ```typescript
 const clientId = 'input_client_id_here';
@@ -81,7 +84,7 @@ twitterClient.oAuth2.setToken(accessToken, refreshToken, tokenExpiresAt);
 ## Media Upload Example
 
 ```typescript
-const media = await twitterClient.media.uploadMedia(
+const media = await twitterClient.media.upload(
   Buffer.from(fs.readFileSync('path/to/media/doge.jpeg')),
   'image/jpeg',
   'tweet_image'
@@ -92,7 +95,7 @@ const mediaId = media.data.id;
 ## Get Media Upload Status Example
 
 ```typescript
-const media = await twitterClient.media.getMediaUploadStatus(mediaId);
+const media = await twitterClient.media.getUploadStatus(mediaId);
 const mediaStatus = media.data.processing_info.state; // 'succeeded' | 'in_progress' | 'pending' | 'failed'
 ```
 
@@ -112,7 +115,7 @@ const mediaMetadata = await twitterClient.media.addMetadata(
 ## Create Post Example
 
 ```typescript
-const post = await twitterClient.posts.createPost(
+const post = await twitterClient.posts.create(
   'Hello World!',
   {
     media: { media_ids: [mediaId] },
@@ -124,13 +127,13 @@ const postId = post.data.id;
 ## Delete Post Example
 
 ```typescript
-await twitterClient.posts.deletePost(postId);
+await twitterClient.posts.delete(postId);
 ```
 
 ## Get One Post Example
 
 ```typescript
-const post = await twitterClient.posts.getPost(postId, {
+const post = await twitterClient.posts.get(postId, {
   mediaFields: ['alt_text', 'type', 'url', 'media_key'],
 });
 const postId = post.data.id;
@@ -144,7 +147,7 @@ const otherpostMediaKey = post.includes?.media?.[0].media_keys?.[0];
 ## Get Several Posts Example
 
 ```typescript
-const posts = await twitterClient.posts.getPosts([postId1, postId2, postId3], {
+const posts = await twitterClient.posts.getMultiple([postId1, postId2, postId3], {
   mediaFields: ['alt_text', 'type', 'url', 'media_key'],
 });
 const post1 = posts.data[0];
@@ -155,7 +158,7 @@ const post3 = posts.data[2];
 ## Like Post Example
 
 ```typescript
-const like = await twitterClient.posts.likePost(postId);
+const like = await twitterClient.likes.add(postId);
 const liked = like.data.liked;
 ```
 
@@ -168,11 +171,9 @@ const userName = user.data.name;
 const userUsername = user.data.username;
 ```
 
-## Documentation
+## Development Documentation
 
-<!-- 
-For detailed documentation, see the [API Documentation](https://micka33.github.io/x-sdk-ts/).
--->
+See [Development Documentation](https://github.com/Micka33/x-sdk-ts/blob/main/DEVELOPMENT.md).
 
 ## Contributing
 

@@ -14,5 +14,5 @@ export interface ILikes {
    * @param postId - The ID of the post to like
    * @returns A promise that resolves when the post is liked
    */
-  likePost(userId: string, postId: string): Promise<ILikePostResponse>;
+  add(userId: string, postId: string): Promise<ILikePostResponse>;
 }

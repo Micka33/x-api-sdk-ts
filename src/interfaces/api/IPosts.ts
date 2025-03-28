@@ -1,6 +1,7 @@
 import { IDeletePostResponse } from '../../types/x-api/posts/delete_post_response';
 import { IGetPostResponse, IGetPostsResponse } from '../../types/x-api/posts/get_posts_response';
 import { ICreatePostResponse } from '../../types/x-api/posts/create_post_response';
+import { AuthenticationError } from 'src/utils/error';
 
 /**
  * Options for posting a tweet.
@@ -73,7 +74,7 @@ export interface IPosts {
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
    */
-  createPost(text: string, options?: IPostOptions): Promise<ICreatePostResponse>;
+  create(text: string, options?: IPostOptions): Promise<ICreatePostResponse>;
 
   /**
    * Retrieves a post by its ID.
@@ -93,7 +94,7 @@ export interface IPosts {
    * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
    * ```
    */
-  getPost(id: string, options?: {
+  get(id: string, options?: {
     tweetFields?: string[];
     expansions?: string[];
     mediaFields?: string[];
@@ -120,7 +121,7 @@ export interface IPosts {
    * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
    * ```
    */
-  getPosts(ids: string[], options?: {
+  getMultiple(ids: string[], options?: {
     tweetFields?: string[];
     expansions?: string[];
     mediaFields?: string[];
@@ -135,5 +136,5 @@ export interface IPosts {
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
-  deletePost(id: string): Promise<IDeletePostResponse>;
+  delete(id: string): Promise<IDeletePostResponse>;
 }
