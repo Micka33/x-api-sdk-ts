@@ -9,7 +9,7 @@ import type { UserField, TweetField } from "../types/x-api/shared";
 export class Users implements IUsers {
   constructor(
     private readonly baseUrl: string,
-    private readonly oAuth1: IOAuth1Auth,
+    private readonly oAuth1: IOAuth1Auth | undefined,
     private readonly oAuth2: IOAuth2Auth,
     private readonly requestClient: IRequestClient
   ) {}

@@ -11,7 +11,7 @@ import { IOAuth1Auth } from './auth/IOAuth1Auth';
  */
 export interface ITwitterClient {
   /** The OAuth1 authentication provider */
-  oAuth1: IOAuth1Auth;
+  oAuth1: IOAuth1Auth | undefined;
   /** The OAuth2 authentication provider */
   oAuth2: IOAuth2Auth;
   /** Module for interacting with tweets */

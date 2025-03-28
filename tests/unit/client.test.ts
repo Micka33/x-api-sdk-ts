@@ -1,8 +1,8 @@
 import {
-  IOAuth1Auth,
-  IOAuth1AuthorizationHeaders,
-  IOAuth1Config,
-  IOAuth1Token,
+  // IOAuth1Auth,
+  // IOAuth1AuthorizationHeaders,
+  // IOAuth1Config,
+  // IOAuth1Token,
   IOAuth2Auth,
   IOAuth2Config,
   IRequestClient,
@@ -11,36 +11,36 @@ import {
 } from '../../src/index';
 
 // Mock auth provider
-class MockAuth implements IOAuth1Auth {
-  setToken(_token: IOAuth1Token): this {
-    return this;
-  }
-  getAsAuthorizationHeader(
-    _url: string,
-    _method: string,
-    _params?: Record<string, any>,
-    _token?: IOAuth1Token,
-  ): { Authorization: string } {
-    return {
-      Authorization: 'Bearer mock-token',
-    };
-  }
-  getAuthorizationHeaders(
-    _url: string,
-    _method: string,
-    _params?: Record<string, any>,
-    _token?: IOAuth1Token,
-  ): IOAuth1AuthorizationHeaders {
-    return {
-      oauth_consumer_key: 'mock-consumer-key',
-      oauth_nonce: 'mock-nonce',
-      oauth_signature_method: 'HMAC-SHA1',
-      oauth_timestamp: Date.now().toString(),
-      oauth_version: '1.0a',
-      oauth_signature: 'mock-signature',
-    };
-  }
-}
+// class MockAuth implements IOAuth1Auth {
+//   setToken(_token: IOAuth1Token): this {
+//     return this;
+//   }
+//   getAsAuthorizationHeader(
+//     _url: string,
+//     _method: string,
+//     _params?: Record<string, any>,
+//     _token?: IOAuth1Token,
+//   ): { Authorization: string } {
+//     return {
+//       Authorization: 'Bearer mock-token',
+//     };
+//   }
+//   getAuthorizationHeaders(
+//     _url: string,
+//     _method: string,
+//     _params?: Record<string, any>,
+//     _token?: IOAuth1Token,
+//   ): IOAuth1AuthorizationHeaders {
+//     return {
+//       oauth_consumer_key: 'mock-consumer-key',
+//       oauth_nonce: 'mock-nonce',
+//       oauth_signature_method: 'HMAC-SHA1',
+//       oauth_timestamp: Date.now().toString(),
+//       oauth_version: '1.0a',
+//       oauth_signature: 'mock-signature',
+//     };
+//   }
+// }
 
 // Mock RequestClient
 class MockRequestClient implements IRequestClient {
@@ -63,7 +63,10 @@ class MockRequestClient implements IRequestClient {
 
 describe('TwitterClient', () => {
   let client: TwitterClient;
-  let mockAuth: { oAuth1: IOAuth1Auth; oAuth2: IOAuth2Auth };
+  let mockAuth: {
+    // oAuth1: IOAuth1Auth;
+    oAuth2: IOAuth2Auth
+  };
   let mockRequestClient: IRequestClient;
 
   beforeEach(() => {
@@ -71,14 +74,20 @@ describe('TwitterClient', () => {
     jest.clearAllMocks();
 
     // Create mock auth provider
-    const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
+    // const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
     const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret', scopes: [], redirectUri: 'http://localhost:3000/oauth2/callback' };
-    mockAuth = { oAuth1: new MockAuth(), oAuth2: {} as IOAuth2Auth };
+    mockAuth = {
+      // oAuth1: new MockAuth(),
+      oAuth2: {} as IOAuth2Auth
+    };
     mockRequestClient = new MockRequestClient();
 
     // Create client with mock auth provider
     client = new TwitterClient(
-      { oAuth1: oAuth1Config, oAuth2: oAuth2Config },
+      { 
+        // oAuth1: oAuth1Config,
+        oAuth2: oAuth2Config
+      },
       {
         apiModules: {
           posts: {} as any,
@@ -94,9 +103,12 @@ describe('TwitterClient', () => {
 
   describe('createClient', () => {
     it('should create a TwitterClient', () => {
-      const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
+      // const oAuth1Config: IOAuth1Config = { apiKey: 'mock-key', apiSecret: 'mock-secret' };
       const oAuth2Config: IOAuth2Config = { clientId: 'mock-client-id', clientSecret: 'mock-client-secret', scopes: [], redirectUri: 'http://localhost:3000/oauth2/callback' };
-      const config: ITwitterClientConfig = { oAuth1: oAuth1Config, oAuth2: oAuth2Config };
+      const config: ITwitterClientConfig = {
+        // oAuth1: oAuth1Config,
+        oAuth2: oAuth2Config
+      };
 
       const client = new TwitterClient(config);
       expect(client).toBeInstanceOf(TwitterClient);

@@ -8,7 +8,7 @@ import type { ILikePostResponse } from "../types/x-api/likes/like_post_response"
 export class Likes implements ILikes {
   constructor(
     private readonly baseUrl: string,
-    private readonly oAuth1: IOAuth1Auth,
+    private readonly oAuth1: IOAuth1Auth | undefined,
     private readonly oAuth2: IOAuth2Auth,
     private readonly requestClient: IRequestClient
   ) {}

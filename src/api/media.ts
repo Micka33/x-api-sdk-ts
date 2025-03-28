@@ -11,7 +11,7 @@ import type { ISuccessUploadMediaResponse, IUploadMediaResponse } from "../types
 export class Media implements IMedia {
   constructor(
     private readonly baseUrl: string,
-    private readonly oAuth1: IOAuth1Auth,
+    private readonly oAuth1: IOAuth1Auth | undefined,
     private readonly oAuth2: IOAuth2Auth,
     private readonly requestClient: IRequestClient
   ) {}

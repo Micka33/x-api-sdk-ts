@@ -35,7 +35,7 @@ export const initializeTwitterClient = (config: typeof Config) => {
     httpAdapter = new AxiosAdapter(axios);
   }
   const twitterClientConfig = {
-    oAuth1: { apiKey: config.apiKey, apiSecret: config.apiSecret },
+    // oAuth1: { apiKey: config.apiKey, apiSecret: config.apiSecret },
     oAuth2: {
       clientId: config.clientId,
       clientSecret: config.clientSecret,
