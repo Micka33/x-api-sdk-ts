@@ -67,16 +67,16 @@ describe('Users Integration Tests', () => {
       expect(data.profile_image_url).toBe('https://pbs.twimg.com/profile_images/1882107024604794881/4PiELgpa_normal.jpg');
     });
 
-    // it('should fail when a wrong field is requested', async () => {
-    //   const { nockDone } = await nock.back('getMeInvalidFields.json');
-    //   // @ts-expect-error - Testing error handling
-    //   const response = (await twitterClient.users.getMe(['id', 'wrong_field'])) as IErrorResponse;
-    //   nockDone();
-    //   expect(response.title).toBe('Invalid Request');
-    //   expect(response.type).toBe('https://api.twitter.com/2/problems/invalid-request');
-    //   expect(response.detail).toContain('One or more parameters to your request was invalid.');
-    //   expect(response.errors?.[0].message).toContain('[wrong_field] is not one of');
-    //   expect(response.errors?.[0].parameters?.['user.fields'][0]).toBe(['id,wrong_field'][0]);
-    // });
+    it('should fail when a wrong field is requested', async () => {
+      const { nockDone } = await nock.back('getMeInvalidFields.json');
+      // @ts-expect-error - Testing error handling
+      const response = (await twitterClient.users.getMe(['id', 'wrong_field'])) as IErrorResponse;
+      nockDone();
+      expect(response.title).toBe('Invalid Request');
+      expect(response.type).toBe('https://api.twitter.com/2/problems/invalid-request');
+      expect(response.detail).toContain('One or more parameters to your request was invalid.');
+      expect(response.errors?.[0].message).toContain('[wrong_field] is not one of');
+      expect(response.errors?.[0].parameters?.['user.fields'][0]).toBe(['id,wrong_field'][0]);
+    });
   });
 });
