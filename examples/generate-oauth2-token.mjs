@@ -25,7 +25,6 @@ const httpAdapter = new AxiosAdapter(axios); // default is `new FetchAdapter()`
 
 // Initialize the Twitter client
 const twitterClient = new TwitterClient({
-  oAuth1: { apiKey: '', apiSecret: '' },
   oAuth2: { clientId, clientSecret, scopes, redirectUri, accessToken, refreshToken, tokenExpiresAt },
 }, { httpAdapter });
 
