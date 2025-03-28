@@ -1,59 +1,17 @@
-import { AxiosAdapter, IHttpAdapter, TwitterApiScope, TwitterClient } from '../../src';
-import path from 'path';
 import nock from 'nock';
-import dotenv from 'dotenv';
-import { ISuccessGetMeResponse } from '../../src/types/x-api/users/get_me_response';
-import { IErrorResponse } from '../../src/types/x-api/base_response';
-import axios from 'axios';
-
-dotenv.config();
+import type { TwitterClient } from '../../src';
+import type { ISuccessGetMeResponse } from '../../src/types/x-api/users/get_me_response';
+import type { IErrorResponse } from '../../src/types/x-api/base_response';
+import { initializeTwitterClient, Config, initializeNock } from './helpers';
 
 describe('Users Integration Tests', () => {
   let twitterClient: TwitterClient;
   let recordingMode: boolean;
   
   beforeAll(async () => {
-    recordingMode = process.env.RECORD_NEW_FIXTURES === 'true';
-    const apiKey = process.env.API_KEY || '';
-    const apiSecret = process.env.API_SECRET || '';
-    const clientId = process.env.CLIENT_ID || '';
-    const clientSecret = process.env.CLIENT_SECRET || '';
-    const accessToken = process.env.ACCESS_TOKEN || '';
-    const refreshToken = process.env.REFRESH_TOKEN || '';
-    const tokenExpiresAt = process.env.TOKEN_EXPIRES_AT ? new Date(process.env.TOKEN_EXPIRES_AT).getTime() : Date.now() + 1000 * 60 * 60 * 24 * 30;
-    const scopes = [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ];
-    const redirectUri = 'http://localhost:3000/oauth2/callback';
-    const config = {
-      oAuth1: { apiKey, apiSecret },
-      oAuth2: { clientId, clientSecret, scopes, redirectUri, accessToken, refreshToken, tokenExpiresAt },
-    };
-    let httpAdapter: IHttpAdapter | undefined;
-    if (!recordingMode) {
-      /**
-       * Only use http adapter in non recording mode.
-       * The default adapter is fetch, but it's not supported properly by nock.
-       * 
-       * When replaying fixtures and using fetch, Nock doesn't pass the headers back.
-       * When using FetchAdapter, RequestClient.handleResponse doesn't find `content-type` and return the response as text
-       * 
-       * @see: https://github.com/nock/nock/issues/2832
-       */
-      axios.defaults.adapter = 'http';
-      httpAdapter = new AxiosAdapter(axios);
-    }
-    twitterClient = new TwitterClient(config, {httpAdapter});
-
-    nock.back.fixtures = path.join(__dirname, 'fixtures', 'users');
-    if (recordingMode) {
-      nock.back.setMode('record');
-    } else {
-      nock.back.setMode('lockdown'); // or dryrun
-    }
-  });
-  afterAll(() => {
-    if (!recordingMode) {
-    } else {
-    }
+    recordingMode = Config.recordingMode;
+    twitterClient = initializeTwitterClient(Config);
+    initializeNock(nock, 'users', recordingMode);
   });
 
   describe('getMe', () => {
