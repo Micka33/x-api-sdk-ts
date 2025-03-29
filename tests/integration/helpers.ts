@@ -1,3 +1,5 @@
+import fs from 'fs';
+import zlib from 'zlib';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import path from 'path';
@@ -8,12 +10,12 @@ dotenv.config();
 
 export const Config = {
   recordingMode: process.env.RECORD_NEW_FIXTURES === 'true',
-  apiKey: process.env.API_KEY || '',
-  apiSecret: process.env.API_SECRET || '',
-  clientId: process.env.CLIENT_ID || '',
-  clientSecret: process.env.CLIENT_SECRET || '',
-  accessToken: process.env.ACCESS_TOKEN || '',
-  refreshToken: process.env.REFRESH_TOKEN || '',
+  apiKey: process.env.API_KEY || 'x',
+  apiSecret: process.env.API_SECRET || 'x',
+  clientId: process.env.CLIENT_ID || 'x',
+  clientSecret: process.env.CLIENT_SECRET || 'x',
+  accessToken: process.env.ACCESS_TOKEN || 'x',
+  refreshToken: process.env.REFRESH_TOKEN || 'x',
   tokenExpiresAt: process.env.TOKEN_EXPIRES_AT ? new Date(process.env.TOKEN_EXPIRES_AT).getTime() : Date.now() + 1000 * 60 * 60 * 24 * 30,
   scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ],
   redirectUri: process.env.REDIRECT_URI || '',
@@ -21,7 +23,7 @@ export const Config = {
 
 export const initializeTwitterClient = (config: typeof Config) => {
   let httpAdapter: IHttpAdapter | undefined;
-  if (!config.recordingMode) {
+  // if (!config.recordingMode) {
     /**
      * Only use http adapter in non recording mode.
      * The default adapter is fetch, but it's not supported properly by nock.
@@ -33,7 +35,7 @@ export const initializeTwitterClient = (config: typeof Config) => {
      */
     axios.defaults.adapter = 'http';
     httpAdapter = new AxiosAdapter(axios);
-  }
+  // }
   const twitterClientConfig = {
     // oAuth1: { apiKey: config.apiKey, apiSecret: config.apiSecret },
     oAuth2: {
@@ -59,3 +61,42 @@ export const initializeNock = (n: typeof nock, moduleName: string, shouldRecord:
     n.back.setMode('lockdown'); // or dryrun
   }
 };
+
+
+export const getFixtureResponse = (moduleName: string, fixtureName: string, responseIndex: number = 0) => {
+  // Define the path to the fixture file
+  const fixturePath = path.join(__dirname, 'fixtures', moduleName, fixtureName);
+  
+  // Read the fixture file
+  const fixtureContent = fs.readFileSync(fixturePath, 'utf-8');
+  
+  // Parse the JSON content
+  const nockData = JSON.parse(fixtureContent);
+  
+  // Extract the response
+  const jsonResponse = decompressBufferToObject(nockData[responseIndex].response);
+  return jsonResponse;
+};
+
+function decompressBufferToObject(response: string | Array<string> | object): any {
+  let hexString: string;
+
+  if (Array.isArray(response)) {
+    hexString = response[0];
+  } else if (typeof response === 'string') {
+    hexString = response;
+  } else {
+    return response;
+  }
+
+   // Convert the hex string to a buffer
+   const buffer = Buffer.from(hexString, 'hex');
+  
+   // Decompress the buffer (assuming gzip compression)
+   const decompressedBuffer = zlib.gunzipSync(buffer);
+   
+   // Convert to string and parse as JSON
+   const responseBody = decompressedBuffer.toString('utf-8');
+
+   return JSON.parse(responseBody);
+}

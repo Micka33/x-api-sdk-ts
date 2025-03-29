@@ -33,8 +33,14 @@ describe('Users Integration Tests', () => {
       expect(response.title).toBe('Invalid Request');
       expect(response.type).toBe('https://api.twitter.com/2/problems/invalid-request');
       expect(response.detail).toContain('One or more parameters to your request was invalid.');
-      expect(response.errors?.[0].message).toContain('[wrong_field] is not one of');
-      expect(response.errors?.[0].parameters?.['user.fields'][0]).toBe(['id,wrong_field'][0]);
+      const error = response.errors?.[0] as {
+        message: string;
+        parameters: Record<string, string | string[]>;
+      };
+      const message = error.message;
+      const parameters = error.parameters;
+      expect(message).toContain('[wrong_field] is not one of');
+      expect(parameters['user.fields'][0]).toBe(['id,wrong_field'][0]);
     });
   });
 });
