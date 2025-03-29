@@ -29,7 +29,8 @@ export class Users implements IUsers {
       data['tweet.fields'] = tweetFields;
     }
 
-    return await this.requestClient.get<IGetMeResponse>(`${this.baseUrl}/2/users/me`,
+    return await this.requestClient.get<IGetMeResponse>(
+      `${this.baseUrl}/2/users/me`,
       data,
       {
         ...headers,
