@@ -7,14 +7,25 @@ import { IRateLimitInfo } from "../types/x-api/base_response";
  * @returns Rate limit information or undefined if not available
  */
 export function parseRateLimitHeaders(headers: Record<string, string>): IRateLimitInfo | undefined {
-  const limit = headers['x-user-limit-24hour-limit'];
-  const remaining = headers['x-user-limit-24hour-remaining'];
-  const reset = headers['x-user-limit-24hour-reset'];
+  const limit = headers['x-rate-limit-limit'];
+  const remaining = headers['x-rate-limit-remaining'];
+  const reset = headers['x-rate-limit-reset'];
+
+  const udlimit = headers['x-user-limit-24hour-limit'];
+  const udremaining = headers['x-user-limit-24hour-remaining'];
+  const udreset = headers['x-user-limit-24hour-reset'];
 
   return {
     limit: Number(limit),
     remaining: Number(remaining),
     reset: new Date(Number(reset) * 1000),
+    user: {
+      daily: {
+        limit: Number(udlimit),
+        remaining: Number(udremaining),
+        reset: new Date(Number(udreset) * 1000),
+      },
+    },
   };
 }
 
