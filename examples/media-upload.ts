@@ -1,13 +1,18 @@
-import { TwitterClient } from '../src';
+import { TwitterApiScope, TwitterClient } from '../src';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // Create a client with OAuth 1.0a credentials
-const client = TwitterClient.createClient({
-  apiKey: 'YOUR_API_KEY',
-  apiSecret: 'YOUR_API_SECRET',
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  accessTokenSecret: 'YOUR_ACCESS_TOKEN_SECRET',
+const client = new TwitterClient({
+  oAuth2: {
+    clientId: '',
+    clientSecret: '',
+    scopes: [TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess],
+    redirectUri: '',
+    accessToken: '',
+    refreshToken: '',
+    tokenExpiresAt: Date.now(),
+  },
 });
 
 // Upload an image and post a tweet with it
@@ -17,20 +22,27 @@ async function uploadImageAndTweet(imagePath: string, altText: string, tweetText
     const imageBuffer = fs.readFileSync(imagePath);
     
     console.log('Uploading image...');
-    const media = await client.media.uploadMedia(imageBuffer, {
-      mimeType: getMimeType(imagePath),
-      altText,
-    });
-    
-    console.log(`Image uploaded with media_id: ${media.media_id}`);
+    const media = await client.media.upload(
+      imageBuffer,
+      getMimeType(imagePath),
+      'tweet_image'
+    );
+    if (!('data' in media)) {
+      console.error('Error uploading image:', media);
+      return;
+    }
+    console.log(`Image uploaded with media_id: ${media.data.id}`);
     
     console.log('Posting tweet with image...');
-    const tweet = await client.tweets.postTweet(tweetText, {
-      mediaIds: [media.media_id],
+    const postResponse = await client.posts.create(tweetText, {
+      media: {media_ids: [media.data.id]}
     });
-    
-    console.log(`Tweet posted: https://twitter.com/user/status/${tweet.id}`);
-    return tweet;
+    if (!('data' in postResponse)) {
+      console.error('Error posting tweet:', JSON.stringify(postResponse, null, 2));
+      return;
+    }
+    console.log(`Tweet posted: https://twitter.com/user/status/${postResponse.data.id}`);
+    return postResponse.data;
   } catch (error) {
     console.error('Error uploading image and posting tweet:', error);
     throw error;
@@ -44,58 +56,41 @@ async function uploadVideoAndTweet(videoPath: string, tweetText: string) {
     const videoBuffer = fs.readFileSync(videoPath);
     
     console.log('Uploading video...');
-    const media = await client.media.uploadMedia(videoBuffer, {
-      mimeType: getMimeType(videoPath),
-      category: 'tweet_video',
-    });
+    const media = await client.media.upload(
+      videoBuffer,
+      getMimeType(videoPath),
+      'tweet_video'
+    );
+    if (!('data' in media)) {
+      console.error('Error uploading video:', media);
+      return;
+    }
+    console.log(`Video uploaded with media_id: ${media.data.id}`);
     
-    console.log(`Video uploaded with media_id: ${media.media_id}`);
     
     // Check if the video is still processing
-    if (media.processing_info && media.processing_info.state !== 'succeeded') {
-      console.log('Video is still processing. Waiting...');
-      await waitForMediaProcessing(media.media_id);
+    if (media.data.processing_info?.state !== 'succeeded') {
+      console.log('Video upload failed.', JSON.stringify(media, null, 2));
+      return;
     }
     
     console.log('Posting tweet with video...');
-    const tweet = await client.tweets.postTweet(tweetText, {
-      mediaIds: [media.media_id],
+    const postResponse = await client.posts.create(tweetText, {
+      media: {media_ids: [media.data.id]}
     });
+    if (!('data' in postResponse)) {
+      console.error('Error posting tweet:', JSON.stringify(postResponse, null, 2));
+      return;
+    }
     
-    console.log(`Tweet posted: https://twitter.com/user/status/${tweet.id}`);
-    return tweet;
+    console.log(`Tweet posted: https://twitter.com/user/status/${postResponse.data.id}`);
+    return postResponse.data;
   } catch (error) {
     console.error('Error uploading video and posting tweet:', error);
     throw error;
   }
 }
 
-// Wait for media processing to complete
-async function waitForMediaProcessing(mediaId: string): Promise<void> {
-  const media = await client.media.getMedia(mediaId);
-  
-  if (!media.processing_info) {
-    return;
-  }
-  
-  const { state, check_after_secs } = media.processing_info;
-  
-  if (state === 'succeeded') {
-    return;
-  }
-  
-  if (state === 'failed') {
-    throw new Error('Media processing failed');
-  }
-  
-  console.log(`Media processing: ${state}. Checking again in ${check_after_secs} seconds...`);
-  
-  // Wait for the specified time before checking again
-  await new Promise((resolve) => setTimeout(resolve, check_after_secs * 1000));
-  
-  // Check again
-  return waitForMediaProcessing(mediaId);
-}
 
 // Get the MIME type based on the file extension
 function getMimeType(filePath: string): string {
