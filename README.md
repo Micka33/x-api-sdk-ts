@@ -37,6 +37,10 @@ x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, 
 
 ## Installation
 
+```bash
+npm install x-api-sdk-ts
+```
+
 ## Generate OAuth2 token from console
 
 See: [examples/generate-oauth2-token.mjs](https://github.com/Micka33/x-api-sdk-ts/blob/main/examples/generate-oauth2-token.mjs)
