@@ -14,7 +14,7 @@ const readline = createInterface({
 const clientId = 'input_client_id_here';
 const clientSecret = 'input_client_secret_here';
 const redirectUri = 'http://localhost:3000/oauth2/callback';
-const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess];
+const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite];
 
 // Set the access token and refresh token to null to generate a new token
 const accessToken = null;
