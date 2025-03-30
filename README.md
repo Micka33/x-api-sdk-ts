@@ -11,7 +11,7 @@ I recommend to use [twitter-api-typescript-sdk](https://github.com/xdevplatform/
 
 x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, and intuitive interface to interact with v2 endpoints.  
 
-*Twitter's v1.1 endpoints are not supported, but can be implemented. *if this is something you need, please open an issue.*  
+*Twitter's v1.1 endpoints are not supported, but can be implemented. if this is something you need, please open an issue.*  
 
 ## Features
 
