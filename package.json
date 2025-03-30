@@ -1,7 +1,7 @@
 {
-  "name": "x-sdk-ts",
+  "name": "x-api-sdk-ts",
   "version": "0.1.0",
-  "description": "The Fullest Implementation of the X (ex-twitter) API in a TypeScript Library",
+  "description": "TypeScript Library for the X (ex-twitter) API V2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
