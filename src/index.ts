@@ -25,7 +25,7 @@ export type { IUsers } from './interfaces/api/IUsers';
 export type { ILikes } from './interfaces/api/ILikes';
 
 // Export authentication
-export { OAuth1Auth } from './auth/OAuth1Auth';
+// export { OAuth1Auth } from './auth/OAuth1Auth';
 export type {
   IOAuth1Config,
   IOAuth1Auth,
