@@ -63,7 +63,6 @@ const tokenExpiresAt = 'input_token_expires_at_here'; // a date object; example:
 
 // Initialize the Twitter client
 const twitterClient = new TwitterClient({
-  oAuth1: { apiKey: '', apiSecret: '' }, // if you don't need the OAuth 1.0a, use empty strings
   oAuth2: { clientId, clientSecret, scopes, redirectUri, accessToken, refreshToken, tokenExpiresAt },
 });
 ```
@@ -85,11 +84,13 @@ twitterClient.oAuth2.setToken(accessToken, refreshToken, tokenExpiresAt);
 
 ```typescript
 const media = await twitterClient.media.upload(
-  Buffer.from(fs.readFileSync('path/to/media/doge.jpeg')),
+  fs.readFileSync('path/to/media/doge.jpeg'),
   'image/jpeg',
   'tweet_image'
 );
 const mediaId = media.data.id;
+// If media.dataprocessing_info field is NOT returned in the response, then mediaId is ready for use in other API endpoints.
+// https://docs.x.com/x-api/media/quickstart/media-upload-chunked#step-2-%3A-post-media%2Fupload-append
 ```
 
 ## Get Media Upload Status Example
