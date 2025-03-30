@@ -46,7 +46,9 @@ See: [examples/generate-oauth2-token.mjs](https://github.com/Micka33/x-api-sdk-t
   - Set `redirectUri` to your App's Callback URI / Redirect URL
     - Or set your App's Callback URI / Redirect URL to `http://localhost:3000/oauth2/callback`
 
-## Authentication
+## Examples
+
+### Authentication
 
 The SDK supports OAuth 2.0 (for v2 API).  
 *It is designed to be easily extendable to support OAuth 1.0a (for v1.1 API) in the future. if this is something you need, please open an issue.*
@@ -74,13 +76,13 @@ const token = twitterClient.oAuth2.getToken();
 const { accessToken, refreshToken, tokenExpiresAt } = token;
 ```
 
-### Change accessToken and refreshToken
+### Set accessToken and refreshToken
 
 ```typescript
 twitterClient.oAuth2.setToken(accessToken, refreshToken, tokenExpiresAt);
 ```
 
-## Media Upload Example
+### Media Upload
 
 ```typescript
 const media = await twitterClient.media.upload(
@@ -93,14 +95,14 @@ const mediaId = media.data.id;
 // https://docs.x.com/x-api/media/quickstart/media-upload-chunked#step-2-%3A-post-media%2Fupload-append
 ```
 
-## Get Media Upload Status Example
+### Get Media Upload Status
 
 ```typescript
 const media = await twitterClient.media.getUploadStatus(mediaId);
 const mediaStatus = media.data.processing_info.state; // 'succeeded' | 'in_progress' | 'pending' | 'failed'
 ```
 
-## Add Metadata to Media Example
+### Add Metadata to Media
 
 ```typescript
 const mediaMetadata = await twitterClient.media.addMetadata(
@@ -113,7 +115,7 @@ const mediaMetadata = await twitterClient.media.addMetadata(
 );
 ```
 
-## Create Post Example
+### Create Post
 
 ```typescript
 const post = await twitterClient.posts.create(
@@ -125,13 +127,13 @@ const post = await twitterClient.posts.create(
 const postId = post.data.id;
 ```
 
-## Delete Post Example
+### Delete Post
 
 ```typescript
 await twitterClient.posts.delete(postId);
 ```
 
-## Get One Post Example
+### Get One Post
 
 ```typescript
 const post = await twitterClient.posts.get(postId, {
@@ -145,7 +147,7 @@ const postMediaKey = post.data.attachments?.media_keys?.[0];
 const otherpostMediaKey = post.includes?.media?.[0].media_keys?.[0];
 ```
 
-## Get Several Posts Example
+### Get Several Posts
 
 ```typescript
 const posts = await twitterClient.posts.getMultiple([postId1, postId2, postId3], {
@@ -156,14 +158,14 @@ const post2 = posts.data[1];
 const post3 = posts.data[2];
 ```
 
-## Like Post Example
+### Like Post
 
 ```typescript
 const like = await twitterClient.likes.add(postId);
 const liked = like.data.liked;
 ```
 
-## Get Authenticated User Info Example
+### Get Authenticated User Info
 
 ```typescript
 const user = await twitterClient.users.getMe();
