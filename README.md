@@ -1,6 +1,6 @@
 !! UNDER CONSTRUCTION !!
 
-# x-sdk-ts
+# x-api-sdk-ts
 
 Simple and versatile typescript SDK for X Api.
 
@@ -9,7 +9,7 @@ I recommend to use [twitter-api-typescript-sdk](https://github.com/xdevplatform/
 
 ## Overview
 
-x-sdk-ts is a flexible TypeScript SDK for the Twitter API, providing a type-safe, and intuitive interface to interact with v2 endpoints.  
+x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, and intuitive interface to interact with v2 endpoints.  
 
 Twitter's v1.1 endpoints are not supported, but can be implemented. *if this is something you need, please open an issue.*  
 
@@ -38,7 +38,7 @@ Twitter's v1.1 endpoints are not supported, but can be implemented. *if this is 
 
 ## Generate OAuth2 token from console
 
-See: [examples/generate-oauth2-token.js](https://github.com/Micka33/x-sdk-ts/blob/main/examples/generate-oauth2-token.js)
+See: [examples/generate-oauth2-token.mjs](https://github.com/Micka33/x-api-sdk-ts/blob/main/examples/generate-oauth2-token.mjs)
 
 - **NB:**
   - Set `clientId` to your App's OAuth 2.0 Client ID
@@ -174,7 +174,7 @@ const userUsername = user.data.username;
 
 ## Development Documentation
 
-See [Development Documentation](https://github.com/Micka33/x-sdk-ts/blob/main/DEVELOPMENT.md).
+See [Development Documentation](https://github.com/Micka33/x-api-sdk-ts/blob/main/DEVELOPMENT.md).
 
 ## Contributing
 
