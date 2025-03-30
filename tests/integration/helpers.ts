@@ -12,8 +12,6 @@ dotenv.config();
 function buildConfig() {
   let config: {
     recordingMode: boolean;
-    apiKey: string;
-    apiSecret: string;
     clientId: string;
     clientSecret: string;
     accessToken: string;
@@ -24,8 +22,6 @@ function buildConfig() {
   };
   const configSchema = Joi.object<typeof config>({
     recordingMode: Joi.boolean().required(),
-    apiKey: Joi.string().required(),
-    apiSecret: Joi.string().required(),
     clientId: Joi.string().required(),
     clientSecret: Joi.string().required(),
     accessToken: Joi.string().required(),
@@ -38,23 +34,19 @@ function buildConfig() {
   if (process.env.RECORD_NEW_FIXTURES === 'true') {
     const schemaEnv = Joi.object({
       RECORD_NEW_FIXTURES: Joi.boolean().required(),
-      API_KEY: Joi.string().required(),
-      API_SECRET: Joi.string().required(),
       CLIENT_ID: Joi.string().required(),
       CLIENT_SECRET: Joi.string().required(),
       ACCESS_TOKEN: Joi.string().required(),
       REFRESH_TOKEN: Joi.string().required(),
       TOKEN_EXPIRES_AT: Joi.date().iso().required(),
       REDIRECT_URI: Joi.string().required(),
-    })
+    }).unknown();
     const { error, value } = schemaEnv.validate(process.env);
     if (error) {
       throw new Error(`Invalid environment variables: ${error.message}`);
     }
     config = {
       recordingMode: true,
-      apiKey: value.API_KEY,
-      apiSecret: value.API_SECRET,
       clientId: value.CLIENT_ID,
       clientSecret: value.CLIENT_SECRET,
       accessToken: value.ACCESS_TOKEN,
@@ -66,8 +58,6 @@ function buildConfig() {
   } else {
     config = {
       recordingMode: false,
-      apiKey: 'x',
-      apiSecret: 'x',
       clientId: 'x',
       clientSecret: 'x',
       accessToken: 'x',
