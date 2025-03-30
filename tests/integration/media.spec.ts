@@ -158,7 +158,6 @@ describe('Media Integration Tests', () => {
         true
       );
       nockDone();
-      console.log('response', JSON.stringify(response, null, 2));
       // The successful response might be empty or have a success indication
       if (isErrorResponse(response)) {
         fail('Expected successful response but got error');
