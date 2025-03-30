@@ -52,7 +52,7 @@ function buildConfig() {
       accessToken: value.ACCESS_TOKEN,
       refreshToken: value.REFRESH_TOKEN,
       tokenExpiresAt: new Date(value.TOKEN_EXPIRES_AT).getTime(),
-      scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ],
+      scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite ],
       redirectUri: value.REDIRECT_URI,
     };
   } else {
@@ -63,7 +63,7 @@ function buildConfig() {
       accessToken: 'x',
       refreshToken: 'x',
       tokenExpiresAt: Date.now() + 1000 * 60 * 60 * 24 * 30,
-      scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ],
+      scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite ],
       redirectUri: 'x',
     };
   };
