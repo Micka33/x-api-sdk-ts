@@ -5,21 +5,88 @@ import axios from 'axios';
 import path from 'path';
 import nock from 'nock/types/index';
 import { AxiosAdapter, IHttpAdapter, TwitterApiScope, TwitterClient } from '../../src';
+import Joi from 'joi';
 
 dotenv.config();
 
-export const Config = {
-  recordingMode: process.env.RECORD_NEW_FIXTURES === 'true',
-  apiKey: process.env.API_KEY || 'x',
-  apiSecret: process.env.API_SECRET || 'x',
-  clientId: process.env.CLIENT_ID || 'x',
-  clientSecret: process.env.CLIENT_SECRET || 'x',
-  accessToken: process.env.ACCESS_TOKEN || 'x',
-  refreshToken: process.env.REFRESH_TOKEN || 'x',
-  tokenExpiresAt: process.env.TOKEN_EXPIRES_AT ? new Date(process.env.TOKEN_EXPIRES_AT).getTime() : Date.now() + 1000 * 60 * 60 * 24 * 30,
-  scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ],
-  redirectUri: process.env.REDIRECT_URI || '',
-};
+function buildConfig() {
+  let config: {
+    recordingMode: boolean;
+    apiKey: string;
+    apiSecret: string;
+    clientId: string;
+    clientSecret: string;
+    accessToken: string;
+    refreshToken: string;
+    tokenExpiresAt: number;
+    scopes: TwitterApiScope[];
+    redirectUri: string;
+  };
+  const configSchema = Joi.object<typeof config>({
+    recordingMode: Joi.boolean().required(),
+    apiKey: Joi.string().required(),
+    apiSecret: Joi.string().required(),
+    clientId: Joi.string().required(),
+    clientSecret: Joi.string().required(),
+    accessToken: Joi.string().required(),
+    refreshToken: Joi.string().required(),
+    tokenExpiresAt: Joi.date().timestamp().required(),
+    scopes: Joi.array<TwitterApiScope[]>().items(Joi.string().valid(...Object.values(TwitterApiScope))).required(),
+    redirectUri: Joi.string().required(),
+  })
+
+  if (process.env.RECORD_NEW_FIXTURES === 'true') {
+    const schemaEnv = Joi.object({
+      RECORD_NEW_FIXTURES: Joi.boolean().required(),
+      API_KEY: Joi.string().required(),
+      API_SECRET: Joi.string().required(),
+      CLIENT_ID: Joi.string().required(),
+      CLIENT_SECRET: Joi.string().required(),
+      ACCESS_TOKEN: Joi.string().required(),
+      REFRESH_TOKEN: Joi.string().required(),
+      TOKEN_EXPIRES_AT: Joi.date().iso().required(),
+      REDIRECT_URI: Joi.string().required(),
+    })
+    const { error, value } = schemaEnv.validate(process.env);
+    if (error) {
+      throw new Error(`Invalid environment variables: ${error.message}`);
+    }
+    config = {
+      recordingMode: true,
+      apiKey: value.API_KEY,
+      apiSecret: value.API_SECRET,
+      clientId: value.CLIENT_ID,
+      clientSecret: value.CLIENT_SECRET,
+      accessToken: value.ACCESS_TOKEN,
+      refreshToken: value.REFRESH_TOKEN,
+      tokenExpiresAt: new Date(value.TOKEN_EXPIRES_AT).getTime(),
+      scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ],
+      redirectUri: value.REDIRECT_URI,
+    };
+  } else {
+    config = {
+      recordingMode: false,
+      apiKey: 'x',
+      apiSecret: 'x',
+      clientId: 'x',
+      clientSecret: 'x',
+      accessToken: 'x',
+      refreshToken: 'x',
+      tokenExpiresAt: Date.now() + 1000 * 60 * 60 * 24 * 30,
+      scopes: [ TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess ],
+      redirectUri: 'x',
+    };
+  };
+
+  const { error, value } = configSchema.validate(config);
+  if (error) {
+    throw new Error(`Invalid environment variables: ${error.message}`);
+  }
+
+  return value;
+}
+
+export const Config = buildConfig();
 
 export const initializeTwitterClient = (config: typeof Config) => {
   let httpAdapter: IHttpAdapter | undefined;
