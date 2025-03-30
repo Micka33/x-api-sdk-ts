@@ -55,7 +55,7 @@ The SDK supports OAuth 2.0 (for v2 API).
 const clientId = 'input_client_id_here';
 const clientSecret = 'input_client_secret_here';
 const redirectUri = 'http://localhost:3000/oauth2/callback';
-const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess];
+const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite];
 
 const accessToken = 'input_access_token_here';
 const refreshToken = 'input_refresh_token_here';
