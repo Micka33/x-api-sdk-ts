@@ -18,6 +18,8 @@ export class Media implements IMedia {
 
   /**
    * Uploads media to Twitter.
+   * If a processing_info field is NOT returned in the response, then media_id is ready for use in other API endpoints.
+   * https://docs.x.com/x-api/media/quickstart/media-upload-chunked#step-2-%3A-post-media%2Fupload-append
    *
    * @param media - The media buffer to upload
    * @param mimeType - The MIME type of the media being uploaded. For example, video/mp4.
@@ -45,20 +47,17 @@ export class Media implements IMedia {
     for (let i = 0; i < chunks; i++) {
       const start = i * chunkSize;
       const end = Math.min(start + chunkSize, media.length);
-      const chunk = media.slice(start, end);
-      
+      const chunk = media.subarray(start, end);
       await this.appendMediaChunk(mediaId, i, chunk);
     }
 
     // Step 3: FINALIZE - Complete the upload
     const finalizeResponse = await this.finalizeMediaUpload(mediaId);
-    
     // Step 4: Check if processing is needed
     if ((finalizeResponse as ISuccessUploadMediaResponse).data?.processing_info) {
       // If processing is needed, wait for it to complete
       return this.waitForProcessing(mediaId, finalizeResponse);
     }
-    
     return finalizeResponse;
   }
 
@@ -71,7 +70,6 @@ export class Media implements IMedia {
   public async getStatus(mediaId: string): Promise<IGetUploadStatusResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
-    
     // Make the API request
     return this.requestClient.get<IGetUploadStatusResponse>(
       `${this.baseUrl}/2/media/upload`,
