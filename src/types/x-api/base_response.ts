@@ -2,6 +2,24 @@
  * Information about the rate limit for the request.
  */
 export interface IRateLimitInfo {
+  user: {
+    daily: {
+      /** 
+       * The limit for the endpoint
+       */
+      limit: number;
+      
+      /**
+       * The remaining requests for the endpoint
+       */
+      remaining: number;
+      
+      /**
+       * The time when the rate limit resets
+       */
+      reset: Date;
+    }
+  },
   /** 
    * The limit for the endpoint
    */
@@ -44,10 +62,18 @@ export interface IErrorResponse extends ICustomBaseResponse {
   /**
    * Additional error details.
    */
-  errors?: {
+  errors?: ({
     parameters?: Record<string, string|string[]>;
     message?: string;
-  }[];
+  } | {
+    value: string;
+    title: string;
+    type: string;
+    detail?: string;
+    resource_type?: string;
+    parameter?: string;
+    resource_id?: string;
+  })[];
 }
 
 export interface ISuccessResponse<T extends object> extends ICustomBaseResponse {
