@@ -1,0 +1,26 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "POST",
+        "path": "/2/media/metadata",
+        "body": {
+            "id": "1906299065089789952",
+            "metadata": {
+                "alt_text": {
+                    "text": "Hooman with a bass"
+                },
+                "allow_download_status": {
+                    "allow_download": true
+                }
+            }
+        },
+        "status": 200,
+        "response": "1f8b0800000000000000648dc10a833010447f25ecb9072bd8ba7e817f1156136820ba60465210ffdd2d855e7a99817933cc414120341c24a5e89c0431f825427e71ce5a7dd0ba6695e00b047bf9073460dbe379b3181ef18d4fe5eb34aa2eb2ba9af072e2263ba2d39ac94674e7e6d1b249d7f4fcec99bbd6e0050000ffff0300dd89d76c96000000",
+        "rawHeaders": {
+            "cf-ray": "9287193e2ea0040d-CDG",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "responseIsBinary": true
+    }
+]

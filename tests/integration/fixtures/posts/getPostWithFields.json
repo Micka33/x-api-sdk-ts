@@ -1,0 +1,40 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "GET",
+        "path": "/2/tweets/1905993362018042115?tweet.fields=created_at%2Cauthor_id%2Cpublic_metrics&expansions=author_id&user.fields=name%2Cusername",
+        "body": "",
+        "status": 200,
+        "response": [
+            "1f8b08000000000000007c904b6bc3301084ff8ad9b353f4b2b17ccea1d06373282dc128f6b6117ec895d6b4c1f8bf574edae243e94530dfec2e339aa13164a09c81f093a08403064a46179f57effae471ff90d881f0cd1bb26e4828da9042edd110369559570413d98ec99dd007ae4ac54a26ef1863cf710e1b4bd5d90672fe52d1072255b60950be00d72cd35aca5c305e302538cfe0988299e8ec7c1c8a777991175af13c574ce95c665214f1e4389d3a5b573d92b77558937bbc5daedd34c43c2c8d64ec2e1bddd91637f27d72b4d527e7dadef876836c3f7a0c2156fe817c89f41aeb8fe4ab37d4ddd4e035d114d0af2d67f8a7c8607a8ce6de27f7b70f8a6c5dfce5dff80996e3b27c010000ffff0300066a16eea9010000"
+        ],
+        "rawHeaders": {
+            "api-version": "2.132",
+            "cache-control": "no-cache, no-store, max-age=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9280286f1ca26f79-CDG",
+            "connection": "close",
+            "content-disposition": "attachment; filename=json.json",
+            "content-encoding": "gzip",
+            "content-length": "283",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Sat, 29 Mar 2025 14:46:39 GMT",
+            "perf": "7402827104",
+            "server": "cloudflare tsa_b",
+            "set-cookie": "__cf_bm=z1hamKAHaeKPKUs0xQZf68a5OBTVqVAGF38vi0gifbA-1743259599-1.0.1.1-Zt61TMt8d_4YXhHr96ZcGheMUjHnlFd2LNtz3m7LlPQB33qP8Pb5S1GOJGgUeOrLso6jQ08KqnqD3rbj5uSuTR38EF3UUl6MDQk2bL0fxr4; path=/; expires=Sat, 29-Mar-25 15:16:39 GMT; domain=.x.com; HttpOnly; Secure; SameSite=None",
+            "strict-transport-security": "max-age=631138519",
+            "vary": "accept-encoding",
+            "x-access-level": "read-write",
+            "x-connection-hash": "da18b87053ff0b999caea31c590c91a2ae08b9ea8bb7f366df3e9d606b27aff9",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-rate-limit-limit": "1",
+            "x-rate-limit-remaining": "0",
+            "x-rate-limit-reset": "1743260499",
+            "x-response-time": "61",
+            "x-transaction-id": "c961904fc404558f",
+            "x-xss-protection": "0"
+        },
+        "responseIsBinary": false
+    }
+]

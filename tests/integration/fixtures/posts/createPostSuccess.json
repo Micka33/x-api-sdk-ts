@@ -1,0 +1,19 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+            "text": "Test post from SDK integration test"
+        },
+        "status": 201,
+        "response": "1f8b08000000000000006cc9b10ac2301405d05f0977ee90b4566c6637c7ba8984409efa061b492ea894febbf90097b39c152932c2af90a40c0fadcce51bf81661d054e12f70931da76918f6bd7507bbeb9d1b71eda009feef75a07cd8f22c95e6951bb7929f663e9e8c2e947b89d4bc18b6c6b6fd000000ffff0300e8ab3f7b83000000",
+        "rawHeaders": {
+            "cf-ray": "92801ec6de309eb3-CDG",
+            "server": "cloudflare tsa_b",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "responseIsBinary": true
+    }
+]

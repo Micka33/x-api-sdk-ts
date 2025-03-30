@@ -1,0 +1,43 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "GET",
+        "path": "/2/users/me?user.fields=name%2Cusername%2Cprofile_image_url",
+        "body": "",
+        "status": 200,
+        "response": [
+            "1f8b080000000000000054ccb10ec2201485e15731773605da2ba5cc9a383838ba35681131a510a031a6e9bbcb604c5cfff3e52c30a8ac402e10a2bfdb51f7d629a3fb398e20e19173489290704d557e5967aa9b77e44f26c284a8196d698d9c62dba1108ce0d91e4e26a87ef2d1a9b17a06035b98938e9372ba3cefe3d1a6ece3fb52ba1d4a61828b0e19e748b1e3cdaea945997e7cf3f5b0ae1f000000ffff0300aaf79f84b4000000"
+        ],
+        "rawHeaders": {
+            "api-version": "2.131",
+            "cache-control": "no-cache, no-store, max-age=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9223f876b9cf5455-CDG",
+            "connection": "close",
+            "content-disposition": "attachment; filename=json.json",
+            "content-encoding": "gzip",
+            "content-length": "170",
+            "content-type": "application/json; charset=utf-8",
+            "date": "Tue, 18 Mar 2025 10:15:44 GMT",
+            "perf": "7402827104",
+            "server": "cloudflare tsa_f",
+            "set-cookie": "__cf_bm=bsK2Wt69zNDUOkPJi8IdGCzcSoPIUBuZc5gHyJDkSSk-1742292944-1.0.1.1-2nmHGXuooKu1k2FFLJufIX1I.PXZKR9P.U9zgAP2lHdKTquPZGEIyqO4PnCdFDTgpKJVu3dfKHsnN5DBYkXpPP_YIySXUKkIto.pG4SknyM; path=/; expires=Tue, 18-Mar-25 10:45:44 GMT; domain=.twitter.com; HttpOnly; Secure; SameSite=None",
+            "strict-transport-security": "max-age=631138519",
+            "vary": "accept-encoding",
+            "x-access-level": "read-write",
+            "x-connection-hash": "60dcca921c998ec12427efddf531d8c0a3bccb47e132d45d8500bef21549d268",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-rate-limit-limit": "1200000",
+            "x-rate-limit-remaining": "1199997",
+            "x-rate-limit-reset": "1742293671",
+            "x-response-time": "134",
+            "x-transaction-id": "f618df257e28c37e",
+            "x-user-limit-24hour-limit": "25",
+            "x-user-limit-24hour-remaining": "14",
+            "x-user-limit-24hour-reset": "1742312800",
+            "x-xss-protection": "0"
+        },
+        "responseIsBinary": false
+    }
+]

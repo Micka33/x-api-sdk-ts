@@ -1,0 +1,18 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+            "text": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        "status": 403,
+        "response": "1f8b080000000000000014cb310ac3300c46e1ab08cd2514dac907c81d3acab542441c2bd8bf87507af7c4e3fbe0fd3829c43207fe7827a94ac54187d6dd004d041fb178dd09ab35922fcccbc40fc679e8bd49f48e10b3946da0210f9dbd464b49cb6d0d82de38bc9fafff050000ffff03006dd7e24770000000",
+        "rawHeaders": {
+            "cf-ray": "927f3bd6af26c702-CDG",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "responseIsBinary": true
+    }
+]

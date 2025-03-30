@@ -1,0 +1,16 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "DELETE",
+        "path": "/2/tweets/9999999999999999999",
+        "body": "",
+        "status": 400,
+        "response": "1f8b08000000000000006c8dc10ac2300c865f25e43c57f0e6dec09320de646075c115d6b5269932c6dedd56871e34b7fcc9f7fd13127360c1ea3861b46c3d29e57542d7a41037bf83f55ca027117b25acf0d0129c5c7382db403cc2470277db0d04c73f861a9c401f34bfa49ab92e509d76d9b6ed5f19ec29e944b1c086d4ba2e9d763d4160f081e9db22a001c63030f09b808715706f4b99701d63f6b6aa512a636c74a53e9c26b4bc046fd626723877e4c52cd06a11e1fc040000ffff0300cd446aa31d010000",
+        "rawHeaders": {
+            "cf-ray": "927f3ccf0b5e6fba-CDG",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "responseIsBinary": true
+    }
+]

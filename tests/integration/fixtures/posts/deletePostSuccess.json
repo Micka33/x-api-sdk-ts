@@ -1,0 +1,33 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "POST",
+        "path": "/2/tweets",
+        "body": {
+            "text": "Post to be deleted"
+        },
+        "status": 201,
+        "response": "1f8b08000000000000006cc93b0a80301005c0ab84575bf88b989cc25e2428bb60400898072ae2ddf5004e3b3764e60c7f432532ac3133ed57e0a1ca1025c38fa85c699d6d6dd3f7755376957335a60251e07faf00f5e49743ca344c665123ba2955f03c2f000000ffff0300d23a1a9b72000000",
+        "rawHeaders": {
+            "cf-ray": "927f3ccbdc6d6f4c-CDG",
+            "server": "cloudflare tsa_b",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "responseIsBinary": true
+    },
+    {
+        "scope": "https://api.x.com:443",
+        "method": "DELETE",
+        "path": "/2/tweets/1905954538823061992",
+        "body": "",
+        "status": 200,
+        "response": "1f8b0800000000000000aa564a492c4954b2aa564a49cd492d494d51b22a292a4dadad05000000ffff03003e5dfb4a19000000",
+        "rawHeaders": {
+            "cf-ray": "927f3ccdd8372a08-CDG",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=utf-8"
+        },
+        "responseIsBinary": true
+    }
+]
