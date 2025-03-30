@@ -19,6 +19,7 @@ Twitter's v1.1 endpoints are not supported, but can be implemented. *if this is 
 - Partial implementation of Twitter API v2 endpoints.
 - Support authentication for OAuth 2.0 (v2).
 - Modular architecture for easy customization and extension using depencencies injection.
+- 0 dependencies.
 - Supported v2 endpoints:
   - Media
     - Upload
