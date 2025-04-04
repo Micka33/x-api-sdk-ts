@@ -25,13 +25,15 @@ export class Media implements IMedia {
    * @param mimeType - The MIME type of the media being uploaded. For example, video/mp4.
    * @param category - A string enum value which identifies a media use-case.
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
+   * @param chunkSize - The size of the chunks to upload. If not provided, the default chunk size will be used (default: media.length > 10MB ? (media.length/10) : 1MB).
    * @returns A promise that resolves to the uploaded media
    */
   public async upload(
     media: Buffer, 
     mimeType: string, 
     category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', 
-    additionalOwners?: string[]
+    additionalOwners: string[] | null = null,
+    chunkSize?: number,
   ): Promise<IUploadMediaResponse> {
     // Step 1: INIT - Initialize the upload
     const initResponse = await this.initMediaUpload(media.length, mimeType, category, additionalOwners);
@@ -41,12 +43,12 @@ export class Media implements IMedia {
     const mediaId = (initResponse as ISuccessUploadMediaResponse).data.id;
 
     // Step 2: APPEND - Upload the media in chunks
-    const chunkSize = (media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024; // 1MB chunks or 10 chunks
-    const chunks = Math.ceil(media.length / chunkSize);
+    const cs = chunkSize || ((media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024); // 1MB chunks or 10 chunks
+    const chunks = Math.ceil(media.length / cs);
 
     for (let i = 0; i < chunks; i++) {
-      const start = i * chunkSize;
-      const end = Math.min(start + chunkSize, media.length);
+      const start = i * cs;
+      const end = Math.min(start + cs, media.length);
       const chunk = media.subarray(start, end);
       await this.appendMediaChunk(mediaId, i, chunk);
     }
@@ -170,7 +172,7 @@ export class Media implements IMedia {
     totalBytes: number, 
     mediaType: string, 
     mediaCategory: MediaCategory, 
-    additionalOwners?: string[]
+    additionalOwners: string[] | null = null
   ): Promise<IUploadMediaResponse> {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
