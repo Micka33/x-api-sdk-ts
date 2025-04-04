@@ -41,9 +41,9 @@ export class Media implements IMedia {
     const mediaId = (initResponse as ISuccessUploadMediaResponse).data.id;
 
     // Step 2: APPEND - Upload the media in chunks
-    const chunkSize = 1024 * 1024; // 1MB chunks
+    const chunkSize = (media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024; // 1MB chunks or 10 chunks
     const chunks = Math.ceil(media.length / chunkSize);
-    
+
     for (let i = 0; i < chunks; i++) {
       const start = i * chunkSize;
       const end = Math.min(start + chunkSize, media.length);
