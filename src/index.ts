@@ -8,32 +8,32 @@ export { AxiosAdapter } from './adapters/axios-adapter';
 export { FetchAdapter } from './adapters/fetch-adapter';
 
 // Export apis
-export { Posts } from './api/posts';
-export { Media } from './api/media';
 export { Likes } from './api/likes';
+export { Media } from './api/media';
+export { Posts } from './api/posts';
 export { Users } from './api/users';
 
 // Export utils
 export { RequestClient } from './utils/request';
-export type { AbstractRequestClient as IRequestClient, RequestOptions } from './interfaces/IRequestClient';
+export { AbstractRequestClient } from './interfaces/IRequestClient';
+export type { RequestOptions } from './interfaces/IRequestClient';
 
-// Export interfaces
+// Export interfaces and abstract classes
 export type { ITwitterClient } from './interfaces/ITwitterClient';
-export type { AbstractPosts as IPosts, IPostOptions } from './interfaces/api/IPosts';
-export type { AbstractMedia as IMedia } from './interfaces/api/IMedia';
-export type { AbstractUsers as IUsers } from './interfaces/api/IUsers';
-export type { AbstractLikes as ILikes } from './interfaces/api/ILikes';
+export type { IPostOptions } from './interfaces/api/IPosts';
+export type { IApiConstructor } from './interfaces/api/IApiConstructor';
+export { AbstractApiContructor } from './interfaces/api/IApiConstructor';
+export { AbstractPosts } from './interfaces/api/IPosts';
+export { AbstractMedia } from './interfaces/api/IMedia';
+export { AbstractUsers } from './interfaces/api/IUsers';
+export { AbstractLikes } from './interfaces/api/ILikes';
 
 // Export authentication
-// export { OAuth1Auth } from './auth/OAuth1Auth';
-export type {
-  IOAuth1Config,
-  AbstractOAuth1Auth as IOAuth1Auth,
-  IOAuth1Token,
-  IOAuth1AuthorizationHeaders,
-} from './interfaces/auth/IOAuth1Auth';
+export type { IOAuth2Config } from './interfaces/auth/IOAuth2Auth';
+export type { IOAuthConstructor } from './interfaces/auth/IOAuthConstructor';
+export { AbstractOAuthConstructor } from './interfaces/auth/IOAuthConstructor';
+export { AbstractOAuth2Auth } from './interfaces/auth/IOAuth2Auth';
 export { OAuth2Auth } from './auth/OAuth2Auth';
-export type { IOAuth2Config, AbstractOAuth2Auth as IOAuth2Auth } from './interfaces/auth/IOAuth2Auth';
 
 // Export x-api types
 // likes

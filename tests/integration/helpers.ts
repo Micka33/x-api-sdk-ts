@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import path from 'path';
 import nock from 'nock/types/index';
-import { AxiosAdapter, IHttpAdapter, TwitterApiScope, TwitterClient } from '../../src';
+import { AxiosAdapter, TwitterApiScope, TwitterClient } from '../../src';
 import Joi from 'joi';
 import { IHttpAdapterInjection } from '../../src/client';
 
