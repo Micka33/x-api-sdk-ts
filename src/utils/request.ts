@@ -138,7 +138,9 @@ export class RequestClient extends AbstractRequestClient {
       
       // Add the body if provided
       if (options.body) {
-        if (options.contentType === 'application/json') {
+        if (options.body instanceof FormData) {
+          fetchOptions.body = options.body; // Use FormData directly
+        } else if (options.contentType === 'application/json') {
           fetchOptions.body = JSON.stringify(options.body);
           (fetchOptions.headers as Record<string, string>)['Content-Type'] = 'application/json';
         } else if (options.contentType === 'application/x-www-form-urlencoded') {
@@ -242,9 +244,7 @@ export class RequestClient extends AbstractRequestClient {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
-            value.forEach((item) => {
-              formData.append(key, item);
-            });
+            value.forEach((item) => formData.append(key, item));
           } else if (value instanceof Blob) {
             // Special handling for Blob objects (like media uploads)
             formData.append(key, value);
