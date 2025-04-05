@@ -1,16 +1,17 @@
 import OAuth from 'oauth-1.0a';
 import crypto from 'crypto';
-import type {
+import {
   IOAuth1Config,
-  IOAuth1Auth,
+  AbstractOAuth1Auth,
   IOAuth1Token,
   IOAuth1AuthorizationHeaders,
 } from '../interfaces/auth/IOAuth1Auth';
+import { IHttpAdapter } from '../interfaces/IHttpAdapter';
 
 /**
  * Implementation of OAuth 1.0a authentication for Twitter API v1.1.
  */
-export class OAuth1Auth implements IOAuth1Auth {
+export class OAuth1Auth extends AbstractOAuth1Auth {
   private oauth: OAuth;
   private token: IOAuth1Token | null = null;
   /**
@@ -18,7 +19,8 @@ export class OAuth1Auth implements IOAuth1Auth {
    *
    * @param config - The OAuth 1.0a configuration
    */
-  constructor(private config: IOAuth1Config) {
+  constructor(config: IOAuth1Config, httpAdapter: IHttpAdapter) {
+    super(config, httpAdapter);
     this.oauth = new OAuth({
       consumer: {
         key: this.config.apiKey,

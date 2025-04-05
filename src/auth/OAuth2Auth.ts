@@ -1,12 +1,12 @@
 import { IHttpAdapter } from 'src/interfaces/IHttpAdapter';
-import type { IOAuth2Auth, IOAuth2Config, IOAuth2Token } from '../interfaces/auth/IOAuth2Auth';
+import { AbstractOAuth2Auth, IOAuth2Config, IOAuth2Token } from '../interfaces/auth/IOAuth2Auth';
 import { NullablePartial, TwitterApiScope } from '../types/x-api/shared';
 import crypto from 'crypto';
 
 /**
  * Implementation of OAuth 2.0 authentication for Twitter API v2.
  */
-export class OAuth2Auth implements IOAuth2Auth {
+export class OAuth2Auth extends AbstractOAuth2Auth {
   private clientId: string;
   private clientSecret?: string;
   private redirectUri?: string;
@@ -17,7 +17,8 @@ export class OAuth2Auth implements IOAuth2Auth {
   private refreshToken: string | null;
   private tokenExpiresAt: number | null;
 
-  constructor(config: IOAuth2Config, private httpAdapter: IHttpAdapter) {
+  constructor(config: IOAuth2Config, httpAdapter: IHttpAdapter) {
+    super(config, httpAdapter);
     if (!config.clientId) {
       throw new Error('OAuth2Auth requires a client ID');
     } else if (!this.httpAdapter) {

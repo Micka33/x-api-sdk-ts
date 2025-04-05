@@ -1,4 +1,5 @@
 import { NullablePartial, TwitterApiScope } from '../../types/x-api/shared';
+import { AbstractOAuthConstructor } from './IOAuthConstructor';
 /**
  * Interface for OAuth 2.0 tokens.
  */
@@ -33,19 +34,19 @@ export interface IOAuth2Config extends Partial<IOAuth2Token> {
  * Interface for OAuth 2.0 authentication.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface IOAuth2Auth {
+export abstract class AbstractOAuth2Auth extends AbstractOAuthConstructor<IOAuth2Config> {
   /**
      * Sets the token for the OAuth2Auth instance.
      * @param token - The token to set.
      * @returns The OAuth2Auth instance. Useful for chaining methods.
      */
-  setToken(token: IOAuth2Token): this;
+  abstract setToken(token: IOAuth2Token): this;
 
   /**
    * Gets the token for the OAuth2Auth instance.
    * @returns The token.
    */
-  getToken(): NullablePartial<IOAuth2Token>;
+  abstract getToken(): NullablePartial<IOAuth2Token>;
 
   /**
    * Generates the OAuth 2.0 authorize URL for user authentication.
@@ -56,7 +57,7 @@ export interface IOAuth2Auth {
    * @param codeChallengeMethod - 'S256' (recommended) or 'plain'
    * @returns The authorize URL to redirect the user to
    */
-  generateAuthorizeUrl(
+  abstract generateAuthorizeUrl(
     state: string,
     codeChallenge?: string | null,
     codeChallengeMethod?: 'S256' | 'plain'
@@ -68,22 +69,22 @@ export interface IOAuth2Auth {
    * @param redirectUri - The same redirect URI used in the authorize URL
    * @param codeVerifier - The original code verifier used to generate the code challenge
    */
-  exchangeAuthCodeForToken(code: string, redirectUri: string, codeVerifier: string): Promise<this>;
+  abstract exchangeAuthCodeForToken(code: string, redirectUri: string, codeVerifier: string): Promise<this>;
 
   /**
    * Refreshes the access token using the refresh token.
    */
-  refreshAccessToken(): Promise<this>;
+  abstract refreshAccessToken(): Promise<this>;
 
   /**
    * Provides authentication headers with a valid access token.
    * @returns A promise resolving to the headers
    */
-  getHeaders(): Promise<{ Authorization: string }>;
+  abstract getHeaders(): Promise<{ Authorization: string }>;
 
   /**
    * Checks if the access token has expired.
    * @returns True if expired or no expiration set
    */
-  isTokenExpired(): boolean;
+  abstract isTokenExpired(): boolean;
 }

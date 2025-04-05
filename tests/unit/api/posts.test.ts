@@ -1,54 +1,35 @@
 import { Posts } from '../../../src/api/posts';
-import { IOAuth1Auth } from '../../../src/interfaces/auth/IOAuth1Auth';
-import { IOAuth2Auth } from '../../../src/interfaces/auth/IOAuth2Auth';
-import { IRequestClient } from '../../../src/interfaces/IRequestClient';
+import { IOAuth2Config } from '../../../src/interfaces/auth/IOAuth2Auth';
 import { ICreatePostResponse } from '../../../src/types/x-api/posts/create_post_response';
 import { IDeletePostResponse, ISuccessDeletePostResponse } from '../../../src/types/x-api/posts/delete_post_response';
 import { IGetPostResponse, IGetPostsResponse } from '../../../src/types/x-api/posts/get_posts_response';
 import { ExpansionPost, MediaField } from '../../../src/types/x-api/posts/get_posts_query';
 import { TweetField, UserField } from '../../../src/types/x-api/shared';
+import { FetchAdapter } from '../../../src';
+import { FakeRequestClient, FakeOAuth2Auth } from '../helpers';
 
 describe('Posts', () => {
-  let posts: Posts;
-  let mockOAuth1: IOAuth1Auth;
-  let mockOAuth2: IOAuth2Auth;
-  let mockRequestClient: IRequestClient;
-  const baseUrl = 'https://api.twitter.com';
+  const baseUrl = 'https://api.x.com';
+  const oAuth2Config: IOAuth2Config = {
+    clientId: 'mock-client-id',
+    clientSecret: 'mock-client-secret',
+    scopes: [],
+    redirectUri: 'http://localhost:3000/oauth2/callback'
+  };
+  const httpAdapter = new FetchAdapter();
+  const requestClient = new FakeRequestClient(httpAdapter);
+  const oAuth2 = new FakeOAuth2Auth(oAuth2Config, httpAdapter);
+  const posts = new Posts(baseUrl, null, oAuth2, requestClient);
+  const getMock = jest.spyOn(requestClient, 'get');
+  const postMock = jest.spyOn(requestClient, 'post');
+  const deleteMock = jest.spyOn(requestClient, 'delete');
+  const getHeadersMock = jest.spyOn(oAuth2, 'getHeaders');
 
   beforeEach(() => {
-    // Reset mocks
-    jest.clearAllMocks();
-
-    // Create mock auth providers
-    mockOAuth1 = {
-      getAsAuthorizationHeader: jest.fn(),
-      getAuthorizationHeaders: jest.fn(),
-      setToken: jest.fn().mockReturnThis(),
-    };
-
-    mockOAuth2 = {
-      generateAuthorizeUrl: jest.fn(),
-      exchangeAuthCodeForToken: jest.fn(),
-      refreshAccessToken: jest.fn(),
-      getToken: jest.fn(),
-      setToken: jest.fn(),
-      isTokenExpired: jest.fn(),
-      getHeaders: jest.fn().mockResolvedValue({
-        Authorization: 'Bearer mock-token',
-      }),
-    };
-
-    // Create mock request client
-    mockRequestClient = {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-      patch: jest.fn(),
-    };
-
-    // Create posts instance with mocks
-    posts = new Posts(baseUrl, mockOAuth1, mockOAuth2, mockRequestClient);
+    getMock.mockClear();
+    postMock.mockClear();
+    deleteMock.mockClear();
+    getHeadersMock.mockClear();
   });
 
   describe('createPost', () => {
@@ -63,15 +44,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.post as jest.Mock).mockResolvedValueOnce(mockResponse);
+      postMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.create(text);
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets`,
         { text },
         {
@@ -102,15 +83,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.post as jest.Mock).mockResolvedValueOnce(mockResponse);
+      postMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.create(text, options);
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets`,
         {
           text,
@@ -133,15 +114,15 @@ describe('Posts', () => {
       const mockError = new Error('Failed to create post');
 
       // Setup mock implementation to throw an error
-      (mockRequestClient.post as jest.Mock).mockRejectedValueOnce(mockError);
+      postMock.mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
       await expect(posts.create(text))
         .rejects.toThrow('Failed to create post');
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -156,15 +137,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.delete as jest.Mock).mockResolvedValueOnce(mockResponse);
+      deleteMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.delete(postId) as ISuccessDeletePostResponse;
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.delete).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.delete).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(deleteMock).toHaveBeenCalledTimes(1);
+      expect(deleteMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets/${postId}`,
         {
           Authorization: 'Bearer mock-token',
@@ -181,15 +162,15 @@ describe('Posts', () => {
       const mockError = new Error('Failed to delete post');
 
       // Setup mock implementation to throw an error
-      (mockRequestClient.delete as jest.Mock).mockRejectedValueOnce(mockError);
+      deleteMock.mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
       await expect(posts.delete(postId))
         .rejects.toThrow('Failed to delete post');
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.delete).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(deleteMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -205,15 +186,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
+      getMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.get(postId);
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets/${postId}`,
         {},
         {
@@ -258,15 +239,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
+      getMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.get(postId, options);
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets/${postId}`,
         {
           'tweet.fields': options.tweetFields,
@@ -287,15 +268,15 @@ describe('Posts', () => {
       const mockError = new Error('Failed to get post');
 
       // Setup mock implementation to throw an error
-      (mockRequestClient.get as jest.Mock).mockRejectedValueOnce(mockError);
+      getMock.mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
       await expect(posts.get(postId))
         .rejects.toThrow('Failed to get post');
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -317,15 +298,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
+      getMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.getMultiple(postIds);
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets`,
         { ids: postIds },
         {
@@ -385,15 +366,15 @@ describe('Posts', () => {
       };
 
       // Setup mock implementation
-      (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
+      getMock.mockResolvedValueOnce(mockResponse);
 
       // Call the method
       const result = await posts.getMultiple(postIds, options);
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledWith(
         `${baseUrl}/2/tweets`,
         {
           ids: postIds,
@@ -415,15 +396,15 @@ describe('Posts', () => {
       const mockError = new Error('Failed to get posts');
 
       // Setup mock implementation to throw an error
-      (mockRequestClient.get as jest.Mock).mockRejectedValueOnce(mockError);
+      getMock.mockRejectedValueOnce(mockError);
 
       // Call the method and expect it to throw
       await expect(posts.getMultiple(postIds))
         .rejects.toThrow('Failed to get posts');
 
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
     });
   });
 });

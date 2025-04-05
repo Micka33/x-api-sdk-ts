@@ -1,6 +1,6 @@
 {
   "name": "x-api-sdk-ts",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "TypeScript Library for the X (ex-twitter) API V2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,12 @@
     "x",
     "api",
     "sdk",
-    "typescript"
+    "typescript",
+    "typed",
+    "types",
+    "v2",
+    "twitter-api",
+    "x-api"
   ],
   "author": "@mickaelcassy",
   "license": "MIT",
@@ -33,12 +38,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/micka33/x-sdk-ts.git"
+    "url": "git+https://github.com/Micka33/x-api-sdk-ts.git"
   },
   "bugs": {
-    "url": "https://github.com/micka33/x-sdk-ts/issues"
+    "url": "https://github.com/micka33/x-api-sdk-ts/issues"
   },
-  "homepage": "https://github.com/micka33/x-sdk-ts#readme",
+  "homepage": "https://github.com/micka33/x-api-sdk-ts#readme",
   "dependencies": {},
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

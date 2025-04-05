@@ -1,18 +1,8 @@
-import type { ILikes } from "../interfaces/api/ILikes";
-import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
-import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
-import type { IRequestClient } from "../interfaces/IRequestClient";
+import { AbstractLikes } from "../interfaces/api/ILikes";
 import type { ILikePostQuery } from "../types/x-api/likes/like_post_query";
 import type { ILikePostResponse } from "../types/x-api/likes/like_post_response";
 
-export class Likes implements ILikes {
-  constructor(
-    private readonly baseUrl: string,
-    private readonly oAuth1: IOAuth1Auth | undefined,
-    private readonly oAuth2: IOAuth2Auth,
-    private readonly requestClient: IRequestClient
-  ) {}
-  
+export class Likes extends AbstractLikes {
   /**
    * Likes a post.
    *

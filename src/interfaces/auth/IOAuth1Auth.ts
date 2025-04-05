@@ -1,3 +1,5 @@
+import { AbstractOAuthConstructor } from "./IOAuthConstructor";
+
 /**
  * Configuration for OAuth 1.0a authentication.
  */
@@ -29,7 +31,7 @@ export type IOAuth1Token = {
   secret: string;
 };
 
-export interface IOAuth1Auth {
+export abstract class AbstractOAuth1Auth extends AbstractOAuthConstructor<IOAuth1Config> {
   /**
    * Sets the OAuth 1.0a token for the instance.
    *
@@ -43,7 +45,7 @@ export interface IOAuth1Auth {
    * const token = { key: 'your_oauth_token', secret: 'your_oauth_token_secret' }
    * auth.setToken(token).getHeaders('https://api.twitter.com/1.1/statuses/update.json', 'POST', { status: 'Hello, world!' });
    */
-  setToken(token: IOAuth1Token): this;
+  abstract setToken(token: IOAuth1Token): this;
 
   /**
    * Generates authorization headers for a Twitter API request.
@@ -54,7 +56,7 @@ export interface IOAuth1Auth {
    * @param token - Optional OAuth 1.0a token
    * @returns The authorization headers
    */
-  getAuthorizationHeaders(
+  abstract getAuthorizationHeaders(
     url: string,
     method: string,
     params?: Record<string, any>,
@@ -70,7 +72,7 @@ export interface IOAuth1Auth {
    * @param token - Optional OAuth 1.0a token
    * @returns An object containing the authentication headers
    */
-  getAsAuthorizationHeader(
+  abstract getAsAuthorizationHeader(
     url: string,
     method: string,
     params?: Record<string, any>,

@@ -1,7 +1,7 @@
 import { IDeletePostResponse } from '../../types/x-api/posts/delete_post_response';
 import { IGetPostResponse, IGetPostsResponse } from '../../types/x-api/posts/get_posts_response';
 import { ICreatePostResponse } from '../../types/x-api/posts/create_post_response';
-import { AuthenticationError } from 'src/utils/error';
+import { AbstractApiContructor } from './IApiConstructor';
 
 /**
  * Options for posting a tweet.
@@ -66,7 +66,7 @@ export interface IPostOptions {
  * Interface for the Posts module.
  * Provides methods for interacting with posts.
  */
-export interface IPosts {
+export abstract class AbstractPosts extends AbstractApiContructor {
   /**
    * Posts a new tweet.
    *
@@ -74,7 +74,7 @@ export interface IPosts {
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
    */
-  create(text: string, options?: IPostOptions): Promise<ICreatePostResponse>;
+  abstract create(text: string, options?: IPostOptions): Promise<ICreatePostResponse>;
 
   /**
    * Retrieves a post by its ID.
@@ -94,7 +94,7 @@ export interface IPosts {
    * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
    * ```
    */
-  get(id: string, options?: {
+  abstract get(id: string, options?: {
     tweetFields?: string[];
     expansions?: string[];
     mediaFields?: string[];
@@ -121,7 +121,7 @@ export interface IPosts {
    * console.log(`Post by ${response.includes?.users?.[0]?.name}: ${response.data.text}`);
    * ```
    */
-  getMultiple(ids: string[], options?: {
+  abstract getMultiple(ids: string[], options?: {
     tweetFields?: string[];
     expansions?: string[];
     mediaFields?: string[];
@@ -136,5 +136,5 @@ export interface IPosts {
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
-  delete(id: string): Promise<IDeletePostResponse>;
+  abstract delete(id: string): Promise<IDeletePostResponse>;
 }

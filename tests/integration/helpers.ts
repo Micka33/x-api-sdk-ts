@@ -6,6 +6,7 @@ import path from 'path';
 import nock from 'nock/types/index';
 import { AxiosAdapter, IHttpAdapter, TwitterApiScope, TwitterClient } from '../../src';
 import Joi from 'joi';
+import { IHttpAdapterInjection } from '../../src/client';
 
 dotenv.config();
 
@@ -79,22 +80,19 @@ function buildConfig() {
 export const Config = buildConfig();
 
 export const initializeTwitterClient = (config: typeof Config) => {
-  let httpAdapter: IHttpAdapter | undefined;
-  // if (!config.recordingMode) {
-    /**
-     * Only use http adapter in non recording mode.
-     * The default adapter is fetch, but it's not supported properly by nock.
-     * 
-     * When replaying fixtures and using fetch, Nock doesn't pass the headers back.
-     * When using FetchAdapter, RequestClient.handleResponse doesn't find `content-type` and return the response as text
-     * 
-     * @see: https://github.com/nock/nock/issues/2832
-     */
-    axios.defaults.adapter = 'http';
-    httpAdapter = new AxiosAdapter(axios);
-  // }
+  let httpAdapter: IHttpAdapterInjection | undefined;
+  /**
+   * Only use http.
+   * The default adapter is fetch, but it's not supported properly by nock.
+   * 
+   * When replaying fixtures and using fetch, Nock doesn't pass the headers back.
+   * When using FetchAdapter, RequestClient.handleResponse doesn't find `content-type` and return the response as text
+   * 
+   * @see: https://github.com/nock/nock/issues/2832
+   */
+  axios.defaults.adapter = 'http';
+  httpAdapter = [AxiosAdapter, axios];
   const twitterClientConfig = {
-    // oAuth1: { apiKey: config.apiKey, apiSecret: config.apiSecret },
     oAuth2: {
       clientId: config.clientId,
       clientSecret: config.clientSecret,

@@ -1,16 +1,13 @@
 import { parseTwitterError } from './error';
 import { parseRateLimitHeaders } from './rate-limit';
-import { RequestOptions, IRequestClient } from '../interfaces/IRequestClient';
-import { IHttpAdapter, IHttpFetchResponse } from '../interfaces/IHttpAdapter';
+import { RequestOptions, AbstractRequestClient } from '../interfaces/IRequestClient';
+import { IHttpFetchResponse } from '../interfaces/IHttpAdapter';
 import { ICustomBaseResponse, IRateLimitInfo } from 'src/types/x-api/base_response';
 
 /**
  * Client for making requests to the Twitter API.
  */
-export class RequestClient implements IRequestClient {
-
-  constructor(private httpAdapter: IHttpAdapter) {}
-
+export class RequestClient extends AbstractRequestClient {
   /**
    * Makes a GET request to the Twitter API.
    * 

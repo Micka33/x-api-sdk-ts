@@ -1,52 +1,33 @@
 import { Media } from '../../../src/api/media';
-import { IOAuth1Auth } from '../../../src/interfaces/auth/IOAuth1Auth';
-import { IOAuth2Auth } from '../../../src/interfaces/auth/IOAuth2Auth';
-import { IRequestClient } from '../../../src/interfaces/IRequestClient';
+import { IOAuth2Config } from '../../../src/interfaces/auth/IOAuth2Auth';
 import { IUploadMediaResponse } from '../../../src/types/x-api/media/upload_media_response';
 import { IGetUploadStatusResponse } from '../../../src/types/x-api/media/get_upload_status_response';
 import { IAddMetadataResponse } from '../../../src/types/x-api/media/add_metadata_response';
+import { FetchAdapter } from '../../../src';
+import { FakeRequestClient, FakeOAuth2Auth } from '../helpers';
 
 describe('Media', () => {
-  let media: Media;
-  let mockOAuth1: IOAuth1Auth;
-  let mockOAuth2: IOAuth2Auth;
-  let mockRequestClient: IRequestClient;
-  const baseUrl = 'https://api.twitter.com';
+  const baseUrl = 'https://api.x.com';
+  const oAuth2Config: IOAuth2Config = {
+    clientId: 'mock-client-id',
+    clientSecret: 'mock-client-secret',
+    scopes: [],
+    redirectUri: 'http://localhost:3000/oauth2/callback'
+  };
+  const httpAdapter = new FetchAdapter();
+  const requestClient = new FakeRequestClient(httpAdapter);
+  const oAuth2 = new FakeOAuth2Auth(oAuth2Config, httpAdapter);
+  const media = new Media(baseUrl, null, oAuth2, requestClient);
+  const getMock = jest.spyOn(requestClient, 'get');
+  const postMock = jest.spyOn(requestClient, 'post');
+  const deleteMock = jest.spyOn(requestClient, 'delete');
+  const getHeadersMock = jest.spyOn(oAuth2, 'getHeaders');
 
   beforeEach(() => {
-    // Reset mocks
-    jest.clearAllMocks();
-
-    // Create mock auth providers
-    mockOAuth1 = {
-      getAsAuthorizationHeader: jest.fn(),
-      getAuthorizationHeaders: jest.fn(),
-      setToken: jest.fn().mockReturnThis(),
-    };
-
-    mockOAuth2 = {
-      generateAuthorizeUrl: jest.fn(),
-      exchangeAuthCodeForToken: jest.fn(),
-      refreshAccessToken: jest.fn(),
-      getToken: jest.fn(),
-      setToken: jest.fn(),
-      isTokenExpired: jest.fn(),
-      getHeaders: jest.fn().mockResolvedValue({
-        Authorization: 'Bearer mock-token',
-      }),
-    };
-
-    // Create mock request client
-    mockRequestClient = {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-      patch: jest.fn(),
-    };
-
-    // Create media instance with mocks
-    media = new Media(baseUrl, mockOAuth1, mockOAuth2, mockRequestClient);
+    getMock.mockClear();
+    postMock.mockClear();
+    deleteMock.mockClear();
+    getHeadersMock.mockClear();
   });
 
   describe('uploadMedia', () => {
@@ -74,7 +55,7 @@ describe('Media', () => {
       };
       
       // Setup mock implementations
-      (mockRequestClient.post as jest.Mock)
+      postMock
         .mockResolvedValueOnce(initResponse) // INIT
         .mockResolvedValueOnce(undefined)    // APPEND
         .mockResolvedValueOnce(finalizeResponse); // FINALIZE
@@ -83,11 +64,11 @@ describe('Media', () => {
       const result = await media.upload(mediaBuffer, mimeType, category);
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(3); // Once for each step
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(3);
+      expect(getHeadersMock).toHaveBeenCalledTimes(3); // Once for each step
+      expect(postMock).toHaveBeenCalledTimes(3);
       
       // Verify INIT call
-      expect(mockRequestClient.post).toHaveBeenNthCalledWith(
+      expect(postMock).toHaveBeenNthCalledWith(
         1,
         `${baseUrl}/2/media/upload`,
         {
@@ -102,7 +83,7 @@ describe('Media', () => {
       );
       
       // Verify APPEND call
-      expect(mockRequestClient.post).toHaveBeenNthCalledWith(
+      expect(postMock).toHaveBeenNthCalledWith(
         2,
         `${baseUrl}/2/media/upload`,
         {
@@ -117,7 +98,7 @@ describe('Media', () => {
       );
       
       // Verify FINALIZE call
-      expect(mockRequestClient.post).toHaveBeenNthCalledWith(
+      expect(postMock).toHaveBeenNthCalledWith(
         3,
         `${baseUrl}/2/media/upload`,
         {
@@ -187,12 +168,12 @@ describe('Media', () => {
       };
       
       // Setup mock implementations
-      (mockRequestClient.post as jest.Mock)
+      postMock
         .mockResolvedValueOnce(initResponse)    // INIT
         .mockResolvedValueOnce(undefined)       // APPEND
         .mockResolvedValueOnce(finalizeResponse); // FINALIZE
       
-      (mockRequestClient.get as jest.Mock)
+      getMock
         .mockResolvedValueOnce(processingResponse)  // First status check
         .mockResolvedValueOnce(completedResponse);  // Second status check
       
@@ -206,12 +187,12 @@ describe('Media', () => {
       const result = await media.upload(mediaBuffer, mimeType, category);
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(5); // 3 for upload steps, 2 for status checks
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(3);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(2);
+      expect(getHeadersMock).toHaveBeenCalledTimes(5); // 3 for upload steps, 2 for status checks
+      expect(postMock).toHaveBeenCalledTimes(3);
+      expect(getMock).toHaveBeenCalledTimes(2);
       
       // Verify status check calls
-      expect(mockRequestClient.get).toHaveBeenCalledWith(
+      expect(getMock).toHaveBeenCalledWith(
         `${baseUrl}/2/media/upload`,
         { command: 'STATUS', media_id: 'media-123' },
         { Authorization: 'Bearer mock-token' }
@@ -228,15 +209,15 @@ describe('Media', () => {
       const mockError = new Error('Upload failed');
       
       // Setup mock implementation to throw an error
-      (mockRequestClient.post as jest.Mock).mockRejectedValueOnce(mockError);
+      postMock.mockRejectedValueOnce(mockError);
       
       // Call the method and expect it to throw
       await expect(media.upload(mediaBuffer, mimeType, category))
         .rejects.toThrow('Upload failed');
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -258,15 +239,15 @@ describe('Media', () => {
       };
       
       // Setup mock implementation
-      (mockRequestClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
+      getMock.mockResolvedValueOnce(mockResponse);
       
       // Call the method
       const result = await media.getStatus(mediaId);
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledWith(
         `${baseUrl}/2/media/upload`,
         { command: 'STATUS', media_id: mediaId },
         { Authorization: 'Bearer mock-token' }
@@ -280,15 +261,15 @@ describe('Media', () => {
       const mockError = new Error('Status check failed');
       
       // Setup mock implementation to throw an error
-      (mockRequestClient.get as jest.Mock).mockRejectedValueOnce(mockError);
+      getMock.mockRejectedValueOnce(mockError);
       
       // Call the method and expect it to throw
       await expect(media.getStatus(mediaId))
         .rejects.toThrow('Status check failed');
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.get).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(getMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -313,15 +294,15 @@ describe('Media', () => {
       };
       
       // Setup mock implementation
-      (mockRequestClient.post as jest.Mock).mockResolvedValueOnce(mockResponse);
+      postMock.mockResolvedValueOnce(mockResponse);
       
       // Call the method
       const result = await media.addMetadata(mediaId, altText, allowDownload);
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledWith(
         `${baseUrl}/2/media/metadata`,
         {
           id: mediaId,
@@ -372,7 +353,7 @@ describe('Media', () => {
       };
       
       // Setup mock implementation
-      (mockRequestClient.post as jest.Mock).mockResolvedValueOnce(mockResponse);
+      postMock.mockResolvedValueOnce(mockResponse);
       
       // Call the method
       const result = await media.addMetadata(
@@ -385,9 +366,9 @@ describe('Media', () => {
       );
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledWith(
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledWith(
         `${baseUrl}/2/media/metadata`,
         {
           id: mediaId,
@@ -423,15 +404,15 @@ describe('Media', () => {
       const mockError = new Error('Metadata update failed');
       
       // Setup mock implementation to throw an error
-      (mockRequestClient.post as jest.Mock).mockRejectedValueOnce(mockError);
+      postMock.mockRejectedValueOnce(mockError);
       
       // Call the method and expect it to throw
       await expect(media.addMetadata(mediaId, altText, allowDownload))
         .rejects.toThrow('Metadata update failed');
       
       // Assertions
-      expect(mockOAuth2.getHeaders).toHaveBeenCalledTimes(1);
-      expect(mockRequestClient.post).toHaveBeenCalledTimes(1);
+      expect(getHeadersMock).toHaveBeenCalledTimes(1);
+      expect(postMock).toHaveBeenCalledTimes(1);
     });
   });
 });

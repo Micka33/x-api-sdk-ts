@@ -15,25 +15,25 @@ export { Users } from './api/users';
 
 // Export utils
 export { RequestClient } from './utils/request';
-export type { IRequestClient, RequestOptions } from './interfaces/IRequestClient';
+export type { AbstractRequestClient as IRequestClient, RequestOptions } from './interfaces/IRequestClient';
 
 // Export interfaces
 export type { ITwitterClient } from './interfaces/ITwitterClient';
-export type { IPosts, IPostOptions } from './interfaces/api/IPosts';
-export type { IMedia } from './interfaces/api/IMedia';
-export type { IUsers } from './interfaces/api/IUsers';
-export type { ILikes } from './interfaces/api/ILikes';
+export type { AbstractPosts as IPosts, IPostOptions } from './interfaces/api/IPosts';
+export type { AbstractMedia as IMedia } from './interfaces/api/IMedia';
+export type { AbstractUsers as IUsers } from './interfaces/api/IUsers';
+export type { AbstractLikes as ILikes } from './interfaces/api/ILikes';
 
 // Export authentication
 // export { OAuth1Auth } from './auth/OAuth1Auth';
 export type {
   IOAuth1Config,
-  IOAuth1Auth,
+  AbstractOAuth1Auth as IOAuth1Auth,
   IOAuth1Token,
   IOAuth1AuthorizationHeaders,
 } from './interfaces/auth/IOAuth1Auth';
 export { OAuth2Auth } from './auth/OAuth2Auth';
-export type { IOAuth2Config, IOAuth2Auth } from './interfaces/auth/IOAuth2Auth';
+export type { IOAuth2Config, AbstractOAuth2Auth as IOAuth2Auth } from './interfaces/auth/IOAuth2Auth';
 
 // Export x-api types
 // likes

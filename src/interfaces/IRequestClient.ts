@@ -1,4 +1,5 @@
 import { ICustomBaseResponse } from "src/types/x-api/base_response";
+import { IHttpAdapter } from "./IHttpAdapter";
 
 /**
  * Request options for the Twitter API.
@@ -26,11 +27,16 @@ export interface RequestOptions {
   withCredentials?: boolean;
 }
 
+export interface IRequestClientConstructor {
+  new (httpAdapter: IHttpAdapter): AbstractRequestClient;
+}
 
 /**
  * Interface for a client that makes requests to the Twitter API.
  */
-export interface IRequestClient {
+export abstract class AbstractRequestClient {
+  constructor(protected httpAdapter: IHttpAdapter) {}
+
   /**
    * Makes a GET request to the Twitter API.
    * 
@@ -39,7 +45,7 @@ export interface IRequestClient {
    * @param headers - The headers to include
    * @returns A promise that resolves to the response data
    */
-  get<T extends ICustomBaseResponse>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T>;
+  abstract get<T extends ICustomBaseResponse>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T>;
 
   /**
    * Makes a POST request to the Twitter API.
@@ -51,7 +57,7 @@ export interface IRequestClient {
    * @param contentType - The content type of the request body
    * @returns A promise that resolves to the response data
    */
-  post<T extends ICustomBaseResponse>(
+  abstract post<T extends ICustomBaseResponse>(
     url: string,
     body?: any,
     headers?: Record<string, string>,
@@ -68,7 +74,7 @@ export interface IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  put<T extends ICustomBaseResponse>(
+  abstract put<T extends ICustomBaseResponse>(
     url: string,
     body?: any,
     headers?: Record<string, string>,
@@ -83,7 +89,7 @@ export interface IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  delete<T extends ICustomBaseResponse>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T>;
+  abstract delete<T extends ICustomBaseResponse>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T>;
 
   /**
    * Makes a PATCH request to the Twitter API.
@@ -94,7 +100,7 @@ export interface IRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  patch<T extends ICustomBaseResponse>(
+  abstract patch<T extends ICustomBaseResponse>(
     url: string,
     body?: any,
     headers?: Record<string, string>,

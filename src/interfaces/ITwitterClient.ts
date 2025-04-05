@@ -1,9 +1,9 @@
-import { IPosts } from './api/IPosts';
-import { IMedia } from './api/IMedia';
-import { IUsers } from './api/IUsers';
-import { ILikes } from './api/ILikes';
-import { IOAuth2Auth } from './auth/IOAuth2Auth';
-import { IOAuth1Auth } from './auth/IOAuth1Auth';
+import { AbstractPosts } from './api/IPosts';
+import { AbstractMedia } from './api/IMedia';
+import { AbstractUsers } from './api/IUsers';
+import { AbstractLikes } from './api/ILikes';
+import { AbstractOAuth2Auth } from './auth/IOAuth2Auth';
+import { AbstractOAuth1Auth } from './auth/IOAuth1Auth';
 
 /**
  * Interface for the Twitter client.
@@ -11,15 +11,15 @@ import { IOAuth1Auth } from './auth/IOAuth1Auth';
  */
 export interface ITwitterClient {
   /** The OAuth1 authentication provider */
-  oAuth1: IOAuth1Auth | undefined;
+  oAuth1: AbstractOAuth1Auth | undefined;
   /** The OAuth2 authentication provider */
-  oAuth2: IOAuth2Auth;
+  oAuth2: AbstractOAuth2Auth;
   /** Module for interacting with tweets */
-  posts: IPosts;
+  posts: AbstractPosts;
   /** Module for interacting with media */
-  media: IMedia;
+  media: AbstractMedia;
   /** Module for interacting with users */
-  users: IUsers;
+  users: AbstractUsers;
   /** Module for interacting with likes */
-  likes: ILikes;
+  likes: AbstractLikes;
 }

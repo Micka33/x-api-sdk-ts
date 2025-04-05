@@ -1,12 +1,7 @@
 import { ILikePostResponse } from "../../types/x-api/likes/like_post_response";
+import { AbstractApiContructor } from "./IApiConstructor";
 
-/**
- * Interface for the Likes module.
- * Provides methods for interacting with likes on Twitter.
- */
-export interface ILikes {
-
-
+export abstract class AbstractLikes extends AbstractApiContructor {
   /**
    * Likes a post.
    *
@@ -14,5 +9,5 @@ export interface ILikes {
    * @param postId - The ID of the post to like
    * @returns A promise that resolves when the post is liked
    */
-  add(userId: string, postId: string): Promise<ILikePostResponse>;
+  abstract add(userId: string, postId: string): Promise<ILikePostResponse>;
 }

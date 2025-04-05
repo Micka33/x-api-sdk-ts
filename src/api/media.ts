@@ -1,21 +1,11 @@
 import { IErrorResponse } from "src/types/x-api/base_response";
-import type { IMedia } from "../interfaces/api/IMedia";
-import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
-import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
-import type { IRequestClient } from "../interfaces/IRequestClient";
+import { AbstractMedia } from "../interfaces/api/IMedia";
 import type { IAddMetadataResponse } from "../types/x-api/media/add_metadata_response";
 import type { IGetUploadStatusResponse } from "../types/x-api/media/get_upload_status_response";
 import type { IAppendParams, IInitParams, MediaCategory } from "../types/x-api/media/upload_media_query";
 import type { ISuccessUploadMediaResponse, IUploadMediaResponse } from "../types/x-api/media/upload_media_response";
 
-export class Media implements IMedia {
-  constructor(
-    private readonly baseUrl: string,
-    private readonly oAuth1: IOAuth1Auth | undefined,
-    private readonly oAuth2: IOAuth2Auth,
-    private readonly requestClient: IRequestClient
-  ) {}
-
+export class Media extends AbstractMedia {
   /**
    * Uploads media to Twitter.
    * If a processing_info field is NOT returned in the response, then media_id is ready for use in other API endpoints.
@@ -46,6 +36,9 @@ export class Media implements IMedia {
     const cs = chunkSize || ((media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024); // 1MB chunks or 10 chunks
     const chunks = Math.ceil(media.length / cs);
 
+    // 77632992 bytes
+    // cs = 77632992 / 10 = 7763299,2 = 7763300
+    // chunks = 77632992 / 7763300 = 9.999 = 10
     for (let i = 0; i < chunks; i++) {
       const start = i * cs;
       const end = Math.min(start + cs, media.length);

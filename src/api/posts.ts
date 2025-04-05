@@ -1,7 +1,4 @@
-import type { IOAuth1Auth } from "../interfaces/auth/IOAuth1Auth";
-import type { IOAuth2Auth } from "../interfaces/auth/IOAuth2Auth";
-import type { IPostOptions, IPosts } from "../interfaces/api/IPosts";
-import type { IRequestClient } from "../interfaces/IRequestClient";
+import { IPostOptions, AbstractPosts } from "../interfaces/api/IPosts";
 import type { ICreatePostQuery } from "../types/x-api/posts/create_post_query";
 import type { ICreatePostResponse } from "../types/x-api/posts/create_post_response";
 import type { IDeletePostResponse } from "../types/x-api/posts/delete_post_response";
@@ -9,14 +6,7 @@ import type { ExpansionPost, PlaceField, IGetPostQuery, IGetPostsQuery, MediaFie
 import type { IGetPostResponse, IGetPostsResponse } from "../types/x-api/posts/get_posts_response";
 import type { TweetField, UserField } from "../types/x-api/shared";
 
-export class Posts implements IPosts {
-  constructor(
-    private readonly baseUrl: string,
-    private readonly oAuth1: IOAuth1Auth | undefined,
-    private readonly oAuth2: IOAuth2Auth,
-    private readonly requestClient: IRequestClient
-  ) {}
-
+export class Posts extends AbstractPosts {
   /**
    * Posts a new post.
    *
