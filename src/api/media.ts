@@ -33,12 +33,10 @@ export class Media extends AbstractMedia {
     const mediaId = (initResponse as ISuccessUploadMediaResponse).data.id;
 
     // Step 2: APPEND - Upload the media in chunks
-    const cs = chunkSize || ((media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024); // 1MB chunks or 10 chunks
+    //   1MB chunks or 10 chunks
+    const cs = chunkSize || ((media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024); 
     const chunks = Math.ceil(media.length / cs);
 
-    // 77632992 bytes
-    // cs = 77632992 / 10 = 7763299,2 = 7763300
-    // chunks = 77632992 / 7763300 = 9.999 = 10
     for (let i = 0; i < chunks; i++) {
       const start = i * cs;
       const end = Math.min(start + cs, media.length);
