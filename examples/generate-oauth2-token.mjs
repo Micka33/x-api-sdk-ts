@@ -21,7 +21,7 @@ const accessToken = null;
 const refreshToken = null;
 const tokenExpiresAt = null;
 
-const httpAdapter = new AxiosAdapter(axios); // default is `new FetchAdapter()`
+const httpAdapter = [AxiosAdapter, axios]; // default is `[FetchAdapter]`
 
 // Initialize the Twitter client
 const twitterClient = new TwitterClient({
