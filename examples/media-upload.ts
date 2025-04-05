@@ -7,7 +7,7 @@ const client = new TwitterClient({
   oAuth2: {
     clientId: '',
     clientSecret: '',
-    scopes: [TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess],
+    scopes: [TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite],
     redirectUri: '',
     accessToken: '',
     refreshToken: '',
