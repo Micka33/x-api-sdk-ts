@@ -1,4 +1,4 @@
-import { FetchAdapter } from '../../../src';
+import { FetchAdapter, RCResponseSimple } from '../../../src';
 import { Likes } from '../../../src/api/likes';
 import { IOAuth2Config } from '../../../src/interfaces/auth/IOAuth2Auth';
 import { ILikePostResponse } from '../../../src/types/x-api/likes/like_post_response';
@@ -30,10 +30,14 @@ describe('Likes', () => {
       // Mock data
       const userId = '12345';
       const postId = '67890';
-      const mockResponse: ILikePostResponse = {
+      const mockResponse: Omit<RCResponseSimple<ILikePostResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          liked: true
-        }
+          data: {
+            liked: true
+          }
+        },
+        ok: true,
+        headers: new Headers()
       };
 
       // Setup mock implementation
@@ -42,19 +46,23 @@ describe('Likes', () => {
       // Call the method
       const result = await likes.add(userId, postId);
 
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(postMock).toHaveBeenCalledTimes(1);
-      expect(postMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/users/${userId}/likes`,
-        { tweet_id: postId },
-        {
-          Authorization: 'Bearer mock-token',
-          'Content-Type': 'application/json'
-        }
-      );
-      expect(result).toEqual(mockResponse);
-      expect(result.data.liked).toBe(true);
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(postMock).toHaveBeenCalledTimes(1);
+        expect(postMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/users/${userId}/likes`,
+          { tweet_id: postId },
+          {
+            Authorization: 'Bearer mock-token',
+            'Content-Type': 'application/json'
+          }
+        );
+        expect(result.data).toEqual(mockResponse.data);
+        expect(result.data.data.liked).toBe(true);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should handle API errors when liking a post', async () => {

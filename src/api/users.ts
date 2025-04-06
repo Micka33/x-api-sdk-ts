@@ -16,7 +16,7 @@ export class Users extends AbstractUsers {
     userFields: UserField[] = ['id', 'username'],
     expansions?: ExpansionUser[],
     tweetFields?: TweetField[]
-  ): Promise<IGetMeResponse> {
+  ) {
     const headers = await this.oAuth2.getHeaders();
 
     const data: IGetMeQuery = { 'user.fields': userFields }

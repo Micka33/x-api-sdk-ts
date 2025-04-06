@@ -3,7 +3,7 @@ export { TwitterClient } from './client';
 export type { ITwitterClientConfig } from './client';
 
 // Export Http Adapters
-export type { IHttpAdapter } from './interfaces/IHttpAdapter';
+export type { IHttpAdapter, IHttpFetchResponse } from './interfaces/IHttpAdapter';
 export { AxiosAdapter } from './adapters/axios-adapter';
 export { FetchAdapter } from './adapters/fetch-adapter';
 
@@ -16,13 +16,13 @@ export { Users } from './api/users';
 // Export utils
 export { RequestClient } from './utils/request';
 export { AbstractRequestClient } from './interfaces/IRequestClient';
-export type { RequestOptions } from './interfaces/IRequestClient';
+export type { RequestOptions, RCResponse, RCResponseSimple } from './interfaces/IRequestClient';
 
 // Export interfaces and abstract classes
 export type { ITwitterClient } from './interfaces/ITwitterClient';
 export type { IPostOptions } from './interfaces/api/IPosts';
 export type { IApiConstructor } from './interfaces/api/IApiConstructor';
-export { AbstractApiContructor } from './interfaces/api/IApiConstructor';
+export { AbstractApi } from './interfaces/api/IApiConstructor';
 export { AbstractPosts } from './interfaces/api/IPosts';
 export { AbstractMedia } from './interfaces/api/IMedia';
 export { AbstractUsers } from './interfaces/api/IUsers';
@@ -59,8 +59,23 @@ export type { IGetMeResponse } from './types/x-api/users/get_me_response';
 export type { TweetField, UserField, NullablePartial } from './types/x-api/shared';
 export { TwitterApiScope } from './types/x-api/shared';
 // base_response
-export type { IBaseResponse, ICustomBaseResponse, IRateLimitInfo, IErrorResponse, ISuccessResponse } from './types/x-api/base_response';
-
+export type { IBaseResponse, ICustomBaseResponse, IRateLimitInfo } from './types/x-api/base_response';
+// Error responses
+export type {
+  IXError,
+  IGenericError,
+  IForbiddenError,
+  IResourceViolationError,
+  IDuplicateRuleError,
+  IInvalidRequestError,
+  IForbiddenFieldAccessError,
+  IForbiddenResourceAccessError,
+  IDisconnectedError,
+  IResourceNotFoundError,
+  IResourceNotAvailableToYouError,
+  IConnectionIssueError,
+  IUsageCapExceededError
+} from './types/x-api/error_responses';
 // Export utilities
 export { TwitterError, TwitterAPIError, RateLimitError, AuthenticationError } from './utils/error';
 export { parseRateLimitHeaders, isRateLimitExceeded, getTimeUntilReset } from './utils/rate-limit';

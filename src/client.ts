@@ -6,7 +6,7 @@ import { AbstractLikes } from './interfaces/api/ILikes';
 import type { IApiConstructor } from './interfaces/api/IApiConstructor';
 import type { AbstractOAuth1Auth } from './interfaces/auth/IOAuth1Auth';
 import type { AbstractOAuth2Auth, IOAuth2Config } from './interfaces/auth/IOAuth2Auth';
-import type { AbstractRequestClient, IRequestClientConstructor } from './interfaces/IRequestClient';
+import type { AbstractRequestClient, IRequestClientConstructor, RCResponse, RCResponseSimple } from './interfaces/IRequestClient';
 // import { OAuth1Auth } from './auth/OAuth1Auth';
 import { OAuth2Auth } from './auth/OAuth2Auth';
 import { RequestClient } from './utils/request';
@@ -79,5 +79,12 @@ export class TwitterClient implements ITwitterClient {
     this.media = apiModules?.media ? new apiModules.media(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient) : new Media(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
     this.users = apiModules?.users ? new apiModules.users(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient) : new Users(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
     this.likes = apiModules?.likes ? new apiModules.likes(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient) : new Likes(this.baseUrl, this.oAuth1, this.oAuth2, this.requestClient);
+  }
+
+  public isSuccessResponse<T>(response: RCResponse<T>): response is RCResponseSimple<T> {
+    return this.requestClient.isSuccessResponse(response);
+  }
+  public isErrorResponse<T>(response: RCResponse<T>): response is RCResponse<never> {
+    return !this.isSuccessResponse(response);
   }
 }

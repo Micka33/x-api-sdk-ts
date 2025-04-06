@@ -1,15 +1,9 @@
 import nock from 'nock';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import type { TwitterClient } from '../../src';
-import type { IErrorResponse } from '../../src/types/x-api/base_response';
-import type { ISuccessUploadMediaResponse } from '../../src/types/x-api/media/upload_media_response';
+import type { IUploadMediaResponse, TwitterClient } from '../../src';
 import { initializeTwitterClient, Config, initializeNock, getFixtureResponse } from './helpers';
 
-// Type guard to check if response is an error
-function isErrorResponse(response: any): response is IErrorResponse {
-  return ('errors' in response) || ('title' in response);
-}
 
 describe('Media Integration Tests', () => {
   let twitterClient: TwitterClient;
@@ -20,10 +14,6 @@ describe('Media Integration Tests', () => {
     recordingMode = Config.recordingMode;
     twitterClient = initializeTwitterClient(Config);
     initializeNock(nock, 'media', recordingMode);
-  });
-
-  it('needs paid plan to upload media', async () => {
-    expect(true).toBe(true);
   });
 
   describe('upload', () => {
@@ -53,27 +43,12 @@ describe('Media Integration Tests', () => {
         'tweet_image'
       );
       nockDone();
-      // {
-      //   data: {
-      //     id: '1906030204172079104',
-      //     media_key: '3_1906030204172079104',
-      //     size: 244109,
-      //     expires_after_secs: 86400,
-      //     image: { image_type: 'image/jpeg', w: 1024, h: 1536 }
-      //   },
-      //   rateLimitInfo: {
-      //     limit: 40000,
-      //     remaining: 39995,
-      //     reset: 2025-03-29T17:21:27.000Z,
-      //     user: { daily: [Object] }
-      //   }
-      // }
-      if (isErrorResponse(response)) {
+
+      if (twitterClient.isSuccessResponse(response)) {
+        expect(response.data.data.id).toBeDefined();
+      } else {
         console.error('should upload an image successfully - response', JSON.stringify(response, null, 2));
         fail('Expected successful response but got error');
-      } else {
-        const successResponse = response as ISuccessUploadMediaResponse;
-        expect(successResponse.data.id).toBeDefined();
       }
     });
 
@@ -149,7 +124,7 @@ describe('Media Integration Tests', () => {
       // Use a media ID from a previous upload or fixture
       const mediaFixture = getFixtureResponse('media', 'uploadImageSuccess.json', 4);
       // Cast to any to access Twitter API specific fields
-      const mediaId = (mediaFixture as ISuccessUploadMediaResponse).data.id;
+      const mediaId = (mediaFixture as IUploadMediaResponse).data.id;
       // Add metadata
       const { nockDone } = await nock.back('addMetadataSuccess.json');
       const response = await twitterClient.media.addMetadata(
@@ -159,12 +134,12 @@ describe('Media Integration Tests', () => {
       );
       nockDone();
       // The successful response might be empty or have a success indication
-      if (isErrorResponse(response)) {
-        fail('Expected successful response but got error');
+      if (twitterClient.isSuccessResponse(response)) {
+        expect(response.data.data.id).toBeDefined();
+        expect(response.data.data.associated_metadata.alt_text?.text).toBe('Hooman with a bass');
+        expect(response.data.data.associated_metadata.allow_download_status?.allow_download).toBe(true);
       } else {
-        expect(response.data.id).toBeDefined();
-        expect(response.data.associated_metadata.alt_text?.text).toBe('Hooman with a bass');
-        expect(response.data.associated_metadata.allow_download_status?.allow_download).toBe(true);
+        fail('Expected successful response but got error');
       }
     });
 

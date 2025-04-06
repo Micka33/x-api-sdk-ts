@@ -1,9 +1,5 @@
 import nock from 'nock';
-import type { TwitterClient } from '../../src';
-import type { IErrorResponse } from '../../src/types/x-api/base_response';
-import type { ISuccessCreatePostResponse } from '../../src/types/x-api/posts/create_post_response';
-import type { ISuccessGetPostResponse } from '../../src/types/x-api/posts/get_posts_response';
-import type { ISuccessDeletePostResponse } from '../../src/types/x-api/posts/delete_post_response';
+import type { IGenericError, TwitterClient } from '../../src';
 import { initializeTwitterClient, Config, initializeNock, getFixtureResponse } from './helpers';
 
 describe('Posts Integration Tests', () => {
@@ -22,41 +18,30 @@ describe('Posts Integration Tests', () => {
       const postText = 'Test post from SDK integration test';
       const response = await twitterClient.posts.create(postText);
       nockDone();
-      // {
-      //   "data": {
-      //     "edit_history_tweet_ids": [
-      //       "1905993362018042115"
-      //     ],
-      //     "id": "1905993362018042115",
-      //     "text": "Test post from SDK integration test"
-      //   },
-      //   "rateLimitInfo": {
-      //     "limit": 1080000,
-      //     "remaining": 1079998,
-      //     "reset": "2025-03-29T14:53:48.000Z",
-      //     "user": {
-      //       "daily": {
-      //         "limit": 17,
-      //         "remaining": 11,
-      //         "reset": "2025-03-30T12:05:08.000Z"
-      //       }
-      //     }
-      //   }
-      // }
-      const successResponse = response as ISuccessCreatePostResponse;
-      expect(successResponse.data.id).toBeDefined();
-      expect(successResponse.data.text).toBe(postText);
+      if (twitterClient.isSuccessResponse(response)) {
+        expect(response.data.data.id).toBeDefined();
+        expect(response.data.data.text).toBe(postText);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should fail when text exceeds character limit', async () => {
       const { nockDone } = await nock.back('createPostExceedsLimit.json');
       // Create a string that exceeds the 280 character limit
       const longText = 'A'.repeat(281);
-      const response = (await twitterClient.posts.create(longText)) as IErrorResponse;
+      const response = await twitterClient.posts.create(longText);
       nockDone();
-      expect(response.title).toBe('Forbidden');
-      expect(response.type).toBe('about:blank');
-      expect(response.detail).toContain('You are not permitted to perform this action.');
+      if (twitterClient.isErrorResponse(response)) {
+        const error = response.data as IGenericError;
+        expect(response.status).toBe(403);
+        expect(error.status).toBe(403);
+        expect(error.title).toBe('Forbidden');
+        expect(error.type).toBe('about:blank');
+        expect(error.detail).toContain('You are not permitted to perform this action.');
+      } else {
+        fail('Expected error response but got success');
+      }
     });
   });
 
@@ -65,15 +50,20 @@ describe('Posts Integration Tests', () => {
       const { nockDone } = await nock.back('deletePostSuccess.json');
       // First create a post to delete
       const createResponse = await twitterClient.posts.create('Post to be deleted');
-      const successCreateResponse = createResponse as ISuccessCreatePostResponse;
-      const postId = successCreateResponse.data.id;
-      
-      // Now delete it
-      const response = await twitterClient.posts.delete(postId);
-      const successDeleteResponse = response as ISuccessDeletePostResponse;
-      nockDone();
-
-      expect(successDeleteResponse.data.deleted).toBe(true);
+      if (twitterClient.isSuccessResponse(createResponse)) {
+        const postId = createResponse.data.data.id;
+        // Now delete it
+        const deleteResponse = await twitterClient.posts.delete(postId);
+        nockDone();
+        if (twitterClient.isSuccessResponse(deleteResponse)) {
+          expect(deleteResponse.data.data.deleted).toBe(true);
+        } else {
+          fail('Expected success response but got error');
+        }
+      } else {
+        nockDone();
+        fail('Expected success response but got error');
+      }
     });
 
   //   it('should fail when using an invalid ID to delete a non-existent post', async () => {
@@ -100,16 +90,19 @@ describe('Posts Integration Tests', () => {
         userFields: ['name', 'username']
       });
       nockDone();
-      const successResponse = response as ISuccessGetPostResponse;
 
-      expect(successResponse.data.id).toBe(postId);
-      expect(successResponse.data.text).toBeDefined();
-      expect(successResponse.data.created_at).toBeDefined();
-      expect(successResponse.data.author_id).toBeDefined();
-      expect(successResponse.data.public_metrics).toBeDefined();
-      expect(successResponse.includes?.users).toBeDefined();
-      expect(successResponse.includes?.users?.[0].name).toBeDefined();
-      expect(successResponse.includes?.users?.[0].username).toBeDefined();
+      if (twitterClient.isSuccessResponse(response)) {
+        expect(response.data.data.id).toBe(postId);
+        expect(response.data.data.text).toBeDefined();
+        expect(response.data.data.created_at).toBeDefined();
+        expect(response.data.data.author_id).toBeDefined();
+        expect(response.data.data.public_metrics).toBeDefined();
+        expect(response.data.includes?.users).toBeDefined();
+        expect(response.data.includes?.users?.[0].name).toBeDefined();
+        expect(response.data.includes?.users?.[0].username).toBeDefined();
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     // it('should fail when requesting a non-existing post', async () => {
@@ -166,12 +159,15 @@ describe('Posts Integration Tests', () => {
       });
       nockDone();
 
-      // We're assuming this is a success response
-      const successResponse = response as any;
-      expect(successResponse.data).toHaveLength(postIds.length);
-      expect(successResponse.data[0].id).toBeDefined();
-      expect(successResponse.data[0].text).toBeDefined();
-      expect(successResponse.includes?.users).toBeDefined();
+      if (twitterClient.isSuccessResponse(response)) {
+        // We're assuming this is a success response
+        expect(response.data.data).toHaveLength(postIds.length);
+        expect(response.data.data[0].id).toBeDefined();
+        expect(response.data.data[0].text).toBeDefined();
+        expect(response.data.includes?.users).toBeDefined();
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     // it('should fail when requesting with invalid parameters', async () => {

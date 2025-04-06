@@ -15,7 +15,7 @@ export interface IApiConstructor<T> {
   ): T;
 }
 
-export abstract class AbstractApiContructor {
+export abstract class AbstractApi {
   constructor(
     protected readonly baseUrl: string,
     protected readonly oAuth1: AbstractOAuth1Auth | undefined | null,

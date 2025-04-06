@@ -1,7 +1,8 @@
 import { IDeletePostResponse } from '../../types/x-api/posts/delete_post_response';
 import { IGetPostResponse, IGetPostsResponse } from '../../types/x-api/posts/get_posts_response';
 import { ICreatePostResponse } from '../../types/x-api/posts/create_post_response';
-import { AbstractApiContructor } from './IApiConstructor';
+import { AbstractApi } from './IApiConstructor';
+import { RCResponse } from '../IRequestClient';
 
 /**
  * Options for posting a tweet.
@@ -66,7 +67,7 @@ export interface IPostOptions {
  * Interface for the Posts module.
  * Provides methods for interacting with posts.
  */
-export abstract class AbstractPosts extends AbstractApiContructor {
+export abstract class AbstractPosts extends AbstractApi {
   /**
    * Posts a new tweet.
    *
@@ -74,7 +75,10 @@ export abstract class AbstractPosts extends AbstractApiContructor {
    * @param options - Optional parameters for the tweet
    * @returns A promise that resolves to the created tweet
    */
-  abstract create(text: string, options?: IPostOptions): Promise<ICreatePostResponse>;
+  abstract create(
+    text: string,
+    options?: IPostOptions
+  ): Promise<RCResponse<ICreatePostResponse>>;
 
   /**
    * Retrieves a post by its ID.
@@ -101,7 +105,7 @@ export abstract class AbstractPosts extends AbstractApiContructor {
     pollFields?: string[];
     userFields?: string[];
     placeFields?: string[];
-  }): Promise<IGetPostResponse>;
+  }): Promise<RCResponse<IGetPostResponse>>;
 
   /**
    * Retrieves multiple posts by their IDs.
@@ -128,7 +132,7 @@ export abstract class AbstractPosts extends AbstractApiContructor {
     pollFields?: string[];
     userFields?: string[];
     placeFields?: string[];
-  }): Promise<IGetPostsResponse>;
+  }): Promise<RCResponse<IGetPostsResponse>>;
 
   /**
    * Deletes a tweet.
@@ -136,5 +140,5 @@ export abstract class AbstractPosts extends AbstractApiContructor {
    * @param id - The ID of the tweet to delete
    * @returns A promise that resolves when the tweet is deleted
    */
-  abstract delete(id: string): Promise<IDeletePostResponse>;
+  abstract delete(id: string): Promise<RCResponse<IDeletePostResponse>>;
 }

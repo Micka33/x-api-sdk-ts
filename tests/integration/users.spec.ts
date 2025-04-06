@@ -1,8 +1,7 @@
 import nock from 'nock';
 import type { TwitterClient } from '../../src';
-import type { ISuccessGetMeResponse } from '../../src/types/x-api/users/get_me_response';
-import type { IErrorResponse } from '../../src/types/x-api/base_response';
 import { initializeTwitterClient, Config, initializeNock } from './helpers';
+import type { IInvalidRequestError } from '../../src/types/x-api/error_responses';
 
 describe('Users Integration Tests', () => {
   let twitterClient: TwitterClient;
@@ -19,28 +18,35 @@ describe('Users Integration Tests', () => {
       const { nockDone } = await nock.back('getMeValidFields.json');
       const response = await twitterClient.users.getMe(['name', 'username', 'profile_image_url']);
       nockDone();
-      const data = (response as ISuccessGetMeResponse).data;
-      expect(data.name).toBe('Dr History');
-      expect(data.username).toBe('DrHistoryX');
-      expect(data.profile_image_url).toBe('https://pbs.twimg.com/profile_images/1882107024604794881/4PiELgpa_normal.jpg');
+      if (twitterClient.isSuccessResponse(response)) {
+        const data = response.data;
+        expect(data.data.name).toBe('Dr History');
+        expect(data.data.username).toBe('DrHistoryX');
+        expect(data.data.profile_image_url).toBe('https://pbs.twimg.com/profile_images/1882107024604794881/4PiELgpa_normal.jpg');
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should fail when a wrong field is requested', async () => {
       const { nockDone } = await nock.back('getMeInvalidFields.json');
       // @ts-expect-error - Testing error handling
-      const response = (await twitterClient.users.getMe(['id', 'wrong_field'])) as IErrorResponse;
+      const response = (await twitterClient.users.getMe(['id', 'wrong_field']));
       nockDone();
-      expect(response.title).toBe('Invalid Request');
-      expect(response.type).toBe('https://api.twitter.com/2/problems/invalid-request');
-      expect(response.detail).toContain('One or more parameters to your request was invalid.');
-      const error = response.errors?.[0] as {
-        message: string;
-        parameters: Record<string, string | string[]>;
-      };
-      const message = error.message;
-      const parameters = error.parameters;
-      expect(message).toContain('[wrong_field] is not one of');
-      expect(parameters['user.fields'][0]).toBe(['id,wrong_field'][0]);
+      if (twitterClient.isErrorResponse(response)) {
+        const error = response.data as IInvalidRequestError;
+        expect(error.title).toBe('Invalid Request');
+        expect(error.type).toBe('https://api.twitter.com/2/problems/invalid-request');
+        expect(error.detail).toContain('One or more parameters to your request was invalid.');
+        const errorItem = error.errors?.[0] as {
+          message: string;
+          parameters: Record<string, string | string[]>;
+        };
+        expect(errorItem.message).toContain('[wrong_field] is not one of');
+        expect(errorItem.parameters['user.fields'][0]).toBe(['id,wrong_field'][0]);
+      } else {
+        fail('Expected error response but got success');
+      }
     });
   });
 });

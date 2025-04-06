@@ -1,4 +1,4 @@
-import { TwitterApiScope, TwitterClient } from '../src';
+import { TwitterApiScope, TwitterClient } from '../dist';
 
 // Create a client with OAuth 2.0 credentials
 const client = new TwitterClient({
@@ -16,11 +16,11 @@ const client = new TwitterClient({
 // Post a tweet
 async function postTweet() {
   try {
-    const tweet = await client.posts.create('Hello, Twitter!');
-    if ('data' in tweet) {
-      console.log('Tweet posted:', tweet.data.id);
+    const tweetResponse = await client.posts.create('Hello, Twitter!');
+    if (client.isSuccessResponse(tweetResponse)) {
+      console.log('Tweet posted:', tweetResponse.data);
     } else {
-      console.error('Error posting tweet:', tweet);
+      console.error('Error posting tweet:', tweetResponse);
     }
   } catch (error) {
     console.error('Caught error posting tweet:', error);
@@ -30,11 +30,11 @@ async function postTweet() {
 // Get a tweet by ID
 async function getTweet(id: string) {
   try {
-    const tweet = await client.posts.get(id);
-    if ('data' in tweet) {
-      console.log('Tweet:', tweet.data.text);
+    const tweetResponse = await client.posts.get(id);
+    if (client.isSuccessResponse(tweetResponse)) {
+      console.log('Tweet:', tweetResponse.data);
     } else {
-      console.error('Error getting tweet:', tweet);
+      console.error('Error getting tweet:', tweetResponse);
     }
   } catch (error) {
     console.error('Caught error getting tweet:', error);
@@ -44,11 +44,11 @@ async function getTweet(id: string) {
 // Get a authenticated user
 async function getAuthenticatedUser() {
   try {
-    const user = await client.users.getMe();
-    if ('data' in user) {
-      console.log('User:', user.data.username);
+    const userResponse = await client.users.getMe();
+    if (client.isSuccessResponse(userResponse)) {
+      console.log('User:', userResponse.data);
     } else {
-      console.error('Error getting user:', user);
+      console.error('Error getting user:', userResponse);
     }
   } catch (error) {
     console.error('Caught error getting user:', error);

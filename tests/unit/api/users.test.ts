@@ -3,7 +3,7 @@ import { IOAuth2Config } from '../../../src/interfaces/auth/IOAuth2Auth';
 import { IGetMeResponse } from '../../../src/types/x-api/users/get_me_response';
 import { ExpansionUser } from '../../../src/types/x-api/users/get_me_query';
 import { TweetField, UserField } from '../../../src/types/x-api/shared';
-import { FetchAdapter } from '../../../src';
+import { FetchAdapter, RCResponseSimple } from '../../../src';
 import { FakeRequestClient, FakeOAuth2Auth } from '../helpers';
 
 describe('Users', () => {
@@ -30,12 +30,16 @@ describe('Users', () => {
     it('should get authenticated user info with default fields', async () => {
       // Mock data
       const defaultFields = ['id', 'username'] as UserField[];
-      const mockResponse: IGetMeResponse = {
+      const mockResponse: Omit<RCResponseSimple<IGetMeResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: '12345',
-          name: 'Test User',
-          username: 'testuser'
-        }
+          data: {
+            id: '12345',
+            name: 'Test User',
+            username: 'testuser'
+          }
+        },
+        ok: true,
+        headers: new Headers()
       };
 
       // Setup mock implementation
@@ -44,30 +48,38 @@ describe('Users', () => {
       // Call the method
       const result = await users.getMe();
 
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/users/me`,
-        { 'user.fields': defaultFields },
-        {
-          Authorization: 'Bearer mock-token',
-          'Content-Type': 'application/json'
-        }
-      );
-      expect(result).toEqual(mockResponse);
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/users/me`,
+          { 'user.fields': defaultFields },
+          {
+            Authorization: 'Bearer mock-token',
+            'Content-Type': 'application/json'
+          }
+        );
+        expect(result.data).toEqual(mockResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should get authenticated user info with custom fields', async () => {
       // Mock data
       const customFields = ['id', 'name', 'username', 'verified'] as UserField[];
-      const mockResponse: IGetMeResponse = {
+      const mockResponse: Omit<RCResponseSimple<IGetMeResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: '12345',
-          name: 'Test User',
-          username: 'testuser',
-          verified: true
-        }
+          data: {
+            id: '12345',
+            name: 'Test User',
+            username: 'testuser',
+            verified: true
+          }
+        },
+        ok: true,
+        headers: new Headers()
       };
 
       // Setup mock implementation
@@ -76,18 +88,22 @@ describe('Users', () => {
       // Call the method
       const result = await users.getMe(customFields);
 
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/users/me`,
-        { 'user.fields': customFields },
-        {
-          Authorization: 'Bearer mock-token',
-          'Content-Type': 'application/json'
-        }
-      );
-      expect(result).toEqual(mockResponse);
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/users/me`,
+          { 'user.fields': customFields },
+          {
+            Authorization: 'Bearer mock-token',
+            'Content-Type': 'application/json'
+          }
+        );
+        expect(result.data).toEqual(mockResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should get authenticated user info with expansions and tweet fields', async () => {
@@ -96,24 +112,28 @@ describe('Users', () => {
       const expansions = ['pinned_tweet_id'] as ExpansionUser[];
       const tweetFields = ['id', 'text', 'created_at'] as TweetField[];
       
-      const mockResponse = {
+      const mockResponse: Omit<RCResponseSimple<IGetMeResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: '12345',
-          name: 'Test User',
-          username: 'testuser',
-          verified: true,
-          pinned_tweet_id: '67890'
+          data: {
+            id: '12345',
+            name: 'Test User',
+            username: 'testuser',
+            verified: true,
+            pinned_tweet_id: '67890'
+          },
+          // includes: {
+          //   tweets: [
+          //     {
+          //       id: '67890',
+          //       text: 'This is my pinned tweet!',
+          //       created_at: '2023-01-01T12:00:00Z'
+          //     }
+          //   ]
+          // }
         },
-        includes: {
-          tweets: [
-            {
-              id: '67890',
-              text: 'This is my pinned tweet!',
-              created_at: '2023-01-01T12:00:00Z'
-            }
-          ]
-        }
-      } as unknown as IGetMeResponse;
+        ok: true,
+        headers: new Headers()
+      };
 
       // Setup mock implementation
       getMock.mockResolvedValueOnce(mockResponse);
@@ -121,22 +141,26 @@ describe('Users', () => {
       // Call the method
       const result = await users.getMe(userFields, expansions, tweetFields);
 
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/users/me`,
-        {
-          'user.fields': userFields,
-          'expansions': expansions,
-          'tweet.fields': tweetFields
-        },
-        {
-          Authorization: 'Bearer mock-token',
-          'Content-Type': 'application/json'
-        }
-      );
-      expect(result).toEqual(mockResponse);
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/users/me`,
+          {
+            'user.fields': userFields,
+            'expansions': expansions,
+            'tweet.fields': tweetFields
+          },
+          {
+            Authorization: 'Bearer mock-token',
+            'Content-Type': 'application/json'
+          }
+        );
+        expect(result.data).toEqual(mockResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should handle errors when getting user info', async () => {

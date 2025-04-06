@@ -1,9 +1,10 @@
-import { IErrorResponse } from "src/types/x-api/base_response";
+import { IXError } from "src/types/x-api/error_responses";
 import { AbstractMedia } from "../interfaces/api/IMedia";
 import type { IAddMetadataResponse } from "../types/x-api/media/add_metadata_response";
 import type { IGetUploadStatusResponse } from "../types/x-api/media/get_upload_status_response";
 import type { IAppendParams, IInitParams, MediaCategory } from "../types/x-api/media/upload_media_query";
-import type { ISuccessUploadMediaResponse, IUploadMediaResponse } from "../types/x-api/media/upload_media_response";
+import type { IUploadMediaResponse } from "../types/x-api/media/upload_media_response";
+import { RCResponse, RCResponseSimple } from "src/interfaces/IRequestClient";
 
 export class Media extends AbstractMedia {
   /**
@@ -24,13 +25,13 @@ export class Media extends AbstractMedia {
     category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', 
     additionalOwners: string[] | null = null,
     chunkSize?: number,
-  ): Promise<IUploadMediaResponse> {
+  ): Promise<RCResponse<IUploadMediaResponse>> {
     // Step 1: INIT - Initialize the upload
     const initResponse = await this.initMediaUpload(media.length, mimeType, category, additionalOwners);
-    if (!(initResponse as ISuccessUploadMediaResponse).data) {
-      return initResponse as IErrorResponse;
+    if (!this.requestClient.isSuccessResponse(initResponse)) {
+      return initResponse as RCResponseSimple<IXError | string | null | undefined>;
     }
-    const mediaId = (initResponse as ISuccessUploadMediaResponse).data.id;
+    const mediaId = initResponse.data.data.id;
 
     // Step 2: APPEND - Upload the media in chunks
     //   1MB chunks or 10 chunks
@@ -41,13 +42,19 @@ export class Media extends AbstractMedia {
       const start = i * cs;
       const end = Math.min(start + cs, media.length);
       const chunk = media.subarray(start, end);
-      await this.appendMediaChunk(mediaId, i, chunk);
+      const appendResponse = await this.appendMediaChunk(mediaId, i, chunk);
+      if (!appendResponse.ok) {
+        return appendResponse as RCResponseSimple<IXError | string | null | undefined>;
+      }
     }
 
     // Step 3: FINALIZE - Complete the upload
     const finalizeResponse = await this.finalizeMediaUpload(mediaId);
+    if (!this.requestClient.isSuccessResponse(finalizeResponse)) {
+      return finalizeResponse as RCResponseSimple<IXError | string | null | undefined>;
+    }
     // Step 4: Check if processing is needed
-    if ((finalizeResponse as ISuccessUploadMediaResponse).data?.processing_info) {
+    if (finalizeResponse.data.data.processing_info) {
       // If processing is needed, wait for it to complete
       return this.waitForProcessing(mediaId, finalizeResponse);
     }
@@ -60,7 +67,7 @@ export class Media extends AbstractMedia {
    * @param mediaId - Media id for the requested media upload status.
    * @returns A promise that resolves to the uploaded media
    */
-  public async getStatus(mediaId: string): Promise<IGetUploadStatusResponse> {
+  public async getStatus(mediaId: string) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     // Make the API request
@@ -101,7 +108,7 @@ export class Media extends AbstractMedia {
     originalId?: string,
     originalProvider?: string,
     uploadSource?: string
-  ): Promise<IAddMetadataResponse> {
+  ) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
@@ -164,7 +171,7 @@ export class Media extends AbstractMedia {
     mediaType: string, 
     mediaCategory: MediaCategory, 
     additionalOwners: string[] | null = null
-  ): Promise<IUploadMediaResponse> {
+  ) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
@@ -202,7 +209,11 @@ export class Media extends AbstractMedia {
    * @returns A promise that resolves when the chunk is uploaded
    * @private
    */
-  private async appendMediaChunk(mediaId: string, segmentIndex: number, chunk: Buffer): Promise<void> {
+  private async appendMediaChunk(
+    mediaId: string,
+    segmentIndex: number,
+    chunk: Buffer
+  ) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
@@ -215,7 +226,7 @@ export class Media extends AbstractMedia {
     };
     
     // Make the API request
-    await this.requestClient.post<IUploadMediaResponse>(
+    return await this.requestClient.post<IUploadMediaResponse>(
       `${this.baseUrl}/2/media/upload`,
       params,
       headers,
@@ -231,7 +242,7 @@ export class Media extends AbstractMedia {
    * @returns A promise that resolves to the finalization response
    * @private
    */
-  private async finalizeMediaUpload(mediaId: string): Promise<IUploadMediaResponse> {
+  private async finalizeMediaUpload(mediaId: string) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
     
@@ -259,28 +270,33 @@ export class Media extends AbstractMedia {
    * @returns A promise that resolves to the final media status
    * @private
    */
-  private async waitForProcessing(mediaId: string, initialResponse: IUploadMediaResponse): Promise<IUploadMediaResponse> {
-    let response: IUploadMediaResponse = initialResponse;
-    let data = (response as ISuccessUploadMediaResponse).data;
+  private async waitForProcessing(
+    mediaId: string,
+    initialResponse: RCResponseSimple<IUploadMediaResponse>
+  ): Promise<RCResponse<IUploadMediaResponse>> {
+    let response: RCResponseSimple<IUploadMediaResponse> = initialResponse;
+    let data = response.data.data;
 
     // Keep checking until processing is complete or fails
     while (
-      response &&
+      response && data && typeof data !== 'string' &&
       data.processing_info && 
       ['pending', 'in_progress'].includes(data.processing_info.state)
     ) {
       // Wait for the recommended time before checking again
       const checkAfterSecs = data.processing_info?.check_after_secs || 1;
       await new Promise(resolve => setTimeout(resolve, checkAfterSecs * 1000));
-      
+
       // Check status
-      response = await this.getStatus(mediaId);
-      data = (response as ISuccessUploadMediaResponse).data;
-      if (!data) {
-        return response as IErrorResponse;
+      const rcResponse = await this.getStatus(mediaId);
+
+      if (!this.requestClient.isSuccessResponse(rcResponse)) {
+        console.error('Error waiting for media processing to complete (status)', JSON.stringify(rcResponse, null, 2));
+        return rcResponse as RCResponseSimple<IXError | string | null | undefined>;
       }
+      response = rcResponse;
+      data = response.data.data;
     }
-    
     return response;
   }
 }

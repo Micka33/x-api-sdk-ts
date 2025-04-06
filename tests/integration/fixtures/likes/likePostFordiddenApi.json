@@ -1,0 +1,34 @@
+[
+    {
+        "scope": "https://api.x.com:443",
+        "method": "POST",
+        "path": "/2/users/1868941664049635328/likes",
+        "body": {
+            "tweet_id": "1905993362018042115"
+        },
+        "status": 403,
+        "response": {
+            "title": "Forbidden",
+            "type": "about:blank",
+            "status": 403,
+            "detail": "Forbidden"
+        },
+        "rawHeaders": {
+            "cache-control": "no-cache, no-store, max-age=0",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "92c24bb8fba5d785-CDG",
+            "connection": "close",
+            "content-length": "76",
+            "content-type": "application/problem+json",
+            "date": "Sun, 06 Apr 2025 15:25:04 GMT",
+            "perf": "7402827104",
+            "server": "cloudflare tsa_b",
+            "set-cookie": "__cf_bm=9wbk0FBiu4XEkAdWGsA7caVfr8Sw0MWtjGr5bMtSB9w-1743953104-1.0.1.1-Hk73CANTBB35SVms.inPQlfXlGK8hakkgwEMjFtD28Xj3JZgx69_Z.S_iGUijWar0M0Z8RI27ATRsZqmvH8WH9GjeXn7WAg0zGlQNAbD7YY; path=/; expires=Sun, 06-Apr-25 15:55:04 GMT; domain=.x.com; HttpOnly; Secure; SameSite=None",
+            "strict-transport-security": "max-age=631138519",
+            "x-connection-hash": "2d30911e3c15a337942d2c8a92364ca107abbdfb790ab891161e216f56025c4f",
+            "x-response-time": "7",
+            "x-transaction-id": "9544a054a2682189"
+        },
+        "responseIsBinary": false
+    }
+]

@@ -1,11 +1,8 @@
-!! UNDER CONSTRUCTION !!
-
 # x-api-sdk-ts
 
 Simple and versatile typescript SDK for X Api.
 
-I don't recommend using this SDK in production, but it can be used as a reference for building your own SDK.  
-I recommend to use [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk) instead.  
+Have you checked [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk)?  
 
 ## Overview
 
@@ -13,9 +10,39 @@ x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, 
 
 *Twitter's v1.1 endpoints are not supported, but can be implemented. if this is something you need, please open an issue.*  
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Generate OAuth2 token from console](#generate-oauth2-token-from-console)
+- [Examples](#examples)
+  - [Scripts](#scripts)
+  - [Authentication](#authentication)
+  - [Get accessToken and refreshToken](#get-accesstoken-and-refreshtoken)
+  - [Set accessToken and refreshToken](#set-accesstoken-and-refreshtoken)
+  - [Check for successful response](#check-for-successful-response)
+    - [Usage example](#usage-example)
+  - [Media Upload](#media-upload)
+  - [Get Media Upload Status](#get-media-upload-status)
+  - [Add Metadata to Media](#add-metadata-to-media)
+  - [Create Post](#create-post)
+  - [Delete Post](#delete-post)
+  - [Get One Post](#get-one-post)
+  - [Get Several Posts](#get-several-posts)
+  - [Like Post](#like-post)
+  - [Get Authenticated User Info](#get-authenticated-user-info)
+- [Change Base URL](#change-base-url)
+- [Change HTTP Adapter](#change-http-adapter)
+  - [Using Axios](#using-axios)
+  - [Create a custom HTTP adapter](#create-a-custom-http-adapter)
+- [Development Documentation](#development-documentation)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+s
 ## Features
 
-- Full TypeScript type definitions of supported endpoints.
+- Full TypeScript type definitions and JSDOC of supported endpoints.
 - Partial implementation of Twitter API v2 endpoints.
 - Support authentication for OAuth 2.0 (v2).
 - Modular architecture for easy customization and extension using depencencies injection.
@@ -53,20 +80,30 @@ See: [examples/generate-oauth2-token.mjs](https://github.com/Micka33/x-api-sdk-t
 
 ## Examples
 
+### Scripts
+
+you will find some examples in the [examples](https://github.com/Micka33/x-api-sdk-ts/tree/main/examples) folder.
+
+- [examples/basic-usage.ts](https://github.com/Micka33/x-api-sdk-ts/blob/main/examples/basic-usage.ts)
+- [examples/generate-oauth2-token.mjs](https://github.com/Micka33/x-api-sdk-ts/blob/main/examples/generate-oauth2-token.mjs)
+- [examples/media-upload.ts](https://github.com/Micka33/x-api-sdk-ts/blob/main/examples/media-upload.ts)
+
 ### Authentication
 
 The SDK supports OAuth 2.0 (for v2 API).  
 *It is designed to be easily extendable to support OAuth 1.0a (for v1.1 API) in the future. if this is something you need, please open an issue.*
 
 ```typescript
+import { TwitterApiScope, TwitterClient } from 'x-api-sdk-ts';
+
 const clientId = 'input_client_id_here';
 const clientSecret = 'input_client_secret_here';
 const redirectUri = 'http://localhost:3000/oauth2/callback';
-const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite];
+const scopes = [ TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite ];
 
 const accessToken = 'input_access_token_here';
 const refreshToken = 'input_refresh_token_here';
-const tokenExpiresAt = 'input_token_expires_at_here'; // a date object; example: new Date()
+const tokenExpiresAt = new Date('input_token_expires_at_here').getTime();
 
 // Initialize the Twitter client
 const twitterClient = new TwitterClient({
@@ -87,24 +124,53 @@ const { accessToken, refreshToken, tokenExpiresAt } = token;
 twitterClient.oAuth2.setToken(accessToken, refreshToken, tokenExpiresAt);
 ```
 
-### Media Upload
+### Check for successful response
+
+For convenience, the SDK provides 2 methods to check a response and assert its type.  
+They are accessible from the `twitterClient` object.
 
 ```typescript
-const media = await twitterClient.media.upload(
+twitterClient.isSuccessResponse<T>(response: RCResponse<T>): response is RCResponseSimple<T>;
+twitterClient.isErrorResponse<T>(response: RCResponse<T>): response is RCResponse<never>;
+```
+
+#### Usage example
+
+```typescript
+const postResponse = await twitterClient.posts.create('Hello World!');
+if (twitterClient.isSuccessResponse(postResponse)) {
+  // postResponse.data is of type ICreatePostResponse
+  console.log('Successfully posted tweet');
+}
+if (twitterClient.isErrorResponse(postResponse)) {
+  // postResponse.data is of type XError | string | undefined | null
+  console.log('Failed to post tweet');
+}
+```
+
+
+### Media Upload
+
+The `upload` method automatically handles the chunked upload process.  
+The file is uploaded in chunks of 1MB or 10 chunks, whichever is larger.  
+
+**NB:** You can also specify a custom chunk size as 4th parameter.
+
+```typescript
+const mediaResponse = await twitterClient.media.upload(
   fs.readFileSync('path/to/media/doge.jpeg'),
   'image/jpeg',
   'tweet_image'
 );
-const mediaId = media.data.id;
-// If media.dataprocessing_info field is NOT returned in the response, then mediaId is ready for use in other API endpoints.
-// https://docs.x.com/x-api/media/quickstart/media-upload-chunked#step-2-%3A-post-media%2Fupload-append
+const mediaData = mediaResponse.data;
+const mediaId = mediaData.data.id;
 ```
 
 ### Get Media Upload Status
 
 ```typescript
 const media = await twitterClient.media.getUploadStatus(mediaId);
-const mediaStatus = media.data.processing_info.state; // 'succeeded' | 'in_progress' | 'pending' | 'failed'
+const mediaStatus = media.data.data.processing_info.state; // 'succeeded' | 'in_progress' | 'pending' | 'failed'
 ```
 
 ### Add Metadata to Media
@@ -178,6 +244,68 @@ const userId = user.data.id;
 const userName = user.data.name;
 const userUsername = user.data.username;
 ```
+
+## Change Base URL
+
+By default the SDK uses the X API base URL: `https://api.x.com`.  
+You can change the base URL by setting the `baseUrl` parameter in the constructor.
+
+```typescript
+
+const twitterClient = new TwitterClient(config, { baseUrl: 'https://api.twitter.com' });
+```
+
+## Change HTTP Adapter
+
+By default, the SDK uses the `FetchAdapter`, which is a thin wrapper around the native `fetch` API.  
+You can change the HTTP adapter by setting the `httpAdapter` parameter in the constructor.
+
+### Using Axios
+
+`x-api-sdk-ts` comes bundled with an Axios adapter.  
+To use it, you need to install the `axios` package.
+
+```bash
+npm install axios
+```
+
+And then use it like this:
+
+```typescript
+import axios from 'axios';
+import { AxiosAdapter, TwitterApiScope, TwitterClient } from 'x-api-sdk-ts';
+
+axios.defaults.adapter = 'http'; // see: https://github.com/axios/axios?tab=readme-ov-file#-fetch-adapter
+
+const config = {/**/};
+const twitterClient = new TwitterClient(config, { httpAdapter: [AxiosAdapter, axios] });
+```
+
+### Create a custom HTTP adapter
+
+You can create your own custom HTTP adapter by implementing the `IHttpAdapter` interface.
+
+```typescript
+import { IHttpAdapter, IHttpFetchResponse } from 'x-api-sdk-ts';
+
+export class CustomHttpAdapter implements IHttpAdapter {
+  constructor(private paramA: string, private paramB: number) {}
+  public async fetch<T>(url: string, options?: RequestInit): Promise<IHttpFetchResponse<T>> {
+    return fetch(url, options);
+  }
+}
+```
+
+And then use it like this:
+
+```typescript
+const twitterClient = new TwitterClient(config, {
+  httpAdapter: [CustomHttpAdapter, 'paramA', 'paramB']
+});
+```
+
+
+
 
 ## Development Documentation
 

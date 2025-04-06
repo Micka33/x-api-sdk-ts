@@ -3,7 +3,7 @@ import { IOAuth2Config } from '../../../src/interfaces/auth/IOAuth2Auth';
 import { IUploadMediaResponse } from '../../../src/types/x-api/media/upload_media_response';
 import { IGetUploadStatusResponse } from '../../../src/types/x-api/media/get_upload_status_response';
 import { IAddMetadataResponse } from '../../../src/types/x-api/media/add_metadata_response';
-import { FetchAdapter } from '../../../src';
+import { FetchAdapter, RCResponse, RCResponseSimple } from '../../../src';
 import { FakeRequestClient, FakeOAuth2Auth } from '../helpers';
 
 describe('Media', () => {
@@ -36,37 +36,51 @@ describe('Media', () => {
       const mediaBuffer = Buffer.from('test-image-data');
       const mimeType = 'image/jpeg';
       const category = 'tweet_image';
-      
+
       // Mock responses for each step
-      const initResponse: IUploadMediaResponse = {
+      const initResponse: Omit<RCResponseSimple<IUploadMediaResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: 'media-123',
-          media_key: 'media_key-123',
-          expires_after_secs: 3600
-        }
+          data: {
+            id: 'media-123',
+            media_key: 'media_key-123',
+            expires_after_secs: 3600
+          }
+        },
+        ok: true,
+        headers: new Headers()
       };
-      
-      const finalizeResponse: IUploadMediaResponse = {
+
+      const appendResponse: Omit<RCResponse<IUploadMediaResponse>, 'status' | 'rateLimitInfo'> = {
+        data: null,
+        ok: true,
+        headers: new Headers()
+      };
+
+      const finalizeResponse: Omit<RCResponseSimple<IUploadMediaResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: 'media-123',
-          media_key: 'media_key-123',
-          expires_after_secs: 3600
-        }
+          data: {
+            id: 'media-123',
+            media_key: 'media_key-123',
+            expires_after_secs: 3600
+          }
+        },
+        ok: true,
+        headers: new Headers()
       };
-      
+
       // Setup mock implementations
       postMock
         .mockResolvedValueOnce(initResponse) // INIT
-        .mockResolvedValueOnce(undefined)    // APPEND
+        .mockResolvedValueOnce(appendResponse)    // APPEND
         .mockResolvedValueOnce(finalizeResponse); // FINALIZE
-      
+
       // Call the method
-      const result = await media.upload(mediaBuffer, mimeType, category);
-      
+      const result = await media.upload(mediaBuffer, mimeType, category) as RCResponseSimple<IUploadMediaResponse>;
+
       // Assertions
       expect(getHeadersMock).toHaveBeenCalledTimes(3); // Once for each step
       expect(postMock).toHaveBeenCalledTimes(3);
-      
+
       // Verify INIT call
       expect(postMock).toHaveBeenNthCalledWith(
         1,
@@ -81,7 +95,7 @@ describe('Media', () => {
         undefined,
         'multipart/form-data'
       );
-      
+
       // Verify APPEND call
       expect(postMock).toHaveBeenNthCalledWith(
         2,
@@ -96,7 +110,7 @@ describe('Media', () => {
         undefined,
         'multipart/form-data'
       );
-      
+
       // Verify FINALIZE call
       expect(postMock).toHaveBeenNthCalledWith(
         3,
@@ -109,8 +123,8 @@ describe('Media', () => {
         undefined,
         'multipart/form-data'
       );
-      
-      expect(result).toEqual(finalizeResponse);
+
+      expect(result.data).toEqual(finalizeResponse.data);
     });
 
     it('should handle media processing when required', async () => {
@@ -120,57 +134,79 @@ describe('Media', () => {
       const category = 'tweet_video';
       
       // Mock responses for each step
-      const initResponse: IUploadMediaResponse = {
+      const initResponse: Omit<RCResponseSimple<IUploadMediaResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: 'media-123',
-          media_key: 'media_key-123',
-          expires_after_secs: 3600
-        }
-      };
-      
-      const finalizeResponse: IUploadMediaResponse = {
-        data: {
-          id: 'media-123',
-          media_key: 'media_key-123',
-          expires_after_secs: 3600,
-          processing_info: {
-            state: 'pending',
-            check_after_secs: 1,
-            progress_percent: 0
+          data: {
+            id: 'media-123',
+            media_key: 'media_key-123',
+            expires_after_secs: 3600
           }
-        }
+        },
+        ok: true,
+        headers: new Headers()
       };
-      
-      const processingResponse: IGetUploadStatusResponse = {
+
+      const appendResponse: Omit<RCResponse<IUploadMediaResponse>, 'status' | 'rateLimitInfo'> = {
+        data: null,
+        ok: true,
+        headers: new Headers()
+      };
+
+      const finalizeResponse: Omit<RCResponseSimple<IUploadMediaResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: 'media-123',
-          media_key: 'media_key-123',
-          expires_after_secs: 3600,
-          processing_info: {
-            state: 'in_progress',
-            check_after_secs: 1,
-            progress_percent: 50
+          data: {
+            id: 'media-123',
+            media_key: 'media_key-123',
+            expires_after_secs: 3600,
+            processing_info: {
+              state: 'in_progress',
+              check_after_secs: 1,
+              progress_percent: 0
+            }
           }
-        }
+        },
+        ok: true,
+        headers: new Headers()
       };
       
-      const completedResponse: IGetUploadStatusResponse = {
+      const processingResponse: Omit<RCResponse<IGetUploadStatusResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: 'media-123',
-          media_key: 'media_key-123',
-          expires_after_secs: 3600,
-          processing_info: {
-            state: 'succeeded',
-            check_after_secs: 0,
-            progress_percent: 100
+          data: {
+            id: 'media-123',
+            media_key: 'media_key-123',
+            expires_after_secs: 3600,
+            processing_info: {
+              state: 'in_progress',
+              check_after_secs: 1,
+              progress_percent: 50
+            }
           }
-        }
+        },
+        ok: true,
+        headers: new Headers()
       };
       
+      const completedResponse: Omit<RCResponse<IGetUploadStatusResponse>, 'status' | 'rateLimitInfo'> = {
+        data: {
+          data: {
+            id: 'media-123',
+            media_key: 'media_key-123',
+            expires_after_secs: 3600,
+            processing_info: {
+              state: 'succeeded',
+              check_after_secs: 0,
+              progress_percent: 100
+            }
+          }
+        },
+        ok: true,
+        headers: new Headers()
+      };
+
       // Setup mock implementations
       postMock
-        .mockResolvedValueOnce(initResponse)    // INIT
-        .mockResolvedValueOnce(undefined)       // APPEND
+        .mockResolvedValueOnce(initResponse)      // INIT
+        .mockResolvedValueOnce(appendResponse)    // APPEND
         .mockResolvedValueOnce(finalizeResponse); // FINALIZE
       
       getMock
@@ -186,19 +222,21 @@ describe('Media', () => {
       // Call the method
       const result = await media.upload(mediaBuffer, mimeType, category);
       
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(5); // 3 for upload steps, 2 for status checks
-      expect(postMock).toHaveBeenCalledTimes(3);
-      expect(getMock).toHaveBeenCalledTimes(2);
-      
-      // Verify status check calls
-      expect(getMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/media/upload`,
-        { command: 'STATUS', media_id: 'media-123' },
-        { Authorization: 'Bearer mock-token' }
-      );
-      
-      expect(result).toEqual(completedResponse);
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(5); // 3 for upload steps, 2 for status checks
+        expect(postMock).toHaveBeenCalledTimes(3);
+        expect(getMock).toHaveBeenCalledTimes(2);
+        // Verify status check calls
+        expect(getMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/media/upload`,
+          { command: 'STATUS', media_id: 'media-123' },
+          { Authorization: 'Bearer mock-token' }
+        );
+        expect(result.data).toEqual(completedResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should handle errors during media upload', async () => {
@@ -225,17 +263,21 @@ describe('Media', () => {
     it('should get media upload status successfully', async () => {
       // Mock data
       const mediaId = 'media-123';
-      const mockResponse: IGetUploadStatusResponse = {
+      const mockResponse: Omit<RCResponse<IGetUploadStatusResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: mediaId,
-          media_key: 'media_key-123',
-          expires_after_secs: 3600,
-          processing_info: {
-            state: 'succeeded',
-            check_after_secs: 0,
-            progress_percent: 100
+          data: {
+            id: mediaId,
+            media_key: 'media_key-123',
+            expires_after_secs: 3600,
+            processing_info: {
+              state: 'succeeded',
+              check_after_secs: 0,
+              progress_percent: 100
+            }
           }
-        }
+        },
+        ok: true,
+        headers: new Headers()
       };
       
       // Setup mock implementation
@@ -244,15 +286,19 @@ describe('Media', () => {
       // Call the method
       const result = await media.getStatus(mediaId);
       
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledTimes(1);
-      expect(getMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/media/upload`,
-        { command: 'STATUS', media_id: mediaId },
-        { Authorization: 'Bearer mock-token' }
-      );
-      expect(result).toEqual(mockResponse);
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledTimes(1);
+        expect(getMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/media/upload`,
+          { command: 'STATUS', media_id: mediaId },
+          { Authorization: 'Bearer mock-token' }
+        );
+        expect(result.data).toEqual(mockResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should handle errors when getting upload status', async () => {
@@ -279,48 +325,56 @@ describe('Media', () => {
       const mediaId = 'media-123';
       const altText = 'A beautiful sunset';
       const allowDownload = true;
-      const mockResponse: IAddMetadataResponse = {
+      const mockResponse: Omit<RCResponse<IAddMetadataResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: mediaId,
-          associated_metadata: {
-            alt_text: {
-              text: altText
-            },
-            allow_download_status: {
-              allow_download: allowDownload
-            }
-          }
-        }
-      };
-      
-      // Setup mock implementation
-      postMock.mockResolvedValueOnce(mockResponse);
-      
-      // Call the method
-      const result = await media.addMetadata(mediaId, altText, allowDownload);
-      
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(postMock).toHaveBeenCalledTimes(1);
-      expect(postMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/media/metadata`,
-        {
-          id: mediaId,
-          metadata: {
-            alt_text: {
-              text: altText
-            },
-            allow_download_status: {
-              allow_download: allowDownload
+          data: {
+            id: mediaId,
+            associated_metadata: {
+              alt_text: {
+                text: altText
+              },
+              allow_download_status: {
+                allow_download: allowDownload
+              }
             }
           }
         },
-        {
-          Authorization: 'Bearer mock-token',
-          'Content-Type': 'application/json'
-        }
-      );
-      expect(result).toEqual(mockResponse);
+        ok: true,
+        headers: new Headers()
+      };
+
+      // Setup mock implementation
+      postMock.mockResolvedValueOnce(mockResponse);
+
+      // Call the method
+      const result = await media.addMetadata(mediaId, altText, allowDownload);
+
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(postMock).toHaveBeenCalledTimes(1);
+        expect(postMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/media/metadata`,
+          {
+            id: mediaId,
+            metadata: {
+              alt_text: {
+                text: altText
+              },
+              allow_download_status: {
+                allow_download: allowDownload
+              }
+            }
+          },
+          {
+            Authorization: 'Bearer mock-token',
+            'Content-Type': 'application/json'
+          }
+        );
+        expect(result.data).toEqual(mockResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should add all metadata options when provided', async () => {
@@ -331,25 +385,29 @@ describe('Media', () => {
       const originalId = 'original-123';
       const originalProvider = 'giphy';
       const uploadSource = 'gallery';
-      const mockResponse: IAddMetadataResponse = {
+      const mockResponse: Omit<RCResponse<IAddMetadataResponse>, 'status' | 'rateLimitInfo'> = {
         data: {
-          id: mediaId,
-          associated_metadata: {
-            alt_text: {
-              text: altText
-            },
-            allow_download_status: {
-              allow_download: allowDownload
-            },
-            found_media_origin: {
-              id: originalId,
-              provider: originalProvider
-            },
-            upload_source: {
-              upload_source: uploadSource
+          data: {
+            id: mediaId,
+            associated_metadata: {
+              alt_text: {
+                text: altText
+              },
+              allow_download_status: {
+                allow_download: allowDownload
+              },
+              found_media_origin: {
+                id: originalId,
+                provider: originalProvider
+              },
+              upload_source: {
+                upload_source: uploadSource
+              }
             }
           }
-        }
+        },
+        ok: true,
+        headers: new Headers()
       };
       
       // Setup mock implementation
@@ -365,35 +423,39 @@ describe('Media', () => {
         uploadSource
       );
       
-      // Assertions
-      expect(getHeadersMock).toHaveBeenCalledTimes(1);
-      expect(postMock).toHaveBeenCalledTimes(1);
-      expect(postMock).toHaveBeenCalledWith(
-        `${baseUrl}/2/media/metadata`,
-        {
-          id: mediaId,
-          metadata: {
-            alt_text: {
-              text: altText
-            },
-            allow_download_status: {
-              allow_download: allowDownload
-            },
-            found_media_origin: {
-              id: originalId,
-              provider: originalProvider
-            },
-            upload_source: {
-              upload_source: uploadSource
+      if (requestClient.isSuccessResponse(result)) {
+        // Assertions
+        expect(getHeadersMock).toHaveBeenCalledTimes(1);
+        expect(postMock).toHaveBeenCalledTimes(1);
+        expect(postMock).toHaveBeenCalledWith(
+          `${baseUrl}/2/media/metadata`,
+          {
+            id: mediaId,
+            metadata: {
+              alt_text: {
+                text: altText
+              },
+              allow_download_status: {
+                allow_download: allowDownload
+              },
+              found_media_origin: {
+                id: originalId,
+                provider: originalProvider
+              },
+              upload_source: {
+                upload_source: uploadSource
+              }
             }
+          },
+          {
+            Authorization: 'Bearer mock-token',
+            'Content-Type': 'application/json'
           }
-        },
-        {
-          Authorization: 'Bearer mock-token',
-          'Content-Type': 'application/json'
-        }
-      );
-      expect(result).toEqual(mockResponse);
+        );
+        expect(result.data).toEqual(mockResponse.data);
+      } else {
+        fail('Expected success response but got error');
+      }
     });
 
     it('should handle errors when adding metadata', async () => {

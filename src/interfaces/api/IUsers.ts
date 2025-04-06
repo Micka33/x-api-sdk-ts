@@ -1,9 +1,9 @@
 import { ExpansionUser } from "../../types/x-api/users/get_me_query";
 import { IGetMeResponse } from "../../types/x-api/users/get_me_response";
 import { TweetField, UserField } from "../../types/x-api/shared";
-import { AbstractApiContructor } from "./IApiConstructor";
-
-export abstract class AbstractUsers extends AbstractApiContructor {
+import { AbstractApi } from "./IApiConstructor";
+import { RCResponse } from "../IRequestClient";
+export abstract class AbstractUsers extends AbstractApi {
   /**
    * Retrieves the authenticated user's profile information.
    * 
@@ -18,5 +18,9 @@ export abstract class AbstractUsers extends AbstractApiContructor {
    * console.log(user); // { data: { id: '1234567890', username: 'testuser' } }
    * ```
    */
-  abstract getMe(userFields?: UserField[], expansions?: ExpansionUser[], tweetFields?: TweetField[]): Promise<IGetMeResponse>;
+  abstract getMe(
+    userFields?: UserField[],
+    expansions?: ExpansionUser[],
+    tweetFields?: TweetField[]
+  ): Promise<RCResponse<IGetMeResponse>>;
 }

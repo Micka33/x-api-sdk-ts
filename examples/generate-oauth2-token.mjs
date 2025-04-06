@@ -1,8 +1,7 @@
-import { TwitterClient } from '../dist/index.js';
-import { TwitterApiScope } from '../dist/index.js';
-import { AxiosAdapter } from '../dist/index.js';
-import { createInterface } from 'readline';
 import axios from 'axios';
+import { createInterface } from 'readline';
+import { TwitterClient, TwitterApiScope, AxiosAdapter } from '../dist/index.js';
+
 axios.defaults.adapter = 'http';
 
 const readline = createInterface({
@@ -11,15 +10,15 @@ const readline = createInterface({
 });
 
 // Configuration
-const clientId = 'input_client_id_here';
-const clientSecret = 'input_client_secret_here';
+const clientId = '';
+const clientSecret = '';
 const redirectUri = 'http://localhost:3000/oauth2/callback';
 const scopes = [TwitterApiScope.UsersRead, TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite];
 
 // Set the access token and refresh token to null to generate a new token
 const accessToken = null;
 const refreshToken = null;
-const tokenExpiresAt = null;
+const tokenExpiresAt = null; // new Date("2025-04-06T17:19:14.405Z").getTime();
 
 const httpAdapter = [AxiosAdapter, axios]; // default is `[FetchAdapter]`
 
@@ -73,23 +72,19 @@ async function displayTokenInfoAndGetUserInfo() {
   console.log('Expires At:', new Date(tokenExpiresAt).toISOString());
   console.log('Expires In (seconds):', Math.floor((tokenExpiresAt - Date.now()) / 1000));
 
-  // Get user information as an example
-  const response = await twitterClient.users.getMe(['id', 'name', 'username']);
-  console.log('User:', response.data);
-  if (response.errors) {
-    console.log('errors:', JSON.stringify(response.errors, null, 2));
+  // Get user information
+  let userResponse = await twitterClient.users.getMe(['id', 'name', 'username']);
+  console.log('UserResponse:', userResponse);
+  if (twitterClient.isSuccessResponse(userResponse)) {
+    console.log('Successfully got user info');
+  } else {
+    console.log('Failed to get user info');
   }
-  if (response.rateLimitInfo) {
-    console.log('rateLimitInfo:', response.rateLimitInfo);
+  // Post a tweet
+  const tweetResponse = await twitterClient.posts.create('Hello World!');
+  if (twitterClient.isSuccessResponse(tweetResponse)) {
+    console.log('Successfully posted tweet');
+  } else {
+    console.log('Failed to post tweet');
   }
-
-  // Uncomment to post a tweet as an example
-  // response = await twitterClient.posts.create('Hello World!');
-  // console.log('Tweet:', response.data);
-  // if (response.errors) {
-  //   console.log('errors:', JSON.stringify(response.errors, null, 2));
-  // }
-  // if (response.rateLimitInfo) {
-  //   console.log('rateLimitInfo:', response.rateLimitInfo);
-  // }
 }

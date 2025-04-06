@@ -1,8 +1,8 @@
 import { parseTwitterError } from './error';
 import { parseRateLimitHeaders } from './rate-limit';
-import { RequestOptions, AbstractRequestClient } from '../interfaces/IRequestClient';
+import { RequestOptions, AbstractRequestClient, RCResponse } from '../interfaces/IRequestClient';
 import { IHttpFetchResponse } from '../interfaces/IHttpAdapter';
-import { ICustomBaseResponse, IRateLimitInfo } from 'src/types/x-api/base_response';
+import { ICustomBaseResponse } from 'src/types/x-api/base_response';
 
 /**
  * Client for making requests to the Twitter API.
@@ -16,7 +16,11 @@ export class RequestClient extends AbstractRequestClient {
    * @param headers - The headers to include
    * @returns A promise that resolves to the response data
    */
-  public async get<T extends ICustomBaseResponse>(url: string, params?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
+  public async get<T extends ICustomBaseResponse>(
+    url: string,
+    params?: Record<string, any>,
+    headers?: Record<string, string>
+  ) {
     return this.request<T>({
       method: 'GET',
       url,
@@ -24,7 +28,7 @@ export class RequestClient extends AbstractRequestClient {
       headers
     });
   }
-  
+
   /**
    * Makes a POST request to the Twitter API.
    * 
@@ -40,7 +44,7 @@ export class RequestClient extends AbstractRequestClient {
     headers?: Record<string, string>, 
     params?: Record<string, any>,
     contentType: 'application/json' | 'application/x-www-form-urlencoded' | 'multipart/form-data' = 'application/json'
-  ): Promise<T> {
+  ) {
     return this.request<T>({
       method: 'POST',
       url,
@@ -50,7 +54,7 @@ export class RequestClient extends AbstractRequestClient {
       contentType
     });
   }
-  
+
   /**
    * Makes a PUT request to the Twitter API.
    * 
@@ -65,7 +69,7 @@ export class RequestClient extends AbstractRequestClient {
     body?: any, 
     headers?: Record<string, string>, 
     params?: Record<string, any>
-  ): Promise<T> {
+  ) {
     return this.request<T>({
       method: 'PUT',
       url,
@@ -75,7 +79,7 @@ export class RequestClient extends AbstractRequestClient {
       contentType: 'application/json'
     });
   }
-  
+
   /**
    * Makes a DELETE request to the Twitter API.
    * 
@@ -84,7 +88,11 @@ export class RequestClient extends AbstractRequestClient {
    * @param params - The query parameters
    * @returns A promise that resolves to the response data
    */
-  public async delete<T extends ICustomBaseResponse>(url: string, headers?: Record<string, string>, params?: Record<string, any>): Promise<T> {
+  public async delete<T extends ICustomBaseResponse>(
+    url: string,
+    headers?: Record<string, string>,
+    params?: Record<string, any>
+  ) {
     return this.request<T>({
       method: 'DELETE',
       url,
@@ -92,7 +100,7 @@ export class RequestClient extends AbstractRequestClient {
       params
     });
   }
-  
+
   /**
    * Makes a PATCH request to the Twitter API.
    * 
@@ -107,7 +115,7 @@ export class RequestClient extends AbstractRequestClient {
     body?: any, 
     headers?: Record<string, string>, 
     params?: Record<string, any>
-  ): Promise<T> {
+  ) {
     return this.request<T>({
       method: 'PATCH',
       url,
@@ -117,25 +125,25 @@ export class RequestClient extends AbstractRequestClient {
       contentType: 'application/json'
     });
   }
-  
+
   /**
    * Makes a request to the Twitter API.
    * 
    * @param options - The request options
    * @returns A promise that resolves to the response data
    */
-  private async request<T extends ICustomBaseResponse>(options: RequestOptions): Promise<T> {
+  private async request<T extends ICustomBaseResponse>(options: RequestOptions) {
     try {
       // Build the URL with query parameters
       const url = this.buildUrl(options.url, options.params);
-      
+
       // Prepare the request options
       const fetchOptions: RequestInit = {
         method: options.method,
         headers: options.headers || {},
         credentials: options.withCredentials ? 'include' : 'same-origin'
       };
-      
+
       // Add the body if provided
       if (options.body) {
         if (options.body instanceof FormData) {
@@ -154,48 +162,27 @@ export class RequestClient extends AbstractRequestClient {
           fetchOptions.body = options.body;
         }
       }
-      
-      const response = await this.httpAdapter.fetch<T>(url, fetchOptions);
 
-      // Handle the response
-      return this.handleResponse<T>(response);
+      const response = await this.httpAdapter.fetch<T>(url, fetchOptions);
+      return this.parseResponse(response);
     } catch (error) {
       throw parseTwitterError(error);
     }
   }
 
-  /**
-   * Handles a response from the Twitter API.
-   * 
-   * @param response - The response from the Twitter API
-   * @returns The response data
-   * @private
-   */
-  private async handleResponse<T extends ICustomBaseResponse>(response: IHttpFetchResponse<T>): Promise<T> {
-    let rateLimitInfo: IRateLimitInfo | undefined;
-    // Convert Headers to a plain object
-    const headers: Record<string, string> = {};
-    response.headers.forEach((value, key) => {
-      headers[key] = value;
-    });
-
-    rateLimitInfo = parseRateLimitHeaders(headers);
-
-    // Handle empty responses (like for APPEND commands)
-    if (response.status === 204 || response.headers.get('content-length') === '0') {
-      return undefined as unknown as T;
-    }
-
-    // Parse the response body
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      const jsonObject = await response.json();
-      if (rateLimitInfo) {
-        jsonObject.rateLimitInfo = rateLimitInfo;
-      }
-      return {...jsonObject, rateLimitInfo } as unknown as T;
+  private async parseResponse<T extends ICustomBaseResponse>(response: IHttpFetchResponse<T>): Promise<RCResponse<T>> {
+    let data: T | string | null | undefined = null;
+    if (response.headers.get('Content-Type')?.startsWith('text/')) {
+      data = await response.text();
     } else {
-      return response.text() as unknown as T;
+      data = await response.json();
+    }
+    return {
+      data,
+      ok: response.ok,
+      status: response.status,
+      headers: response.headers,
+      rateLimitInfo: parseRateLimitHeaders(response.headers)
     }
   }
 
@@ -211,9 +198,9 @@ export class RequestClient extends AbstractRequestClient {
     if (!params) {
       return baseUrl;
     }
-    
+
     const url = new URL(baseUrl);
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         // if (Array.isArray(value)) {
@@ -225,7 +212,7 @@ export class RequestClient extends AbstractRequestClient {
         // }
       }
     });
-    
+
     return url.toString();
   }
 
@@ -240,7 +227,7 @@ export class RequestClient extends AbstractRequestClient {
   private buildFormData(params: Record<string, any>, useFormData = false): URLSearchParams | FormData {
     if (useFormData) {
       const formData = new FormData();
-      
+
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
@@ -256,11 +243,11 @@ export class RequestClient extends AbstractRequestClient {
           }
         }
       });
-      
+
       return formData;
     } else {
       const urlSearchParams = new URLSearchParams();
-      
+
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (Array.isArray(value)) {
@@ -277,7 +264,7 @@ export class RequestClient extends AbstractRequestClient {
           }
         }
       });
-      
+
       return urlSearchParams;
     }
   }

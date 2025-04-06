@@ -1,12 +1,13 @@
 import { IAddMetadataResponse } from '../../types/x-api/media/add_metadata_response';
 import { IGetUploadStatusResponse } from '../../types/x-api/media/get_upload_status_response';
 import { IUploadMediaResponse } from '../../types/x-api/media/upload_media_response';
-import { AbstractApiContructor } from './IApiConstructor';
+import { RCResponse } from '../IRequestClient';
+import { AbstractApi } from './IApiConstructor';
 /**
  * Interface for the Media module.
  * Provides methods for interacting with media on Twitter.
  */
-export abstract class AbstractMedia extends AbstractApiContructor {
+export abstract class AbstractMedia extends AbstractApi {
   /**
    * Uploads media to Twitter.
    *
@@ -16,7 +17,12 @@ export abstract class AbstractMedia extends AbstractApiContructor {
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
    * @returns A promise that resolves to the uploaded media
    */
-  abstract upload(media: Buffer, mimeType: string, category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', additionalOwners?: string[]): Promise<IUploadMediaResponse>;
+  abstract upload(
+    media: Buffer,
+    mimeType: string,
+    category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles',
+    additionalOwners?: string[]
+  ): Promise<RCResponse<IUploadMediaResponse>>;
 
   /**
    * Get MediaUpload Status.
@@ -24,7 +30,7 @@ export abstract class AbstractMedia extends AbstractApiContructor {
    * @param mediaId - Media id for the requested media upload status.
    * @returns A promise that resolves to the uploaded media
    */
-  abstract getStatus(mediaId: string): Promise<IGetUploadStatusResponse>;
+  abstract getStatus(mediaId: string): Promise<RCResponse<IGetUploadStatusResponse>>;
 
   /**
    * Adds metadata to an uploaded media.
@@ -37,5 +43,12 @@ export abstract class AbstractMedia extends AbstractApiContructor {
    * @param uploadSource - The source of the media upload
    * @returns A promise that resolves when the metadata is added
    */
-  abstract addMetadata(mediaId: string, altText: string, allowDownload: boolean, originalId?: string, originalProvider?: string, uploadSource?: string): Promise<IAddMetadataResponse>;
+  abstract addMetadata(
+    mediaId: string,
+    altText: string,
+    allowDownload: boolean,
+    originalId?: string,
+    originalProvider?: string,
+    uploadSource?: string
+  ): Promise<RCResponse<IAddMetadataResponse>>;
 }

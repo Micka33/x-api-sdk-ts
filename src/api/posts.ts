@@ -23,7 +23,7 @@ export class Posts extends AbstractPosts {
    * });
    * ```
    */
-  async create(text: string, options?: IPostOptions): Promise<ICreatePostResponse> {
+  async create(text: string, options?: IPostOptions) {
     // Prepare request body
     const requestBody: ICreatePostQuery = {
       text
@@ -76,7 +76,7 @@ export class Posts extends AbstractPosts {
    * }
    * ```
    */
-  async delete(id: string): Promise<IDeletePostResponse> {
+  async delete(id: string) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
@@ -114,7 +114,7 @@ export class Posts extends AbstractPosts {
     pollFields?: PollField[];
     userFields?: UserField[];
     placeFields?: PlaceField[];
-  }): Promise<IGetPostResponse> {
+  }) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
@@ -178,7 +178,7 @@ export class Posts extends AbstractPosts {
     pollFields?: PollField[];
     userFields?: UserField[];
     placeFields?: PlaceField[];
-  }): Promise<IGetPostsResponse> {
+  }) {
     // Get authentication headers using OAuth 2.0
     const headers = await this.oAuth2.getHeaders();
 
