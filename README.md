@@ -15,6 +15,7 @@ x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, 
 - [Features](#features)
 - [Installation](#installation)
 - [Generate OAuth2 token from console](#generate-oauth2-token-from-console)
+- [Understanding the responses](#understanding-the-responses)
 - [Examples](#examples)
   - [Scripts](#scripts)
   - [Authentication](#authentication)
@@ -39,7 +40,7 @@ x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, 
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
-s
+
 ## Features
 
 - Full TypeScript type definitions and JSDOC of supported endpoints.
@@ -77,6 +78,24 @@ See: [examples/generate-oauth2-token.mjs](https://github.com/Micka33/x-api-sdk-t
   - Set `clientSecret` to your App's OAuth 2.0 Client Secret
   - Set `redirectUri` to your App's Callback URI / Redirect URL
     - Or set your App's Callback URI / Redirect URL to `http://localhost:3000/oauth2/callback`
+
+## Understanding the responses
+
+The SDK returns a response object with the following structure:
+```ts
+{
+  data: T | IXError | string | null | undefined; // the response data from twitter
+  ok: boolean; // HTTP code >= 200 && < 300
+  status: number; // HTTP code
+  headers: Headers; // response headers
+  rateLimitInfo: IRateLimitInfo; // brought from the response headers for convenience
+}
+```
+
+Whatever X Api returns will be stored in the `data` property.  
+As example, if you call the `twitterClient.posts.create` method, the response data type `T` will be [`ICreatePostResponse`](https://github.com/Micka33/x-api-sdk-ts/blob/main/src/types/x-api/posts/create_post_response.ts) which maps directly to X's documentation [Creation of a Post](https://docs.x.com/x-api/posts/creation-of-a-post#response-data).
+
+This is true for all the endpoints.
 
 ## Examples
 
