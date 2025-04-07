@@ -1,6 +1,10 @@
-import { TwitterApiScope, TwitterClient } from '../dist';
+import { TwitterApiScope, TwitterClient } from '../dist/index.js';
+import { fileURLToPath } from 'url';
 import * as fs from 'fs';
 import * as path from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // Create a client with OAuth 1.0a credentials
 const client = new TwitterClient({
@@ -8,15 +12,15 @@ const client = new TwitterClient({
     clientId: '',
     clientSecret: '',
     scopes: [TwitterApiScope.TweetRead, TwitterApiScope.TweetWrite, TwitterApiScope.UsersRead, TwitterApiScope.OfflineAccess, TwitterApiScope.MediaWrite],
-    redirectUri: '',
+    redirectUri: 'http://localhost:3000/oauth/callback',
     accessToken: '',
     refreshToken: '',
-    tokenExpiresAt: Date.now(),
+    tokenExpiresAt: '', // eg: new Date('2025-04-07T20:58:55.495Z').getTime(),
   },
 });
 
 // Upload an image and post a tweet with it
-async function uploadImageAndTweet(imagePath: string, altText: string, tweetText: string) {
+async function uploadImageAndTweet(imagePath, altText, tweetText) {
   try {
     console.log(`Reading image from ${imagePath}...`);
     const imageBuffer = fs.readFileSync(imagePath);
@@ -52,7 +56,7 @@ async function uploadImageAndTweet(imagePath: string, altText: string, tweetText
 }
 
 // Upload a video and post a tweet with it
-async function uploadVideoAndTweet(videoPath: string, tweetText: string) {
+async function uploadVideoAndTweet(videoPath, tweetText) {
   try {
     console.log(`Reading video from ${videoPath}...`);
     const videoBuffer = fs.readFileSync(videoPath);
@@ -64,7 +68,7 @@ async function uploadVideoAndTweet(videoPath: string, tweetText: string) {
       'tweet_video'
     );
     if (!client.isSuccessResponse(mediaResponse)) {
-      console.error('Error uploading video:', mediaResponse);
+      console.error('Error uploading video:', JSON.stringify(mediaResponse, null, 2));
       return;
     }
     const mediaData = mediaResponse.data;
@@ -90,7 +94,7 @@ async function uploadVideoAndTweet(videoPath: string, tweetText: string) {
 
 
 // Get the MIME type based on the file extension
-function getMimeType(filePath: string): string {
+function getMimeType(filePath) {
   const extension = path.extname(filePath).toLowerCase();
   
   switch (extension) {
@@ -115,16 +119,17 @@ function getMimeType(filePath: string): string {
 // Run the examples
 async function runExamples() {
   // Uncomment the examples you want to run
+
   // await uploadImageAndTweet(
   //   'path/to/image.jpg',
   //   'Description of the image for accessibility',
   //   'Check out this image! #TwitterAPI'
   // );
   
-  // await uploadVideoAndTweet(
-  //   'path/to/video.mp4',
-  //   'Check out this video! #TwitterAPI'
-  // );
+  await uploadVideoAndTweet(
+    path.join(__dirname, '9d996b3e0871b24a1206152e73b5c43f_tmp.mp4'),
+    'Check out this video! #TwitterAPI'
+  );
 }
 
-runExamples().catch(console.error); 
+await runExamples().catch(console.error);

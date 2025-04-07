@@ -172,10 +172,10 @@ export class RequestClient extends AbstractRequestClient {
 
   private async parseResponse<T extends ICustomBaseResponse>(response: IHttpFetchResponse<T>): Promise<RCResponse<T>> {
     let data: T | string | null | undefined = null;
-    if (response.headers.get('Content-Type')?.startsWith('text/')) {
-      data = await response.text();
-    } else {
+    if (response.headers.get('Content-Type')?.startsWith('application/json')) {
       data = await response.json();
+    } else {
+      data = await response.text();
     }
     return {
       data,

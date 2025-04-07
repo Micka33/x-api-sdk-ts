@@ -171,9 +171,9 @@ if (twitterClient.isErrorResponse(postResponse)) {
 ### Media Upload
 
 The `upload` method automatically handles the chunked upload process.  
-The file is uploaded in chunks of 1MB or 10 chunks, whichever is larger.  
+The file is uploaded in chunks of MIN(4MB, MAX(1MB, media.length / 10)).  
 
-**NB:** You can also specify a custom chunk size as 4th parameter.
+**NB:** You can also specify a custom chunk size as 4th parameter which can be bigger than 4MB. Note that the API has a maximum chunk size of 4MB (for free api access).
 
 ```typescript
 const mediaResponse = await twitterClient.media.upload(

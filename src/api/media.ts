@@ -16,7 +16,7 @@ export class Media extends AbstractMedia {
    * @param mimeType - The MIME type of the media being uploaded. For example, video/mp4.
    * @param category - A string enum value which identifies a media use-case.
    * @param additionalOwners - A comma-separated list of user IDs to set as additional owners allowed to use the returned media_id in Tweets or Cards. Up to 100 additional owners may be specified.
-   * @param chunkSize - The size of the chunks to upload. If not provided, the default chunk size will be used (default: media.length > 10MB ? (media.length/10) : 1MB).
+   * @param chunkSize - The size of the chunks to upload. If not provided, the default chunk size will be used (default: MIN(4MB, MAX(1MB, media.length / 10))).
    * @returns A promise that resolves to the uploaded media
    */
   public async upload(
@@ -34,8 +34,12 @@ export class Media extends AbstractMedia {
     const mediaId = initResponse.data.data.id;
 
     // Step 2: APPEND - Upload the media in chunks
-    //   1MB chunks or 10 chunks
-    const cs = chunkSize || ((media.length > (1024 * 1024 * 10)) ? Math.ceil(media.length / 10) : 1024 * 1024); 
+    // 4MB is the maximum chunk size allowed by the API (at least for free api access)
+    const minChunkSize = 1024 * 1024; // 1MB
+    const maxChunkSize = 1024 * 1024 * 4; // 4MB
+    const tenthOfMediaLength = Math.ceil(media.length / 10); // 10 chunks
+    const defaultChunkSize = Math.min(maxChunkSize, Math.max(minChunkSize, tenthOfMediaLength));
+    const cs = chunkSize || defaultChunkSize;
     const chunks = Math.ceil(media.length / cs);
 
     for (let i = 0; i < chunks; i++) {
@@ -56,7 +60,8 @@ export class Media extends AbstractMedia {
     // Step 4: Check if processing is needed
     if (finalizeResponse.data.data.processing_info) {
       // If processing is needed, wait for it to complete
-      return this.waitForProcessing(mediaId, finalizeResponse);
+      const waitingResponse = await this.waitForProcessing(mediaId, finalizeResponse);
+      return waitingResponse;
     }
     return finalizeResponse;
   }
