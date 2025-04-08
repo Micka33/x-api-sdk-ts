@@ -1,3 +1,7 @@
+![](https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg)
+[![install size](https://packagephobia.com/badge?p=x-api-sdk-ts)](https://packagephobia.com/result?p=x-api-sdk-ts)
+![](https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts)
+
 # x-api-sdk-ts
 
 Simple and versatile typescript SDK for X Api.
