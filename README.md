@@ -1,6 +1,6 @@
-![](https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg)
+[![](https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg)](https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml)
 [![install size](https://packagephobia.com/badge?p=x-api-sdk-ts)](https://packagephobia.com/result?p=x-api-sdk-ts)
-![](https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts)
+[![](https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts)](https://bundlephobia.com/package/x-api-sdk-ts@2.0.4)
 
 # x-api-sdk-ts
 
