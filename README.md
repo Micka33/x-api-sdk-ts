@@ -181,6 +181,9 @@ const mediaResponse = await twitterClient.media.upload(
   'image/jpeg',
   'tweet_image'
 );
+if (!twitterClient.isSuccessResponse(mediaResponse)) {
+  console.error('Failed uploading media:', JSON.stringify(mediaResponse, null, 2));
+}
 const mediaData = mediaResponse.data;
 const mediaId = mediaData.data.id;
 ```
@@ -188,14 +191,17 @@ const mediaId = mediaData.data.id;
 ### Get Media Upload Status
 
 ```typescript
-const media = await twitterClient.media.getUploadStatus(mediaId);
-const mediaStatus = media.data.data.processing_info.state; // 'succeeded' | 'in_progress' | 'pending' | 'failed'
+const mediaResponse = await twitterClient.media.getUploadStatus(mediaId);
+if (!twitterClient.isSuccessResponse(mediaResponse)) {
+  console.error('Failed get media upload status:', JSON.stringify(mediaResponse, null, 2));
+}
+const mediaStatus = mediaResponse.data.data.processing_info.state; // 'succeeded' | 'in_progress' | 'pending' | 'failed'
 ```
 
 ### Add Metadata to Media
 
 ```typescript
-const mediaMetadata = await twitterClient.media.addMetadata(
+const mediaMetadataResponse = await twitterClient.media.addMetadata(
   mediaId,                          // media id
   'A smiling dog profile picture',  // alt text
   true,                             // allow download
@@ -208,12 +214,16 @@ const mediaMetadata = await twitterClient.media.addMetadata(
 ### Create Post
 
 ```typescript
-const post = await twitterClient.posts.create(
+const postReponse = await twitterClient.posts.create(
   'Hello World!',
   {
     media: { media_ids: [mediaId] },
   }
 );
+if (!twitterClient.isSuccessResponse(postReponse)) {
+  console.error('Failed creating new post with media:', JSON.stringify(postReponse, null, 2));
+}
+const post = postResponse.data;
 const postId = post.data.id;
 ```
 
@@ -226,9 +236,11 @@ await twitterClient.posts.delete(postId);
 ### Get One Post
 
 ```typescript
-const post = await twitterClient.posts.get(postId, {
+const postResponse = await twitterClient.posts.get(postId, {
   mediaFields: ['alt_text', 'type', 'url', 'media_key'],
 });
+if (!twitterClient.isSuccessResponse(postReponse)) return;
+const post = postResponse.data;
 const postId = post.data.id;
 const postText = post.data.text;
 const postAuthorId = post.data.author_id;
@@ -240,9 +252,11 @@ const otherpostMediaKey = post.includes?.media?.[0].media_keys?.[0];
 ### Get Several Posts
 
 ```typescript
-const posts = await twitterClient.posts.getMultiple([postId1, postId2, postId3], {
+const postsResponse = await twitterClient.posts.getMultiple([postId1, postId2, postId3], {
   mediaFields: ['alt_text', 'type', 'url', 'media_key'],
 });
+if (!twitterClient.isSuccessResponse(postsResponse)) return;
+const posts = postsResponse.data;
 const post1 = posts.data[0];
 const post2 = posts.data[1];
 const post3 = posts.data[2];
@@ -251,14 +265,18 @@ const post3 = posts.data[2];
 ### Like Post
 
 ```typescript
-const like = await twitterClient.likes.add(postId);
+const likeResponse = await twitterClient.likes.add(postId);
+if (!twitterClient.isSuccessResponse(likeResponse)) return;
+const like = likeResponse.data;
 const liked = like.data.liked;
 ```
 
 ### Get Authenticated User Info
 
 ```typescript
-const user = await twitterClient.users.getMe();
+const userResponse = await twitterClient.users.getMe();
+if (!twitterClient.isSuccessResponse(userResponse)) return;
+const user = userResponse.data;
 const userId = user.data.id;
 const userName = user.data.name;
 const userUsername = user.data.username;
@@ -309,7 +327,7 @@ import { IHttpAdapter, IHttpFetchResponse } from 'x-api-sdk-ts';
 
 export class CustomHttpAdapter implements IHttpAdapter {
   constructor(private paramA: string, private paramB: number) {}
-  public async fetch<T>(url: string, options?: RequestInit): Promise<IHttpFetchResponse<T>> {
+  public fetch<T>(url: string, options?: RequestInit): Promise<IHttpFetchResponse<T>> {
     return fetch(url, options);
   }
 }
@@ -322,8 +340,6 @@ const twitterClient = new TwitterClient(config, {
   httpAdapter: [CustomHttpAdapter, 'paramA', 'paramB']
 });
 ```
-
-
 
 
 ## Development Documentation
