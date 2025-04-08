@@ -24,6 +24,9 @@ x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, 
   - [Check for successful response](#check-for-successful-response)
     - [Usage example](#usage-example)
   - [Media Upload](#media-upload)
+    - [Reduce your API usage](#reduce-your-api-usage)
+      - [Upload with custom chunk size](#upload-with-custom-chunk-size)
+      - [Upload with custom minimum waiting time](#upload-with-custom-minimum-waiting-time)
   - [Get Media Upload Status](#get-media-upload-status)
   - [Add Metadata to Media](#add-metadata-to-media)
   - [Create Post](#create-post)
@@ -170,10 +173,8 @@ if (twitterClient.isErrorResponse(postResponse)) {
 
 ### Media Upload
 
-The `upload` method automatically handles the chunked upload process.  
+The `upload` method automatically handles the chunked upload process. (Read more about it in [X API Documentation](https://docs.x.com/en/x-api/media/quickstart/media-upload-chunked))  
 The file is uploaded in chunks of MIN(4MB, MAX(1MB, media.length / 10)).  
-
-**NB:** You can also specify a custom chunk size as 4th parameter which can be bigger than 4MB. Note that the API has a maximum chunk size of 4MB (for free api access).
 
 ```typescript
 const mediaResponse = await twitterClient.media.upload(
@@ -186,6 +187,44 @@ if (!twitterClient.isSuccessResponse(mediaResponse)) {
 }
 const mediaData = mediaResponse.data;
 const mediaId = mediaData.data.id;
+```
+
+#### Reduce your API usage
+
+You can reduce your API usage by specifying a custom chunk size and a custom minimum waiting time.
+
+##### Upload with custom chunk size
+
+You can specify a custom chunk size as 5th parameter which can be bigger than 4MB.  
+Note that the API has a maximum chunk size of 4MB (confirmed for free api access).
+
+```typescript
+const mediaResponse = await twitterClient.media.upload(
+  fs.readFileSync('path/to/media/doge.jpeg'),
+  'image/jpeg',
+  'tweet_image',
+  null,
+  1024 * 1024 * 3 // 3MB
+);
+```
+
+##### Upload with custom minimum waiting time
+
+You can specify a custom minimum waiting time as 6th parameter.
+
+The default minimum waiting time is 1 second and X provides a recommended minimum waiting time.  
+However, on a Free API access, it is recommended to wait as long as it makes sense for your use case, in order to reduce API Usage.  
+Read more about it in this issue: [#7](https://github.com/Micka33/x-api-sdk-ts/issues/7).
+
+```typescript
+const mediaResponse = await twitterClient.media.upload(
+  fs.readFileSync('path/to/media/doge.jpeg'),
+  'image/jpeg',
+  'tweet_image',
+  null,
+  null,
+  60 // 60 seconds
+);
 ```
 
 ### Get Media Upload Status

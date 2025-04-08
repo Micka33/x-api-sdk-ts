@@ -24,7 +24,8 @@ export class Media extends AbstractMedia {
     mimeType: string, 
     category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles', 
     additionalOwners: string[] | null = null,
-    chunkSize?: number,
+    chunkSize?: number | null,
+    minWaitingTimeInSeconds?: number
   ): Promise<RCResponse<IUploadMediaResponse>> {
     // Step 1: INIT - Initialize the upload
     const initResponse = await this.initMediaUpload(media.length, mimeType, category, additionalOwners);
@@ -60,7 +61,7 @@ export class Media extends AbstractMedia {
     // Step 4: Check if processing is needed
     if (finalizeResponse.data.data.processing_info) {
       // If processing is needed, wait for it to complete
-      const waitingResponse = await this.waitForProcessing(mediaId, finalizeResponse);
+      const waitingResponse = await this.waitForProcessing(mediaId, finalizeResponse, minWaitingTimeInSeconds);
       return waitingResponse;
     }
     return finalizeResponse;
@@ -277,7 +278,8 @@ export class Media extends AbstractMedia {
    */
   private async waitForProcessing(
     mediaId: string,
-    initialResponse: RCResponseSimple<IUploadMediaResponse>
+    initialResponse: RCResponseSimple<IUploadMediaResponse>,
+    minWaitingTimeInSeconds?: number
   ): Promise<RCResponse<IUploadMediaResponse>> {
     let response: RCResponseSimple<IUploadMediaResponse> = initialResponse;
     let data = response.data.data;
@@ -289,7 +291,7 @@ export class Media extends AbstractMedia {
       ['pending', 'in_progress'].includes(data.processing_info.state)
     ) {
       // Wait for the recommended time before checking again
-      const checkAfterSecs = data.processing_info?.check_after_secs || 1;
+      const checkAfterSecs = Math.min(minWaitingTimeInSeconds || 0, data.processing_info?.check_after_secs || 1);
       await new Promise(resolve => setTimeout(resolve, checkAfterSecs * 1000));
 
       // Check status
