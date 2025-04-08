@@ -22,7 +22,8 @@ export abstract class AbstractMedia extends AbstractApi {
     mimeType: string,
     category: 'amplify_video' | 'tweet_gif' | 'tweet_image' | 'tweet_video' | 'dm_video' | 'subtitles',
     additionalOwners?: string[] | null,
-    chunkSize?: number
+    chunkSize?: number | null,
+    minWaitingTimeInSeconds?: number
   ): Promise<RCResponse<IUploadMediaResponse>>;
 
   /**
