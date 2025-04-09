@@ -1,18 +1,33 @@
-[![](https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg)](https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml)
-[![install size](https://packagephobia.com/badge?p=x-api-sdk-ts)](https://packagephobia.com/result?p=x-api-sdk-ts)
-[![](https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts)](https://bundlephobia.com/package/x-api-sdk-ts@2.0.4)
+<h1 align="center">x-api-sdk-ts</h1>
 
-# x-api-sdk-ts
+<p align="center">
+<a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank"><img src="https://img.shields.io/npm/v/x-api-sdk-ts?sanitize=true" alt="Version"></a>
+<a href="https://bundlephobia.com/package/x-api-sdk-ts" target="_blank"><img src="https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts" alt="Dependency Count"></a>
+<a href="https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml" target="_blank">
+  <img alt="Node.js Tests Passing" src="https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg" />
+</a>
+<a href="https://github.com/Micka33/x-api-sdk-ts/graphs/contributors" target="_blank">
+  <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/Micka33/x-api-sdk-ts" />
+</a>
+<a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank"><img src="https://img.shields.io/npm/l/x-api-sdk-ts?sanitize=true" alt="License"></a>
+<a href="https://github.com/Micka33/x-api-sdk-ts/issues/new/choose" target="_blank"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs"></a>
+</p>
 
-Simple and versatile typescript SDK for X Api.
+<p align="center">Simple and versatile typescript SDK for X Api.</p>
 
-Have you checked [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk)?  
+<p align="center">
+  <a href="https://x.com/DrHistoryX" target="_blank">See it in action on X(Twitter)</a>
+</p>
+
+<p align="center">Love the project? Please consider <a href="https://www.paypal.com/donate/?hosted_button_id=JQTSZBUL54LHG" target="_blank">donating</a> to help it improve!</p>
 
 ## Overview
 
 x-api-sdk-ts is a flexible TypeScript SDK for the X API, providing a type-safe, and intuitive interface to interact with v2 endpoints.  
 
 *Twitter's v1.1 endpoints are not supported, but can be implemented. if this is something you need, please open an issue.*  
+
+NB: Official X library is currently not ready for production. The documentation is lacking, but still, it's worth checking it out: [twitter-api-typescript-sdk](https://github.com/xdevplatform/twitter-api-typescript-sdk).
 
 ## Table of Contents
 
