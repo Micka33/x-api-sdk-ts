@@ -1,16 +1,15 @@
 <h1 align="center">x-api-sdk-ts</h1>
 
 <p align="center">
-<a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank"><img src="https://img.shields.io/npm/v/x-api-sdk-ts?sanitize=true" alt="Version"></a>
-<a href="https://bundlephobia.com/package/x-api-sdk-ts" target="_blank"><img src="https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts" alt="Dependency Count"></a>
-<a href="https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml" target="_blank">
-  <img alt="Node.js Tests Passing" src="https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg" />
-</a>
-<a href="https://github.com/Micka33/x-api-sdk-ts/graphs/contributors" target="_blank">
-  <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/Micka33/x-api-sdk-ts" />
-</a>
-<a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank"><img src="https://img.shields.io/npm/l/x-api-sdk-ts?sanitize=true" alt="License"></a>
-<a href="https://github.com/Micka33/x-api-sdk-ts/issues/new/choose" target="_blank"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs"></a>
+  <a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank" rel="nofollow"><img src="https://img.shields.io/npm/v/x-api-sdk-ts?sanitize=true" alt="Version" /></a>
+  <a href="https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml" target="_blank" rel="nofollow"><img alt="Node.js Tests Passing" src="https://github.com/Micka33/x-api-sdk-ts/actions/workflows/node.js.yml/badge.svg" /></a>
+  <a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank" rel="nofollow"><img src="https://badgen.net/npm/dt/x-api-sdk-ts" alt="PRs" /></a>
+</p>
+<p align="center">
+  <a href="https://bundlephobia.com/package/x-api-sdk-ts" target="_blank" rel="nofollow"><img src="https://badgen.net/bundlephobia/dependency-count/x-api-sdk-ts" alt="Dependency Count" /></a>
+  <a href="https://github.com/Micka33/x-api-sdk-ts/graphs/contributors" target="_blank" rel="nofollow"><img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/Micka33/x-api-sdk-ts" /></a>
+  <a href="https://www.npmjs.com/package/x-api-sdk-ts" target="_blank" rel="nofollow"><img src="https://img.shields.io/npm/l/x-api-sdk-ts?sanitize=true" alt="License" /></a>
+  <a href="https://github.com/Micka33/x-api-sdk-ts/issues/new/choose" target="_blank" rel="nofollow"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs" /></a>
 </p>
 
 <p align="center">Simple and versatile typescript SDK for X Api.</p>
