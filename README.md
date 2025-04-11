@@ -249,7 +249,7 @@ const mediaResponse = await twitterClient.media.upload(
 ### Get Media Upload Status
 
 ```typescript
-const mediaResponse = await twitterClient.media.getUploadStatus(mediaId);
+const mediaResponse = await twitterClient.media.getStatus(mediaId);
 if (!twitterClient.isSuccessResponse(mediaResponse)) {
   console.error('Failed get media upload status:', JSON.stringify(mediaResponse, null, 2));
 }
